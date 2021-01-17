@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/Services/Networking/Networking.dart';
@@ -5,6 +7,8 @@ import 'package:Whiff/Services/Networking/Networking.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
+import 'package:rxdart/rxdart.dart';
+
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -12,13 +16,29 @@ class OnboardingPage extends StatefulWidget {
 }
 
 
-class OnboardingPageState extends State<OnboardingPage> {
+class OnboardingPageState extends State<OnboardingPage>  {
 
-  var focusNode = FocusNode();
-  final AutheticatingServicing authenticationService = AutheticationService.shared;
+
+  StreamSubscription onboardingState;
+
+ final AutheticatingServicing authenticationService = AutheticationService.shared;
 
   @override
-  Widget build(BuildContext context) {
+  void deactivate() {
+    this.onboardingState.cancel();
+    super.deactivate();
+  }
+
+
+  Widget build(BuildContext context)  {
+
+    this.onboardingState = authenticationService.currentAuthState().listen((state) {
+      if(state.signedIn == false ) {
+        Navigator.pop(context);
+        Navigator.of(context).pop(true);
+      }
+    });
+
     return WillPopScope(child: Scaffold(
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
       body: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
@@ -48,13 +68,15 @@ class OnboardingPageState extends State<OnboardingPage> {
                             alignment: Alignment.bottomLeft,
                             child: Text(authenticationService.signedInEmail(),textAlign: TextAlign.left, style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Poppins')),
                     ),
-                  Container(height: 80,color: Colors.white),
+                  Container(height: 80, color: Colors.white),
                   Container(height: 50, color: Colors.white,
                     padding: EdgeInsets.only(left: 20),
                     alignment: Alignment.centerLeft,
                     child:
                         Row( children: [
-                          Text("Position 1",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')),
+                          TextButton(onPressed: () {
+
+                          }, child: Text("Current data",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
                         ],)
                   ),
                   Container(height: 50, color: Colors.white,
@@ -62,7 +84,9 @@ class OnboardingPageState extends State<OnboardingPage> {
                       alignment: Alignment.centerLeft,
                       child:
                       Row( children: [
-                        Text("Position 2",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')),
+                        TextButton(onPressed: () {
+
+                        }, child: Text("Historical data",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
                       ],)
                   ),
                   Container(height: 50, color: Colors.white,
@@ -70,21 +94,24 @@ class OnboardingPageState extends State<OnboardingPage> {
                       alignment: Alignment.centerLeft,
                       child:
                       Row( children: [
-                        Text("Position 3",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')),
+                        TextButton(onPressed: () {
+
+                        }, child: Text("Account Settings",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
+
+
                       ],)
                   ),
                   Container(height: 50, color: Colors.white,
                       padding: EdgeInsets.only(left: 20),
                       alignment: Alignment.centerLeft,
                       child:
-                      Row( children: [
-                        Text("Position 4",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')),
-                      ],)
+                      Row(children: [
+                          TextButton(onPressed: () {
+                            this.authenticationService.signOut();
+                          }, child: Text("Sign out",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
+                      ],
+                    )
                   ),
-
-
-
-
           ],
         ),
     ),

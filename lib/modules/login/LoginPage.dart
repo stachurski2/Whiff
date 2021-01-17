@@ -5,6 +5,8 @@ import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
+import 'dart:async';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,7 +17,6 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
 
   var focusNode = FocusNode();
-  final AutheticatingServicing authenticationService = AutheticationService.shared;
 
   var _login = "";
   var _password = "";
@@ -29,6 +30,16 @@ class LoginPageState extends State<LoginPage> {
   final double _kButtonHeight = 35;
   final double _kButtonCornerRadius = 10;
   final double _kInsetBetweenTextFieldAndButton = 30.0;
+
+  StreamSubscription onboardingState;
+
+  final AutheticatingServicing authenticationService = AutheticationService.shared;
+
+  @override
+  void deactivate() {
+    this.onboardingState.cancel();
+    super.deactivate();
+  }
 
   void handle(AutheticationState state) {
     if(state.signedIn == true) {
@@ -46,6 +57,13 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    this.onboardingState = authenticationService.currentAuthState().listen((state) {
+        this.setState(() {
+          this.handle(state);
+        });
+    });
+
     return Scaffold(
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
         body: Container(
@@ -103,9 +121,9 @@ class LoginPageState extends State<LoginPage> {
                       onEditingComplete: ()  async {
                         focusNode.unfocus();
                         var loginResult = await AutheticationService.shared.login(_login, _password);
-                        setState(() {
-                           handle(loginResult);
-                        });
+                        // setState(() {
+                        //    handle(loginResult);
+                        // });
                       },
                         obscureText: true,
                         decoration: InputDecoration(
