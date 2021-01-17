@@ -3,5 +3,8 @@
   "login_login_textfield_placeholder": "Login",
   "login_password_textfield_placeholder": "Password",
   "login_login_register_button_title": "REGISTRATION",
-  "login_login_password_button_title": "FORGOTTEN PASSWORD"
+  "login_login_password_button_title": "FORGOTTEN PASSWORD",
+  "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection"
+
+
 }

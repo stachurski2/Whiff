@@ -1,3 +1,7 @@
+import 'package:Whiff/Services/Authetication/Authetication.dart';
+import 'package:Whiff/Services/Authetication/AutheticationState.dart';
+import 'package:Whiff/modules/onboarding/OnboardingWidget.dart';
+
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
@@ -11,16 +15,34 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
 
   var focusNode = FocusNode();
+  final AutheticatingServicing authenticationService = AutheticationService.shared;
 
-  final double kImageWidth = 300;
-  final double kImageHeight = 150;
-  final double kTopLabelFontSize = 18;
-  final double kBottomButtonBottomInst = 15;
-  final double kStandardViewInset = 20;
-  final double kButtonHeight = 35;
-  final double kButtonCornerRadius = 10;
-  final double kButtonBorderWidth = 0.5;
-  final double kInsetBetweenTextFieldAndButton = 30.0;
+  var _login = "";
+  var _password = "";
+  var _loginMessage = "";
+
+  final double _kImageWidth = 300;
+  final double _kImageHeight = 150;
+  final double _kTopLabelFontSize = 18;
+  final double _kBottomButtonBottomInset = 15;
+  final double _kStandardViewInset = 20;
+  final double _kButtonHeight = 35;
+  final double _kButtonCornerRadius = 10;
+  final double _kInsetBetweenTextFieldAndButton = 30.0;
+
+  void handle(AutheticationState state) {
+    if(state.signedIn == true) {
+      _loginMessage = "";
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OnboardingWidget()),
+      );
+    } else if(state.errorMessage != null) {
+      _loginMessage = state.errorMessage;
+    } else {
+      _loginMessage = AppLocalizations.of(context).translate('login_login_textfield_placeholder');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +54,8 @@ class LoginPageState extends State<LoginPage> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset('assets/whiffLogo.png', width: kImageWidth,
-                        height: kImageHeight),
+                    Image.asset('assets/whiffLogo.png', width: _kImageWidth,
+                        height: _kImageHeight),
                   ]
               ),
               Row(
@@ -41,7 +63,7 @@ class LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     Text(
                         AppLocalizations.of(context).translate('login_top_label_text'),
-                        style: TextStyle(fontSize: kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center
                     ),
                   ]
@@ -50,55 +72,65 @@ class LoginPageState extends State<LoginPage> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: 20),
+                    SizedBox(width: _kStandardViewInset),
                     Expanded(child: TextFormField(
                       onEditingComplete: (){
                         focusNode.requestFocus();
                     },
+                        onChanged: (value){
+                          this._login = value;
+                        },
                         decoration: InputDecoration(
                           hintText: AppLocalizations.of(context).translate('login_login_textfield_placeholder'),
                         )
                     )),
-                    SizedBox(width: kStandardViewInset)
+                    SizedBox(width: _kStandardViewInset)
                   ]
               ),
                 SizedBox(
-                  height: kStandardViewInset,
+                  height: _kStandardViewInset,
                 )
                 ,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: kStandardViewInset),
+                    SizedBox(width: _kStandardViewInset),
                     Expanded(child: TextFormField(
                       focusNode: focusNode,
-                      onEditingComplete: (){
+                      onChanged: (value){
+                        this._password = value;
+                      },
+                      onEditingComplete: ()  async {
                         focusNode.unfocus();
-                        print("login");
+                        var loginResult = await AutheticationService.shared.login(_login, _password);
+                        setState(() {
+                           handle(loginResult);
+                        });
                       },
                         obscureText: true,
                         decoration: InputDecoration(
+                            errorText: _loginMessage,
                             hintText: AppLocalizations.of(context).translate('login_password_textfield_placeholder'),
                         )
                     )
                     ),
-                    SizedBox(width: kStandardViewInset),
+                    SizedBox(width: _kStandardViewInset),
                   ]
               ),
               SizedBox(
-                height: kInsetBetweenTextFieldAndButton,
+                height: _kInsetBetweenTextFieldAndButton,
               ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width - 2*kStandardViewInset,
-                        height: kButtonHeight,
+                      width: MediaQuery.of(context).size.width - 2*_kStandardViewInset,
+                        height: _kButtonHeight,
                         child:
 
                     RaisedButton(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(kButtonCornerRadius),
+                            borderRadius: BorderRadius.circular(_kButtonCornerRadius),
                             side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
                         ),
                         onPressed: () {
@@ -114,18 +146,18 @@ class LoginPageState extends State<LoginPage> {
                   ]
               ),
               SizedBox(
-                height: kStandardViewInset,
+                height: _kStandardViewInset,
               ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                        width: MediaQuery.of(context).size.width - 2*kStandardViewInset,
-                        height: kButtonHeight,
+                        width: MediaQuery.of(context).size.width - 2*_kStandardViewInset,
+                        height: _kButtonHeight,
                         child:
                     RaisedButton(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(kButtonCornerRadius),
+                            borderRadius: BorderRadius.circular(_kButtonCornerRadius),
                             side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                         ),
                         onPressed: () {
@@ -143,7 +175,7 @@ class LoginPageState extends State<LoginPage> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                      SizedBox(height: kBottomButtonBottomInst)
+                      SizedBox(height: _kBottomButtonBottomInset)
                   ]
               )
             ],

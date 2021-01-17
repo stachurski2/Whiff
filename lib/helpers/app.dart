@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:Whiff/modules/login/LoginPage.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
