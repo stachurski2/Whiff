@@ -17,4 +17,6 @@ class ColorProvider {
 
   Color standardAppButtonTextColor =  Color.fromRGBO(255, 255, 255, 1.0);
 
+  Color standardAppLeftMenuBackgroundColor =  Color.fromRGBO(28, 108, 78, 1.0);
+
 }

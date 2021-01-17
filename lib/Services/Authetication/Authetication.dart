@@ -3,6 +3,8 @@ import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 
 abstract class AutheticatingServicing {
   Future<AutheticationState> login(String email, String password) async { }
+  String authorizationHeader() { }
+  String signedInEmail() { }
 }
 
 class AutheticationService extends AutheticatingServicing  {
@@ -21,8 +23,14 @@ class AutheticationService extends AutheticatingServicing  {
   var _authorizationMethod = "";
   var _authorizationToken = "";
 
+  var _signeInEmail = "";
+
   String authorizationHeader() {
     return _authorizationMethod + " " + _authorizationToken;
+  }
+
+  String signedInEmail() {
+    return _signeInEmail;
   }
 
   Future<AutheticationState> login(String email, String password) async {
@@ -32,6 +40,7 @@ class AutheticationService extends AutheticatingServicing  {
             print(response.responseObject);
             this._authorizationMethod = response.responseObject["authMethod"];
             this._authorizationToken = response.responseObject["token"];
+            this._signeInEmail = email;
             return AutheticationState(true, null);
           } else if(response.errorMessage != null) {
             return AutheticationState(false, response.errorMessage);

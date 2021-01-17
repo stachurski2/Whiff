@@ -1,6 +1,6 @@
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
-import 'package:Whiff/modules/onboarding/OnboardingWidget.dart';
+import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
@@ -35,7 +35,7 @@ class LoginPageState extends State<LoginPage> {
       _loginMessage = "";
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OnboardingWidget()),
+        MaterialPageRoute(builder: (context) => OnboardingPage()),
       );
     } else if(state.errorMessage != null) {
       _loginMessage = state.errorMessage;
