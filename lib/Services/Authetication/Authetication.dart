@@ -13,14 +13,12 @@ abstract class AutheticatingServicing {
 
 class AutheticationService extends AutheticatingServicing  {
 
-
   AutheticationService._internal() {
     _readStoredCredientials();
   }
 
   NetworkingServicing networkService = NetworkService.shared;
 
-  final _kMainAdress = "https://whiffdev.herokuapp.com";
   final _kAuthTokenKey = "AuthTokenKey";
   final _kAuthMethodKey = "AuthMethodKey";
   final _kEmailKey = "EmailKey";
@@ -60,7 +58,7 @@ class AutheticationService extends AutheticatingServicing  {
    void login(String email, String password) async {
         email = email.replaceAll(' ', '');
         _didRequestLogin = true;
-        var response = await networkService.makeRequest(RequestMethod.post, _kMainAdress + "/loginUser", { "email": email, "password": password}, null);
+        var response = await networkService.makeRequest(RequestMethod.post, "/loginUser", { "email": email, "password": password}, null);
         _didRequestLogin = false;
         if(response.responseObject != null && response.responseObject["token"] != null && response.responseObject["authMethod"] != null) {
             print(response.responseObject);

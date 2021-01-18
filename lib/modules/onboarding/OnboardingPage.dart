@@ -1,26 +1,23 @@
 import 'dart:async';
 
 import 'package:Whiff/Services/Authetication/Authetication.dart';
-import 'package:Whiff/Services/Authetication/AutheticationState.dart';
-import 'package:Whiff/Services/Networking/Networking.dart';
+import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
-import 'package:Whiff/helpers/app_localizations.dart';
-import 'package:rxdart/rxdart.dart';
-
 
 class OnboardingPage extends StatefulWidget {
   @override
   OnboardingPageState createState() => OnboardingPageState();
 }
 
-
 class OnboardingPageState extends State<OnboardingPage>  {
 
-  final LoginViewModelContract _viewModel = LoginViewModel();
+  OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
   StreamSubscription onboardingState;
+
+ final AutheticatingServicing authenticationService = AutheticationService.shared;
 
   @override
   void deactivate() {
@@ -31,7 +28,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
   @override
   void initState() {
     super.initState();
-    this.onboardingState = _viewModel.currentAuthState().listen((state) {
+    _viewModel.currentAuthState().listen((state) {
       if(state.signedIn == false ) {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
@@ -40,9 +37,13 @@ class OnboardingPageState extends State<OnboardingPage>  {
   }
 
   Widget build(BuildContext context)  {
+    _viewModel.fetchSensors();
     return WillPopScope(child: Scaffold(
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
-      body: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
+      appBar: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
+      body: Center(
+        child: Text("test"),
+      ),
       drawer: Theme(
         data:  Theme.of(context).copyWith(
           canvasColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor, //This will change the drawer background to blue.
@@ -117,15 +118,6 @@ class OnboardingPageState extends State<OnboardingPage>  {
     ),
         ),
 
-     //   child:
-
-
-        // ListView(
-        //   children: [
-        //
-        //     ),
-        //   ],
-        // ),
       ),
       ),
     ),

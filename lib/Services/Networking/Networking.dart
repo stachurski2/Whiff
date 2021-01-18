@@ -14,6 +14,8 @@ abstract class NetworkingServicing {
 
 class NetworkService extends NetworkingServicing {
 
+  final _kMainAdress = "https://whiffdev.herokuapp.com";
+
   static final NetworkService shared = NetworkService._internal();
   factory NetworkService() {
     return shared;
@@ -24,7 +26,7 @@ class NetworkService extends NetworkingServicing {
   Future<ServerResponse<Map<String, dynamic>>> makeRequest(RequestMethod method, String url, Map<String, String> body, String authHeader) async {
     switch(method){
       case RequestMethod.get:{
-        var adress = url + "?";
+        var adress = _kMainAdress + url + "?";
         body.forEach((key, value) {
             adress = adress + key + "=" + value + "&";
         });
@@ -43,7 +45,7 @@ class NetworkService extends NetworkingServicing {
       }
       break;
       case RequestMethod.post: {
-        final response = await http.post(url,
+        final response = await http.post(_kMainAdress + url,
                                          body: body,
                                          headers: <String, String> { 'Authorization': authHeader },
         );
@@ -56,7 +58,7 @@ class NetworkService extends NetworkingServicing {
       }
       break;
       case RequestMethod.delete: {
-        var adress = url + "?";
+        var adress = _kMainAdress + url + "?";
         body.forEach((key, value) {
           adress = adress + key + "=" + value + "&";
         });
