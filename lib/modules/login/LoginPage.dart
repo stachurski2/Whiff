@@ -1,6 +1,6 @@
-import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
+import 'package:Whiff/modules/login/LoginViewModel.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
@@ -16,11 +16,12 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
 
+  final LoginViewModelContract _viewModel = LoginViewModel();
+
   var focusNode = FocusNode();
   var _didShowOnboarding = false;
-  var _login = "";
-  var _password = "";
   var _loginMessage = "";
+
   final double _kImageWidth = 300;
   final double _kImageHeight = 150;
   final double _kTopLabelFontSize = 18;
@@ -32,13 +33,10 @@ class LoginPageState extends State<LoginPage> {
 
   StreamSubscription onboardingState;
 
-  final AutheticatingServicing authenticationService = AutheticationService.shared;
-
-
   @override
   void initState() {
     super.initState();
-    this.onboardingState = authenticationService.currentAuthState().listen((state) {
+    this.onboardingState = _viewModel.currentAuthState().listen((state) {
       this.setState(() {
         this.handle(state);
       });
@@ -56,9 +54,6 @@ class LoginPageState extends State<LoginPage> {
   void handle(AutheticationState state) {
     if(state.signedIn == true) {
       _loginMessage = "";
-      print("test");
-      print(  _didShowOnboarding);
-
       if(_didShowOnboarding == false) {
         Navigator.push(
           context,
@@ -110,7 +105,7 @@ class LoginPageState extends State<LoginPage> {
                         focusNode.requestFocus();
                     },
                         onChanged: (value){
-                          this._login = value;
+                          _viewModel.setLogin(value);
                         },
                         decoration: InputDecoration(
                           hintText: AppLocalizations.of(context).translate('login_login_textfield_placeholder'),
@@ -130,11 +125,11 @@ class LoginPageState extends State<LoginPage> {
                     Expanded(child: TextFormField(
                       focusNode: focusNode,
                       onChanged: (value){
-                        this._password = value;
+                        _viewModel.setPassword(value);
                       },
                       onEditingComplete: ()  async {
                         focusNode.unfocus();
-                        var loginResult = await AutheticationService.shared.login(_login, _password);
+                        _viewModel.login();
                       },
                         obscureText: true,
                         decoration: InputDecoration(

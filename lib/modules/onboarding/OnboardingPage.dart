@@ -18,10 +18,9 @@ class OnboardingPage extends StatefulWidget {
 
 class OnboardingPageState extends State<OnboardingPage>  {
 
+  final LoginViewModelContract _viewModel = LoginViewModel();
 
   StreamSubscription onboardingState;
-
- final AutheticatingServicing authenticationService = AutheticationService.shared;
 
   @override
   void deactivate() {
@@ -32,7 +31,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
   @override
   void initState() {
     super.initState();
-    this.onboardingState = authenticationService.currentAuthState().listen((state) {
+    this.onboardingState = _viewModel.currentAuthState().listen((state) {
       if(state.signedIn == false ) {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
@@ -44,7 +43,6 @@ class OnboardingPageState extends State<OnboardingPage>  {
     return WillPopScope(child: Scaffold(
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
       body: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
-
       drawer: Theme(
         data:  Theme.of(context).copyWith(
           canvasColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor, //This will change the drawer background to blue.
@@ -109,7 +107,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                       child:
                       Row(children: [
                           TextButton(onPressed: () {
-                            this.authenticationService.signOut();
+                            _viewModel.signOut();
                           }, child: Text("Sign out",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
                       ],
                     )

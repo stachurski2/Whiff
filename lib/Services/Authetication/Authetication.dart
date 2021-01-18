@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AutheticatingServicing {
-  Future<AutheticationState> login(String email, String password) async { }
+  void login(String email, String password) async { }
   String authorizationHeader();
   String signedInEmail();
   Stream<AutheticationState> currentAuthState();
@@ -50,14 +50,14 @@ class AutheticationService extends AutheticatingServicing  {
   }
 
   void signOut() {
-    var _authorizationMethod = "";
-    var _authorizationToken = "";
-    var _signedInEmail = "";
+     _authorizationMethod = "";
+     _authorizationToken = "";
+     _signedInEmail = "";
     _removeStoredCredientials();
     _subject.add( AutheticationState(false, null));
   }
 
-  Future<AutheticationState> login(String email, String password) async {
+   void login(String email, String password) async {
         email = email.replaceAll(' ', '');
         _didRequestLogin = true;
         var response = await networkService.makeRequest(RequestMethod.post, _kMainAdress + "/loginUser", { "email": email, "password": password}, null);
@@ -70,14 +70,11 @@ class AutheticationService extends AutheticatingServicing  {
             final state = AutheticationState(true, null);
             _subject.add(state);
             _storeCredientials();
-            return AutheticationState(true, null);
           } else if(response.errorMessage != null) {
            final state = AutheticationState(false, response.errorMessage);
             _subject.add(state);
-            return state;
           } else {
             final state = AutheticationState(false, null);
-            return state;
           }
   }
 
