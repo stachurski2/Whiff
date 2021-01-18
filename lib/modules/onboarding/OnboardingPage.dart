@@ -29,16 +29,18 @@ class OnboardingPageState extends State<OnboardingPage>  {
     super.deactivate();
   }
 
-
-  Widget build(BuildContext context)  {
-
+  @override
+  void initState() {
+    super.initState();
     this.onboardingState = authenticationService.currentAuthState().listen((state) {
       if(state.signedIn == false ) {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
       }
     });
+  }
 
+  Widget build(BuildContext context)  {
     return WillPopScope(child: Scaffold(
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
       body: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),

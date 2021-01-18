@@ -17,11 +17,10 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
 
   var focusNode = FocusNode();
-
+  var _didShowOnboarding = false;
   var _login = "";
   var _password = "";
   var _loginMessage = "";
-
   final double _kImageWidth = 300;
   final double _kImageHeight = 150;
   final double _kTopLabelFontSize = 18;
@@ -35,6 +34,19 @@ class LoginPageState extends State<LoginPage> {
 
   final AutheticatingServicing authenticationService = AutheticationService.shared;
 
+
+  @override
+  void initState() {
+    super.initState();
+    this.onboardingState = authenticationService.currentAuthState().listen((state) {
+      this.setState(() {
+        this.handle(state);
+      });
+    });
+
+  }
+
+
   @override
   void deactivate() {
     this.onboardingState.cancel();
@@ -44,25 +56,27 @@ class LoginPageState extends State<LoginPage> {
   void handle(AutheticationState state) {
     if(state.signedIn == true) {
       _loginMessage = "";
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OnboardingPage()),
-      );
+      print("test");
+      print(  _didShowOnboarding);
+
+      if(_didShowOnboarding == false) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OnboardingPage()),
+        );
+        _didShowOnboarding = true;
+      };
     } else if(state.errorMessage != null) {
+        _didShowOnboarding = false;
       _loginMessage = state.errorMessage;
     } else {
+        _didShowOnboarding = false;
       _loginMessage = AppLocalizations.of(context).translate('login_login_textfield_placeholder');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    this.onboardingState = authenticationService.currentAuthState().listen((state) {
-        this.setState(() {
-          this.handle(state);
-        });
-    });
 
     return Scaffold(
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
@@ -121,9 +135,6 @@ class LoginPageState extends State<LoginPage> {
                       onEditingComplete: ()  async {
                         focusNode.unfocus();
                         var loginResult = await AutheticationService.shared.login(_login, _password);
-                        // setState(() {
-                        //    handle(loginResult);
-                        // });
                       },
                         obscureText: true,
                         decoration: InputDecoration(
