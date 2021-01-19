@@ -5,6 +5,7 @@ import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
+import 'package:Whiff/model/Sensor.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -17,33 +18,63 @@ class OnboardingPageState extends State<OnboardingPage>  {
 
   StreamSubscription onboardingState;
 
- final AutheticatingServicing authenticationService = AutheticationService.shared;
+  StreamSubscription sensorListSubscription;
+
+  var _sensors = List<Sensor>();
+
+  final AutheticatingServicing authenticationService = AutheticationService.shared;
 
   @override
   void deactivate() {
     this.onboardingState.cancel();
+    this.sensorListSubscription.cancel();
     super.deactivate();
   }
 
   @override
   void initState() {
     super.initState();
-    _viewModel.currentAuthState().listen((state) {
+    onboardingState = _viewModel.currentAuthState().listen((state) {
       if(state.signedIn == false ) {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
       }
     });
+
+
+    sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
+      this.setState(() {
+        this._sensors = sensorList;
+      });
+    });
+
+    _viewModel.fetchSensors();
   }
 
   Widget build(BuildContext context)  {
-    _viewModel.fetchSensors();
+
     return WillPopScope(child: Scaffold(
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
       appBar: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
-      body: Center(
-        child: Text("test"),
-      ),
+      body: Container(
+        child: ListView.separated(
+    itemCount: _sensors.length,
+    separatorBuilder:  ( BuildContext context, int index) => SizedBox(height: 20),
+    itemBuilder: (BuildContext context, int index) {
+                return
+                Column(
+                  children: [
+                    SizedBox(height: 20),
+                        Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [ Text( "Sensor name: "  + _sensors[index].name)]),
+                      Row(mainAxisAlignment: MainAxisAlignment.center,
+                                   children: [ Text( "Location: "  + _sensors[index].locationName)]),
+                    SizedBox(height: 20)
+
+                  ],);
+
+                  Row(children: [ Text(_sensors[index].name)]);
+    },),),
       drawer: Theme(
         data:  Theme.of(context).copyWith(
           canvasColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor, //This will change the drawer background to blue.
@@ -125,3 +156,4 @@ class OnboardingPageState extends State<OnboardingPage>  {
     );
   }
 }
+
