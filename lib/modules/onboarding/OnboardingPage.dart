@@ -6,6 +6,7 @@ import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
+import 'package:flutter/rendering.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -13,6 +14,8 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class OnboardingPageState extends State<OnboardingPage>  {
+  final double _kImageWidth = 120;
+  final double _kImageHeight = 60;
 
   OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
@@ -26,8 +29,8 @@ class OnboardingPageState extends State<OnboardingPage>  {
 
   @override
   void deactivate() {
-    this.onboardingState.cancel();
-    this.sensorListSubscription.cancel();
+      this.onboardingState.cancel();
+      this.sensorListSubscription.cancel();
     super.deactivate();
   }
 
@@ -54,27 +57,56 @@ class OnboardingPageState extends State<OnboardingPage>  {
   Widget build(BuildContext context)  {
 
     return WillPopScope(child: Scaffold(
+      extendBodyBehindAppBar:true,
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
-      appBar: AppBar(backgroundColor: ColorProvider.shared.standardAppBackgroundColor, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
-      body: Container(
-        child: ListView.separated(
-    itemCount: _sensors.length,
-    separatorBuilder:  ( BuildContext context, int index) => SizedBox(height: 20),
-    itemBuilder: (BuildContext context, int index) {
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation:0, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
+      body:
+    SingleChildScrollView(
+    child:
+      Column(
+        children:[
+          SizedBox(height: 60),
+          Image.asset('assets/cloud-sun-solid.png', width: _kImageWidth,
+              height: _kImageHeight),
+          Image.asset('assets/whiffLogo.png', width: _kImageWidth,
+              height: _kImageHeight),
+          Text("Select Sensor",  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
+          SizedBox(height: 20),
+          //if()
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            padding: EdgeInsets.zero,
+            itemCount: _sensors.length,
+           itemBuilder: (BuildContext context, int index) {
                 return
+                Container(
+                  decoration:  BoxDecoration(
+                      border: Border(bottom: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor), top: BorderSide(color: index == 0 ? ColorProvider.shared.standardAppButtonBorderColor : Colors.transparent)),
+                                      color:  ColorProvider.shared.sensorCellBackgroundColor),
+                  child:
                 Column(
                   children: [
                     SizedBox(height: 20),
+
                         Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [ Text( "Sensor name: "  + _sensors[index].name)]),
-                      Row(mainAxisAlignment: MainAxisAlignment.center,
-                                   children: [ Text( "Location: "  + _sensors[index].locationName)]),
+                            children: [ Text("Sensor "+ (index+1).toString(), style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
+                              SizedBox(width: 20),
+                              Column(
+                                children: [ Text( "Sensor: "  + _sensors[index].name, textAlign: TextAlign.left), Text( "Location: "  + _sensors[index].locationName, textAlign: TextAlign.left)],)
+
+                             ]),
+
+
                     SizedBox(height: 20)
 
-                  ],);
+                  ],)
+                );
 
-                  Row(children: [ Text(_sensors[index].name)]);
-    },),),
+    },),
+           ],
+    ),),
       drawer: Theme(
         data:  Theme.of(context).copyWith(
           canvasColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor, //This will change the drawer background to blue.
@@ -88,7 +120,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
             child:
 
     Container(
-    color:  Colors.white,
+    color: ColorProvider.shared.standardAppBackgroundColor,
     child:
 
             ListView(
@@ -100,8 +132,8 @@ class OnboardingPageState extends State<OnboardingPage>  {
                             alignment: Alignment.bottomLeft,
                             child: Text(authenticationService.signedInEmail(),textAlign: TextAlign.left, style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Poppins')),
                     ),
-                  Container(height: 80, color: Colors.white),
-                  Container(height: 50, color: Colors.white,
+                  Container(height: 80, color: ColorProvider.shared.standardAppBackgroundColor),
+                  Container(height: 50, color: ColorProvider.shared.standardAppBackgroundColor,
                     padding: EdgeInsets.only(left: 20),
                     alignment: Alignment.centerLeft,
                     child:
@@ -111,7 +143,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                           }, child: Text("Current data",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
                         ],)
                   ),
-                  Container(height: 50, color: Colors.white,
+                  Container(height: 50, color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),
                       alignment: Alignment.centerLeft,
                       child:
@@ -121,7 +153,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                         }, child: Text("Historical data",textAlign: TextAlign.left, style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Poppins')))
                       ],)
                   ),
-                  Container(height: 50, color: Colors.white,
+                  Container(height: 50, color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),
                       alignment: Alignment.centerLeft,
                       child:
@@ -133,7 +165,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
 
                       ],)
                   ),
-                  Container(height: 50, color: Colors.white,
+                  Container(height: 50, color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),
                       alignment: Alignment.centerLeft,
                       child:

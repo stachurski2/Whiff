@@ -9,7 +9,9 @@ class ColorProvider {
   }
   ColorProvider._internal();
 
-  Color standardAppBackgroundColor =  Color.fromRGBO(255, 255, 255, 1.0);
+  Color standardAppBackgroundColor =  Color.fromRGBO(238, 230, 230, 1.0);
+
+  Color sensorCellBackgroundColor =  Color.fromRGBO(240, 231, 231, 1.0);
 
   Color standardAppButtonColor =  Color.fromRGBO(0, 145, 110, 1.0);
 

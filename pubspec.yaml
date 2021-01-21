@@ -48,6 +48,7 @@ flutter:
   assets:
     - assets/
     - assets/whiffLogo.png
+    - assets/cloud-sun-solid.png
     - lang/
     - lang/en.json
   fonts:
