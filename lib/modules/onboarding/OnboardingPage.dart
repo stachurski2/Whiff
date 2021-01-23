@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
+import 'package:Whiff/modules/measurement/MasurementPage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
@@ -26,6 +27,14 @@ class OnboardingPageState extends State<OnboardingPage>  {
   var _sensors = List<Sensor>();
 
   final AutheticatingServicing authenticationService = AutheticationService.shared;
+
+
+
+  void showMeasurementPage() {
+    Navigator.push(context,
+      MaterialPageRoute(builder: (context) => MeasurementPage()),
+    );
+  }
 
   @override
   void deactivate() {
@@ -81,6 +90,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
             itemCount: _sensors.length,
            itemBuilder: (BuildContext context, int index) {
                 return
+                 GestureDetector(child:
                 Container(
                   decoration:  BoxDecoration(
                       border: Border(bottom: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor), top: BorderSide(color: index == 0 ? ColorProvider.shared.standardAppButtonBorderColor : Colors.transparent)),
@@ -102,6 +112,10 @@ class OnboardingPageState extends State<OnboardingPage>  {
                     SizedBox(height: 20)
 
                   ],)
+                ),
+                   onTap: () => {
+                        this.showMeasurementPage()
+                   },
                 );
 
     },),
