@@ -28,11 +28,9 @@ class OnboardingPageState extends State<OnboardingPage>  {
 
   final AutheticatingServicing authenticationService = AutheticationService.shared;
 
-
-
-  void showMeasurementPage() {
+  void showMeasurementPage(Sensor sensor) {
     Navigator.push(context,
-      MaterialPageRoute(builder: (context) => MeasurementPage()),
+      MaterialPageRoute(builder: (context) => MeasurementPage(sensor)),
     );
   }
 
@@ -114,7 +112,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                   ],)
                 ),
                    onTap: () => {
-                        this.showMeasurementPage()
+                        this.showMeasurementPage(_sensors[index])
                    },
                 );
 

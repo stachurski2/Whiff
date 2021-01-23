@@ -1,12 +1,16 @@
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Networking/Networking.dart';
 import 'package:Whiff/Services/Networking/ServerResponse.dart';
+import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class DataServicing {
    void fetchSensors() async { }
+   void fetchCurrentMeasurement(int sensorId) async { }
    Stream<ServerResponse<List<Sensor>>> fetchedSensors();
+   Stream<ServerResponse<Measurement>> currentMeasurement();
+
 }
 
 class DataService extends DataServicing  {
@@ -20,9 +24,17 @@ class DataService extends DataServicing  {
 
   final _fetchedSensorsSubject = PublishSubject<ServerResponse<List<Sensor>>>();
 
+  final _currentMeasurementSubject = PublishSubject<ServerResponse<Measurement>>();
+
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
   }
+
+  Stream<ServerResponse<Measurement>> currentMeasurement() {
+    return _currentMeasurementSubject.stream;
+  }
+
+
 
   NetworkingServicing networkService = NetworkService.shared;
 
@@ -36,7 +48,6 @@ class DataService extends DataServicing  {
         final sensorsData = response.responseObject["sensors"];
          if(sensorsData != null) {
            for (var i = 0; i < sensorsData.length; i++) {
-             print(sensorsData[i]);
               sensorList.add(Sensor(sensorsData[i]["name"],
                   sensorsData[i]["externalIdentifier"],
                   sensorsData[i]["locationName"],
@@ -52,6 +63,24 @@ class DataService extends DataServicing  {
          }
 
     } else if(response.errorMessage != null) {
+
+    }
+  }
+
+  void fetchCurrentMeasurement(int sensorId) async {
+    var response = await networkService.makeRequest(RequestMethod.get, "/lastPieceOfDataFromSensor", {"sensorId": sensorId.toString()}, _autheticatingService.authorizationHeader());
+    if(response.responseObject["data"] != null) {
+      var data = response.responseObject["data"];
+      var measurement = Measurement(double.parse(data["PM1"]),
+                                    double.parse(data["PM10"]),
+                                    double.parse(data["PM25"]),
+                                    double.parse(data["WILGOTNOSC"]),
+                                    double.parse(data["FORMALDEHYD"]),
+                                    double.parse(data["CO2"]),
+                                    double.parse(data["TEMPERATURA"]),
+                                    DateTime.parse(data["CZAS"]));
+      print(data);
+      _currentMeasurementSubject.add(ServerResponse(measurement, null, null));
 
     }
   }

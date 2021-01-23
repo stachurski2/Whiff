@@ -8,16 +8,20 @@ import 'package:Whiff/model/Sensor.dart';
 abstract class MeasurementViewModelContract {
 
   Stream<Measurement> currentMeasurement();
-  void fetchMeasurement();
+  void fetchMeasurement(int sensorId);
 }
 
 class MeasurementViewModel extends MeasurementViewModelContract {
 
-  void fetchMeasurement() {
+  final DataServicing _dataService = DataService.shared;
 
+  void fetchMeasurement(int sensorId) {
+    _dataService.fetchCurrentMeasurement(sensorId);
   }
 
   Stream<Measurement> currentMeasurement() {
-
+    return _dataService.currentMeasurement().map((serverResponse){
+        return serverResponse.responseObject;
+    });
   }
 }
