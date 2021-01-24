@@ -1,11 +1,8 @@
+import 'package:Whiff/model/WhiffError.dart';
+
 class ServerResponse<T extends Object> {
   T responseObject;
-  int errorCode;
-  String errorMessage;
+  WhiffError error;
 
-  ServerResponse(T responseObject, int errorCode, String message) {
-    this.responseObject = responseObject;
-    this.errorCode = errorCode;
-    this.errorMessage = message;
-  }
+  ServerResponse(this.responseObject,  this.error);
 }

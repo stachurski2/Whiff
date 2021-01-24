@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/modules/measurement/MeasurementViewModel.dart';
@@ -9,6 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:flutter/rendering.dart';
+import 'package:Whiff/customView/FailurePage.dart';
+import 'package:Whiff/model/WhiffError.dart';
+
 
 class MeasurementPage extends StatefulWidget {
   Sensor sensor;
@@ -22,7 +27,6 @@ class MeasurementPage extends StatefulWidget {
 
 class MeasurementPageState extends State<MeasurementPage>  {
 
-
   bool _didLoad = false;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -34,31 +38,64 @@ class MeasurementPageState extends State<MeasurementPage>  {
   final DateFormat _dateformatter = DateFormat('EEEE, dd MMMM');
   final DateFormat _hourformatter = DateFormat('HH:mm');
 
-  MeasurementViewModelContract _viewModel = MeasurementViewModel();
+  final MeasurementViewModelContract _viewModel = MeasurementViewModel();
 
   Measurement _measurement;
+  WhiffError _error;
+
   StreamSubscription currentMeasurementSubscription;
+  StreamSubscription errorSubscription;
 
   void _popPage() {
     Navigator.of(context).pop();
   }
 
+  void _launchURL(url) async {
+    if (await canLaunch(url)) {
+      print(url);
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _mailToSupport() async {
+      final mailtoLink = Mailto(
+        to: ['to@example.com'],
+        cc: ['cc1@example.com', 'cc2@example.com'],
+        subject: 'mailto example subject',
+        body: 'mailto example body',
+      );
+
+      await _launchURL(mailtoLink.toString());
+  }
+
+
+
   @override
   void initState() {
     super.initState();
     currentMeasurementSubscription = _viewModel.currentMeasurement().listen((measurement) {
-          this._measurement = measurement;
-          this._didLoad = true;
-          print("loaded");
-          this.setState( () {});
-        });
+          if(measurement != null) {
+            this._measurement = measurement;
+            this._didLoad = true;
+            this.setState(() {});
+          }
+    });
 
+    errorSubscription = _viewModel.fetchErrorStream().listen((error) {
+      if(error != null) {
+        this._error = error;
+        this.setState(() {});
+      }
+    });
     _viewModel.fetchMeasurement(widget.sensor.externalIdentfier);
   }
 
   @override
   void deactivate() {
     this.currentMeasurementSubscription.cancel();
+    this.errorSubscription.cancel();
     super.deactivate();
   }
 
@@ -259,10 +296,17 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             Expanded(
                 child: Align(
-                  alignment: FractionalOffset.bottomCenter,
+                  alignment: FractionalOffset.center,
                   child: Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                     child: this._didLoad ? Column(children: measurementDataWidget(),) :LoadingIndicator(),
+                    padding: EdgeInsets.only(bottom: 10.0),
+                     child: (this._error != null) ? FailurePage(this._error, (){
+                        this._didLoad = false;
+                        this._error = null;
+                        this.setState(() {});
+                        _viewModel.fetchMeasurement(widget.sensor.externalIdentfier);
+                     },  () async {
+                         await this._mailToSupport();
+                     }): this._didLoad ? Column(children: measurementDataWidget(),) :LoadingIndicator(),
                   ),
                 ),
                 ),

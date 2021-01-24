@@ -68,8 +68,8 @@ class AutheticationService extends AutheticatingServicing  {
             final state = AutheticationState(true, null);
             _subject.add(state);
             _storeCredientials();
-          } else if(response.errorMessage != null) {
-           final state = AutheticationState(false, response.errorMessage);
+          } else if(response.error != null) {
+           final state = AutheticationState(false, response.error.errorMessage);
             _subject.add(state);
           } else {
             final state = AutheticationState(false, null);

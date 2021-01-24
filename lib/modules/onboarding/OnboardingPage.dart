@@ -1,6 +1,9 @@
 import 'dart:async';
-
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
+import 'package:Whiff/customView/FailurePage.dart';
+import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
@@ -26,7 +29,11 @@ class OnboardingPageState extends State<OnboardingPage>  {
 
   StreamSubscription sensorListSubscription;
 
+  StreamSubscription sensorListErrorSubscription;
+
+
   var _sensors = List<Sensor>();
+  WhiffError _error;
 
   final AutheticatingServicing authenticationService = AutheticationService.shared;
 
@@ -36,10 +43,39 @@ class OnboardingPageState extends State<OnboardingPage>  {
     );
   }
 
+  void _launchURL(url) async {
+    if (await canLaunch(url)) {
+      print(url);
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _mailToSupport() async {
+    final mailtoLink = Mailto(
+      to: ['to@example.com'],
+      cc: ['cc1@example.com', 'cc2@example.com'],
+      subject: 'mailto example subject',
+      body: 'mailto example body',
+    );
+
+    await _launchURL(mailtoLink.toString());
+  }
+
+  void _reload() {
+    _error = null;
+    _didLoad = false;
+    setState(() { });
+    _viewModel.fetchSensors();
+
+  }
+
   @override
   void deactivate() {
       this.onboardingState.cancel();
       this.sensorListSubscription.cancel();
+      this.sensorListErrorSubscription.cancel();
     super.deactivate();
   }
 
@@ -52,8 +88,6 @@ class OnboardingPageState extends State<OnboardingPage>  {
         Navigator.of(context).pop(true);
       }
     });
-
-
     sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
       this.setState(() {
         this._sensors = sensorList;
@@ -61,10 +95,67 @@ class OnboardingPageState extends State<OnboardingPage>  {
       });
     });
 
+    sensorListErrorSubscription = _viewModel.sensorsListFetchError().listen((error) {
+      this._error = error;
+      this.setState(() {});
+    });
+
     _viewModel.fetchSensors();
   }
 
   Widget build(BuildContext context)  {
+
+
+    Widget sensorListView() {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        padding: EdgeInsets.zero,
+        itemCount: _sensors.length,
+        itemBuilder: (BuildContext context, int index) {
+          return
+            GestureDetector(child:
+            Container(
+                decoration:  BoxDecoration(
+                    border: Border(bottom: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor), top: BorderSide(color: index == 0 ? ColorProvider.shared.standardAppButtonBorderColor : Colors.transparent)),
+                    color:  ColorProvider.shared.sensorCellBackgroundColor),
+                child:
+                Column(
+                  children: [
+                    SizedBox(height: 20),
+
+                    Row(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [ Text("Sensor "+ (index+1).toString(), style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
+                          SizedBox(width: 20),
+                          Column(
+                            children: [ Text( "Sensor: "  + _sensors[index].name, textAlign: TextAlign.left), Text( "Location: "  + _sensors[index].locationName, textAlign: TextAlign.left)],)
+
+                        ]),
+
+
+                    SizedBox(height: 20)
+
+                  ],)
+            ),
+              onTap: () => {
+                this.showMeasurementPage(_sensors[index])
+              },
+            );
+
+        },);
+    }
+
+    Widget failureView(WhiffError error, VoidCallback onPressedReloadButton, VoidCallback onPressedContactButton) {
+      return Column(
+          children:[
+                     SizedBox(height: 60),
+                     Image.asset('assets/whiffLogo.png', width: _kImageWidth,
+                                                        height: _kImageHeight),
+                      FailurePage(error,onPressedReloadButton,onPressedContactButton),
+        ],
+      );
+    }
 
     return WillPopScope(child: Scaffold(
       extendBodyBehindAppBar:true,
@@ -72,7 +163,13 @@ class OnboardingPageState extends State<OnboardingPage>  {
       appBar: AppBar(backgroundColor: Colors.transparent, elevation:0, iconTheme: IconThemeData(color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
     SingleChildScrollView(
-    child:
+    child:  (_error != null) ? failureView(_error, () {
+      this._reload();
+
+    }, () async {
+      await this._mailToSupport();
+
+    }) :
       Column(
         children:[
           SizedBox(height: 60),
@@ -81,45 +178,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
           Image.asset('assets/whiffLogo.png', width: _kImageWidth,
               height: _kImageHeight),
           Text("Select Sensor",  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
-          SizedBox(height: 20),
-          //if()
-          _didLoad ? ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.zero,
-            itemCount: _sensors.length,
-           itemBuilder: (BuildContext context, int index) {
-                return
-                 GestureDetector(child:
-                Container(
-                  decoration:  BoxDecoration(
-                      border: Border(bottom: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor), top: BorderSide(color: index == 0 ? ColorProvider.shared.standardAppButtonBorderColor : Colors.transparent)),
-                                      color:  ColorProvider.shared.sensorCellBackgroundColor),
-                  child:
-                Column(
-                  children: [
-                    SizedBox(height: 20),
-
-                        Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [ Text("Sensor "+ (index+1).toString(), style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
-                              SizedBox(width: 20),
-                              Column(
-                                children: [ Text( "Sensor: "  + _sensors[index].name, textAlign: TextAlign.left), Text( "Location: "  + _sensors[index].locationName, textAlign: TextAlign.left)],)
-
-                             ]),
-
-
-                    SizedBox(height: 20)
-
-                  ],)
-                ),
-                   onTap: () => {
-                        this.showMeasurementPage(_sensors[index])
-                   },
-                );
-
-                },) : LoadingIndicator(),
+          SizedBox(height: 20), _didLoad ? sensorListView(): LoadingIndicator(),
            ],
     ),),
       drawer: Theme(

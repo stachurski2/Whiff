@@ -1,6 +1,12 @@
 import 'dart:convert';
+import 'package:Whiff/model/WhiffError.dart';
 import 'package:http/http.dart' as http;
 import 'package:Whiff/Services/Networking/ServerResponse.dart';
+import 'package:Whiff/model/WhiffError.dart';
+import 'package:flutter/services.dart';
+import 'dart:io';
+
+
 
 enum RequestMethod {
   get,
@@ -33,27 +39,49 @@ class NetworkService extends NetworkingServicing {
         if (adress != null && adress.length > 0) {
           adress = adress.substring(0, adress.length - 1);
         }
-        final response = await http.get(adress,
-                                        headers: <String, String> { 'Authorization': authHeader},
-        );
-        if(response.statusCode > 205 || response.statusCode < 200) {
-            return ServerResponse(null, response.statusCode, jsonDecode(response.body)["message"]);
-        } else {
-          Map<String, dynamic> decodedData = await jsonDecode(response.body);
-          return ServerResponse(decodedData,null,null);
+        try {
+          final response = await http.get(adress,
+            headers: <String, String>{ 'Authorization': authHeader},
+          );
+          if (response.statusCode > 205 || response.statusCode < 200) {
+            return ServerResponse(null, WhiffError(
+                response.statusCode, jsonDecode(response.body)["message"]));
+          } else {
+            Map<String, dynamic> decodedData = await jsonDecode(response.body);
+            return ServerResponse(decodedData, null);
+          }
+        } on SocketException {
+          print('No Internet connection 😑');
+          return ServerResponse(null, WhiffError.noInternet());
+        } on HttpException {
+          print("Couldn't find the post 😱");
+          return ServerResponse(null, WhiffError.noInternet());
+        } on FormatException {
+          return ServerResponse(null, WhiffError.noInternet());
         }
+
       }
       break;
       case RequestMethod.post: {
-        final response = await http.post(_kMainAdress + url,
-                                         body: body,
-                                         headers: <String, String> { 'Authorization': authHeader },
-        );
-        if(response.statusCode > 205 || response.statusCode < 200) {
-          return ServerResponse(null, response.statusCode,jsonDecode(response.body)["message"]);
-        } else {
-          Map<String, dynamic> decodedData = await jsonDecode(response.body);
-          return ServerResponse(decodedData,null,null);
+        try {
+          final response = await http.post(_kMainAdress + url,
+                                           body: body,
+                                           headers: <String, String> { 'Authorization': authHeader },
+          );
+          if(response.statusCode > 205 || response.statusCode < 200) {
+            return ServerResponse(null, WhiffError(response.statusCode,jsonDecode(response.body)["message"]));
+          } else {
+            Map<String, dynamic> decodedData = await jsonDecode(response.body);
+            return ServerResponse(decodedData,null);
+        }
+        } on SocketException {
+          print('No Internet connection 😑');
+          return ServerResponse(null, WhiffError.noInternet());
+        } on HttpException {
+          print("Couldn't find the post 😱");
+          return ServerResponse(null, WhiffError.noInternet());
+        } on FormatException {
+          return ServerResponse(null, WhiffError.noInternet());
         }
       }
       break;
@@ -65,13 +93,23 @@ class NetworkService extends NetworkingServicing {
         if (adress != null && adress.length > 0) {
           adress = adress.substring(0, adress.length - 1);
         }
-        final response = await http.delete(adress,
-                                           headers: <String, String> { 'Authorization': authHeader},);
-        if(response.statusCode > 205 || response.statusCode < 200) {
-          return ServerResponse(null, response.statusCode,jsonDecode(response.body)["message"]);
-        } else {
-          Map<String, dynamic> decodedData = await jsonDecode(response.body);
-          return ServerResponse(decodedData,null,null);
+        try {
+           final response = await http.delete(adress,
+                                               headers: <String, String> { 'Authorization': authHeader},);
+            if(response.statusCode > 205 || response.statusCode < 200) {
+              return ServerResponse(null, WhiffError(response.statusCode,jsonDecode(response.body)["message"]));
+            } else {
+              Map<String, dynamic> decodedData = await jsonDecode(response.body);
+              return ServerResponse(decodedData,null);
+            }
+        } on SocketException {
+          print('No Internet connection 😑');
+          return ServerResponse(null, WhiffError.noInternet());
+        } on HttpException {
+          print("Couldn't find the post 😱");
+          return ServerResponse(null, WhiffError.noInternet());
+        } on FormatException {
+          return ServerResponse(null, WhiffError.noInternet());
         }
       }
     }

@@ -4,7 +4,13 @@
   "login_password_textfield_placeholder": "Password",
   "login_login_register_button_title": "REGISTRATION",
   "login_login_password_button_title": "FORGOTTEN PASSWORD",
-  "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection"
-
+  "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection",
+  "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
+  "error_server_unavailable": "Our server is unavailable now, please try again later.",
+  "error_server_response_decode_problem" : "An error occurred within the server communication process",
+  "error_server_response_message" : "The server respond with error: ",
+  "failure_page_title" : "We couldn't collect data. ",
+  "failure_page_contact_support_button_title" : "Contact Support",
+  "failure_page_try_again_button_title" : "Try reload"
 
 }

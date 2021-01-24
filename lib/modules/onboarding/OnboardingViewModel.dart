@@ -4,11 +4,12 @@ import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/Services/Data/DataService.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/model/Sensor.dart';
+import 'package:Whiff/model/WhiffError.dart';
 
 abstract class OnboardingViewModelContract {
   Stream<AutheticationState> currentAuthState();
   Stream<List<Sensor>> sensorsList();
-
+  Stream<WhiffError> sensorsListFetchError();
   String signedInEmail();
   void signOut();
   void fetchSensors();
@@ -38,6 +39,11 @@ class OnboardingViewModel extends OnboardingViewModelContract {
   Stream<List<Sensor>> sensorsList() {
     return _dataService.fetchedSensors().map((serverResponse){
         return serverResponse.responseObject;
+    });
+  }
+  Stream<WhiffError> sensorsListFetchError() {
+    return _dataService.fetchedSensors().map((serverResponse){
+      return serverResponse.error;
     });
   }
 }
