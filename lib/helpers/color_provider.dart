@@ -21,4 +21,11 @@ class ColorProvider {
 
   Color standardAppLeftMenuBackgroundColor =  Color.fromRGBO(28, 108, 78, 1.0);
 
+  Color loadingIndicatorColor =  Color.fromRGBO(215, 215, 215, 1.0);
+
+  Color loadingIndicatorCircleColor =  Color.fromRGBO(28, 108, 78, 1.0);
+
+  Color loadingIndicatorAnimationColor =  Color.fromRGBO(0, 145, 110, 1.0);
+
+
 }

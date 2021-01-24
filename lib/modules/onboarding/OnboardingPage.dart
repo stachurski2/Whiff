@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
+import 'package:Whiff/customView/LoadingIndicator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
@@ -17,6 +18,7 @@ class OnboardingPage extends StatefulWidget {
 class OnboardingPageState extends State<OnboardingPage>  {
   final double _kImageWidth = 120;
   final double _kImageHeight = 60;
+  bool _didLoad = false;
 
   OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
@@ -55,6 +57,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
     sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
       this.setState(() {
         this._sensors = sensorList;
+        this._didLoad = true;
       });
     });
 
@@ -80,7 +83,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
           Text("Select Sensor",  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
           SizedBox(height: 20),
           //if()
-          ListView.builder(
+          _didLoad ? ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
@@ -116,7 +119,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                    },
                 );
 
-    },),
+                },) : LoadingIndicator(),
            ],
     ),),
       drawer: Theme(

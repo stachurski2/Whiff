@@ -31,6 +31,8 @@ class LoginPageState extends State<LoginPage> {
   final double _kButtonCornerRadius = 10;
   final double _kInsetBetweenTextFieldAndButton = 30.0;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   StreamSubscription onboardingState;
 
   @override
@@ -41,9 +43,7 @@ class LoginPageState extends State<LoginPage> {
         this.handle(state);
       });
     });
-
   }
-
 
   @override
   void deactivate() {
