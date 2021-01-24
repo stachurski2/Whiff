@@ -99,7 +99,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 20),
             Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 70),
                 (_measurement != null)
@@ -121,7 +120,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              //    mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 105),
                 (_measurement != null)
@@ -142,7 +140,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 90),
                 (_measurement != null)
@@ -163,7 +160,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 95),
                 (_measurement != null)
@@ -184,7 +180,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 55),
                 (_measurement != null)
@@ -205,7 +200,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 20),
                 (_measurement != null)
@@ -227,7 +221,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
             ),
             SizedBox(height: 5),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: 97),
                 (_measurement != null)
@@ -251,10 +244,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
 
       Widget content() {
         return
-
-          // SingleChildScrollView(
-          // child:
-
           Column(children: [
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -268,13 +257,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     height: _kImageHeight),
               ],
             ),
-            // this._didLoad ? Column(children: measurementDataWidget(),) :
-              // constraints: Center(
-              //   minWidth: 70,
-              //   minHeight: 70,
-              //   maxWidth: 150,
-              //   maxHeight: 150,
-              // ),
             Expanded(
                 child: Align(
                   alignment: FractionalOffset.bottomCenter,
@@ -284,15 +266,8 @@ class MeasurementPageState extends State<MeasurementPage>  {
                   ),
                 ),
                 ),
-
-
-
-
-
-
           ],
           );
-  //      );
       }
 
       return Scaffold(
@@ -309,9 +284,5 @@ class MeasurementPageState extends State<MeasurementPage>  {
         extendBodyBehindAppBar:true,
         body: content(),
       );
-
-    
-
   }
-
 }
