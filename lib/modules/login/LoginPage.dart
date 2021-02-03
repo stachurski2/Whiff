@@ -35,6 +35,8 @@ class LoginPageState extends State<LoginPage> {
 
   StreamSubscription onboardingState;
 
+  StreamSubscription loginState;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +45,11 @@ class LoginPageState extends State<LoginPage> {
         this.handle(state);
       });
     });
+
+    this.loginState = _viewModel.curentViewState().listen((state) {
+        print(state);
+    });
+
   }
 
   @override
@@ -158,6 +165,7 @@ class LoginPageState extends State<LoginPage> {
                             side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
                         ),
                         onPressed: () {
+                          this._viewModel.remindPassword();
                         },
                         color: ColorProvider.shared.standardAppButtonColor,
                         textColor: ColorProvider.shared.standardAppButtonTextColor,
@@ -185,7 +193,7 @@ class LoginPageState extends State<LoginPage> {
                             side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                         ),
                         onPressed: () {
-
+                          this._viewModel.registerUser();
                         },
                         color: ColorProvider.shared.standardAppButtonColor,
                         textColor: ColorProvider.shared.standardAppButtonTextColor,
