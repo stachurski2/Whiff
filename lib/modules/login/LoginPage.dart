@@ -18,9 +18,16 @@ class LoginPageState extends State<LoginPage> {
 
   final LoginViewModelContract _viewModel = LoginViewModel();
 
-  var focusNode = FocusNode();
+  var _firstFocusNode = FocusNode();
+  var _secondFocusNode = FocusNode();
+
   var _didShowOnboarding = false;
   var _loginMessage = "";
+  var _currentPageState = LoginViewState.loginUser;
+  var _firstTextfieldController = TextEditingController();
+  var _secondTextfieldController = TextEditingController();
+  var _thirdTextfieldController = TextEditingController();
+
 
   final double _kImageWidth = 300;
   final double _kImageHeight = 150;
@@ -34,7 +41,6 @@ class LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   StreamSubscription onboardingState;
-
   StreamSubscription loginState;
 
   @override
@@ -42,15 +48,18 @@ class LoginPageState extends State<LoginPage> {
     super.initState();
     this.onboardingState = _viewModel.currentAuthState().listen((state) {
       this.setState(() {
-        this.handle(state);
+        this._handleAuthState(state);
       });
     });
 
     this.loginState = _viewModel.curentViewState().listen((state) {
-        print(state);
+      this.setState(() {
+        this._handleViewState(state);
+      });
     });
-
   }
+
+
 
   @override
   void deactivate() {
@@ -58,7 +67,7 @@ class LoginPageState extends State<LoginPage> {
     super.deactivate();
   }
 
-  void handle(AutheticationState state) {
+  void _handleAuthState(AutheticationState state) {
     if(state.signedIn == true) {
       _loginMessage = "";
       if(_didShowOnboarding == false) {
@@ -66,6 +75,15 @@ class LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => OnboardingPage()),
         );
+        _viewModel.setSecondPassword("");
+        _viewModel.setPassword("");
+        _viewModel.setLogin("");
+        _firstTextfieldController.clear();
+        _secondTextfieldController.clear();
+        _thirdTextfieldController.clear();
+
+        setState(() {
+        });
         _didShowOnboarding = true;
       };
     } else if(state.errorMessage != null) {
@@ -75,6 +93,13 @@ class LoginPageState extends State<LoginPage> {
         _didShowOnboarding = false;
       _loginMessage = AppLocalizations.of(context).translate('login_login_textfield_placeholder');
     }
+  }
+
+  void _handleViewState(LoginViewState state) {
+    _currentPageState = state;
+    _firstTextfieldController.clear();
+    _secondTextfieldController.clear();
+    _thirdTextfieldController.clear();
   }
 
   @override
@@ -109,14 +134,20 @@ class LoginPageState extends State<LoginPage> {
                     SizedBox(width: _kStandardViewInset),
                     Expanded(child: TextFormField(
                       onEditingComplete: (){
-                        focusNode.requestFocus();
+                        if(_currentPageState == LoginViewState.loginUser || _currentPageState == LoginViewState.registerUser){
+                         _firstFocusNode.requestFocus();
+                        } else {
+                          _firstFocusNode.unfocus();
+                          _viewModel.registerUser();
+                        }
                     },
+                       controller: _firstTextfieldController,
                         onChanged: (value){
                           _viewModel.setLogin(value);
                         },
                         decoration: InputDecoration(
                           hintText: AppLocalizations.of(context).translate('login_login_textfield_placeholder'),
-                        )
+                        ),
                     )),
                     SizedBox(width: _kStandardViewInset)
                   ]
@@ -125,19 +156,26 @@ class LoginPageState extends State<LoginPage> {
                   height: _kStandardViewInset,
                 )
                 ,
+                _currentPageState == LoginViewState.loginUser || _currentPageState == LoginViewState.registerUser?
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(width: _kStandardViewInset),
                     Expanded(child: TextFormField(
-                      focusNode: focusNode,
+                      focusNode:  _firstFocusNode,
                       onChanged: (value){
                         _viewModel.setPassword(value);
                       },
                       onEditingComplete: ()  async {
-                        focusNode.unfocus();
-                        _viewModel.login();
+                        if(_currentPageState == LoginViewState.loginUser) {
+                          _firstFocusNode.unfocus();
+                          _viewModel.login();
+                        } else {
+                          _secondFocusNode.requestFocus();
+                          _viewModel.registerUser();
+                        }
                       },
+                       controller: _secondTextfieldController,
                         obscureText: true,
                         decoration: InputDecoration(
                             errorText: _loginMessage,
@@ -147,10 +185,36 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(width: _kStandardViewInset),
                   ]
-              ),
+              ) : SizedBox(),
+              _currentPageState == LoginViewState.registerUser ?
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(width: _kStandardViewInset),
+                    Expanded(child: TextFormField(
+                        focusNode: _secondFocusNode,
+                        onChanged: (value){
+                          _viewModel.setSecondPassword(value);
+                        },
+                        onEditingComplete: ()  async {
+                          _secondFocusNode.unfocus();
+                          _viewModel.requestRegisterUser();
+                        },
+                      controller: _thirdTextfieldController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          errorText: _loginMessage,
+                          hintText: AppLocalizations.of(context).translate('login_password_textfield_placeholder'),
+                        )
+                    )
+                    ),
+                    SizedBox(width: _kStandardViewInset),
+                  ]
+              ) : SizedBox(),
               SizedBox(
                 height: _kInsetBetweenTextFieldAndButton,
               ),
+              _currentPageState == LoginViewState.loginUser || _currentPageState == LoginViewState.remindPassword  ?
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -165,21 +229,26 @@ class LoginPageState extends State<LoginPage> {
                             side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
                         ),
                         onPressed: () {
-                          this._viewModel.remindPassword();
+                          if(_currentPageState == LoginViewState.loginUser) {
+                            this._viewModel.remindPassword();
+                          } else {
+                            this._viewModel.requestRemindPassword();
+                          }
                         },
                         color: ColorProvider.shared.standardAppButtonColor,
                         textColor: ColorProvider.shared.standardAppButtonTextColor,
                         child: Text(
-                            AppLocalizations.of(context).translate('login_login_password_button_title'),
+                          _currentPageState == LoginViewState.loginUser ? AppLocalizations.of(context).translate('login_login_password_button_title') :  AppLocalizations.of(context).translate('login_login_password_password_button_title'),
                         )
 
-                    )
+                      )
                     )
                   ]
-              ),
+              ) : SizedBox(),
               SizedBox(
                 height: _kStandardViewInset,
               ),
+              _currentPageState == LoginViewState.loginUser || _currentPageState == LoginViewState.registerUser  ?
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -198,12 +267,12 @@ class LoginPageState extends State<LoginPage> {
                         color: ColorProvider.shared.standardAppButtonColor,
                         textColor: ColorProvider.shared.standardAppButtonTextColor,
                         child: Text(
-                          AppLocalizations.of(context).translate('login_login_register_button_title'),
+                        _currentPageState == LoginViewState.loginUser ? AppLocalizations.of(context).translate('login_login_register_button_title') :  AppLocalizations.of(context).translate('login_login_register_register_button_title'),
                         )
                     ),
                     )
                   ]
-              ),
+              ) : SizedBox(),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

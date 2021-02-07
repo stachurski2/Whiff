@@ -1,13 +1,18 @@
 import 'package:Whiff/Services/Networking/Networking.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
+import 'package:Whiff/model/WhiffError.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AutheticatingServicing {
   void login(String email, String password) async { }
+  void register(String email, String password) async { }
+  void remindPassword(String email) async { }
   String authorizationHeader();
   String signedInEmail();
   Stream<AutheticationState> currentAuthState();
+  Stream<WhiffError> registrationState();
+
   void signOut();
 }
 
@@ -27,6 +32,9 @@ class AutheticationService extends AutheticatingServicing  {
   var _authorizationToken = "";
   var _signedInEmail = "";
   var _didRequestLogin = false;
+  var _didRequestRegister = false;
+  var _didRequestRemind = false;
+
 
   static final AutheticationService shared = AutheticationService._internal();
   factory AutheticationService() {
@@ -34,6 +42,8 @@ class AutheticationService extends AutheticatingServicing  {
   }
 
   final _subject = PublishSubject<AutheticationState>();
+  final _registrationErrorSubject = PublishSubject<WhiffError>();
+
 
   String authorizationHeader() {
     return _authorizationMethod + " " + _authorizationToken;
@@ -46,6 +56,11 @@ class AutheticationService extends AutheticatingServicing  {
   Stream<AutheticationState> currentAuthState() {
     return _subject.stream;
   }
+
+  Stream<WhiffError> registrationState() {
+    return _registrationErrorSubject.stream;
+  }
+
 
   void signOut() {
      _authorizationMethod = "";
@@ -61,7 +76,6 @@ class AutheticationService extends AutheticatingServicing  {
         var response = await networkService.makeRequest(RequestMethod.post, "/loginUser", { "email": email, "password": password}, null);
         _didRequestLogin = false;
         if(response.responseObject != null && response.responseObject["token"] != null && response.responseObject["authMethod"] != null) {
-            print(response.responseObject);
             this._authorizationMethod = response.responseObject["authMethod"];
             this._authorizationToken = response.responseObject["token"];
             this._signedInEmail = email;
@@ -76,7 +90,27 @@ class AutheticationService extends AutheticatingServicing  {
           }
   }
 
+  void register(String email, String password) async {
+       email = email.replaceAll(' ', '');
+       _didRequestRegister = true;
+       var response = await networkService.makeRequest(RequestMethod.post, "/registerUser", { "email": email, "password": password}, null);
+       _didRequestRegister = false;
+       if(response.responseObject["token"] != null) {
+         this._authorizationToken = response.responseObject["token"];
+         this._signedInEmail = email;
+         this._authorizationMethod = "Basic";
+         final state = AutheticationState(true, null);
+         _subject.add(state);
+         _storeCredientials();
+       }
+    }
 
+  void remindPassword(String email) async {
+    email = email.replaceAll(' ', '');
+    _didRequestRemind = true;
+    var response = await networkService.makeRequest(RequestMethod.post, "/resetPassword", { "email": email }, null);
+    _didRequestRemind = false;
+  }
 
   _storeCredientials() async {
     final prefs = await SharedPreferences.getInstance();

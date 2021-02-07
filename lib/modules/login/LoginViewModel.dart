@@ -16,7 +16,10 @@ abstract class LoginViewModelContract {
 
   void setLogin(String login);
   void setPassword(String password);
+  void setSecondPassword(String password);
   void login();
+  void requestRegisterUser();
+  void requestRemindPassword();
   void remindPassword();
   void registerUser();
 }
@@ -25,6 +28,7 @@ class LoginViewModel extends LoginViewModelContract {
 
   var _login = "";
   var _password = "";
+  var _secondPassword = "";
   var _loginMessage = "";
 
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
@@ -53,6 +57,11 @@ class LoginViewModel extends LoginViewModelContract {
       _password = password;
   }
 
+  void setSecondPassword(String password) {
+    _secondPassword = password;
+  }
+
+
   void login() {
       _authenticationService.login(_login, _password);
   }
@@ -65,4 +74,16 @@ class LoginViewModel extends LoginViewModelContract {
        _stateSubject.add(LoginViewState.registerUser);
   }
 
+  void requestRegisterUser() {
+        if(_password == _secondPassword) {
+          _authenticationService.register(_login, _password);
+        } else {
+            print("show error");
+        }
+  }
+
+  void requestRemindPassword() {
+       _authenticationService.remindPassword(_login);
+       _stateSubject.add(LoginViewState.loginUser);
+  }
 }

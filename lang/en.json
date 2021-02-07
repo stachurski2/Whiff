@@ -1,9 +1,11 @@
 {
   "login_top_label_text": "whiff.zone",
-  "login_login_textfield_placeholder": "Login",
+  "login_login_textfield_placeholder": "email",
   "login_password_textfield_placeholder": "Password",
   "login_login_register_button_title": "REGISTRATION",
+  "login_login_register_register_button_title": "REGISTER",
   "login_login_password_button_title": "FORGOTTEN PASSWORD",
+  "login_login_password_password_button_title": "REMIND PASSWORD",
   "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection",
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",

@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:http/http.dart' as http;
 import 'package:Whiff/Services/Networking/ServerResponse.dart';
-import 'package:Whiff/model/WhiffError.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
 
 
