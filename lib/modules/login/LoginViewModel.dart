@@ -6,7 +6,8 @@ import 'package:rxdart/rxdart.dart';
 enum LoginViewState {
   loginUser,
   registerUser,
-  remindPassword
+  remindPassword,
+  loading
 }
 
 abstract class LoginViewModelContract {
@@ -37,6 +38,9 @@ class LoginViewModel extends LoginViewModelContract {
 
   LoginViewModel() {
     _stateSubject.add(LoginViewState.loginUser);
+    _authenticationService.currentAuthState().listen((state) {
+        _stateSubject.add(LoginViewState.loginUser);
+    });
   }
 
   @override
@@ -63,7 +67,8 @@ class LoginViewModel extends LoginViewModelContract {
 
 
   void login() {
-      _authenticationService.login(_login, _password);
+    _stateSubject.add(LoginViewState.loading);
+    _authenticationService.login(_login, _password);
   }
 
   void remindPassword() {
@@ -80,6 +85,7 @@ class LoginViewModel extends LoginViewModelContract {
         } else {
             print("show error");
         }
+        _stateSubject.add(LoginViewState.loading);
   }
 
   void requestRemindPassword() {

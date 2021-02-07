@@ -1,4 +1,5 @@
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
+import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:Whiff/modules/login/LoginViewModel.dart';
 
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 import 'dart:async';
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -46,6 +46,7 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _currentPageState = LoginViewState.loginUser;
     this.onboardingState = _viewModel.currentAuthState().listen((state) {
       this.setState(() {
         this._handleAuthState(state);
@@ -53,13 +54,10 @@ class LoginPageState extends State<LoginPage> {
     });
 
     this.loginState = _viewModel.curentViewState().listen((state) {
-      this.setState(() {
-        this._handleViewState(state);
-      });
+      this._handleViewState(state);
+      this.setState((){});
     });
   }
-
-
 
   @override
   void deactivate() {
@@ -108,7 +106,10 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
         body: Container(
-          child: Column(
+          child:
+
+          _currentPageState != LoginViewState.loading ?
+            Column(
             children: [
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -280,7 +281,7 @@ class LoginPageState extends State<LoginPage> {
                   ]
               )
             ],
-          ),
+          ) : Center(child: LoadingIndicator()),
         )
     );
   }
