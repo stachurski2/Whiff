@@ -42,6 +42,7 @@ class LoginPageState extends State<LoginPage> {
 
   StreamSubscription onboardingState;
   StreamSubscription loginState;
+  StreamSubscription alertSubscription;
 
   @override
   void initState() {
@@ -56,6 +57,12 @@ class LoginPageState extends State<LoginPage> {
     this.loginState = _viewModel.curentViewState().listen((state) {
       this._handleViewState(state);
       this.setState((){});
+    });
+
+    this.alertSubscription = _viewModel.alertStream().listen((message) {
+        print("test");
+       // AlertDialog(title: Text(AppLocalizations.of(context).translate(message)));
+      this.showAlert(context,AppLocalizations.of(context).translate(message));
     });
   }
 
@@ -107,8 +114,6 @@ class LoginPageState extends State<LoginPage> {
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
         body: Container(
           child:
-
-          _currentPageState != LoginViewState.loading ?
             Column(
             children: [
               Row(
@@ -118,28 +123,51 @@ class LoginPageState extends State<LoginPage> {
                         height: _kImageHeight),
                   ]
               ),
-              Row(
+               _currentPageState == LoginViewState.registerUser ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                        AppLocalizations.of(context).translate('login_top_label_text'),
+                        AppLocalizations.of(context).translate('login_login_registration_title'),
                         style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center
                     ),
                   ]
-              ),
-             Spacer(),
+              ): _currentPageState == LoginViewState.remindPassword ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                        AppLocalizations.of(context).translate('login_login_remind_password_title'),
+                        style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center
+                    ),
+                  ]
+              ): Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: <Widget>[
+                     Text(
+                         AppLocalizations.of(context).translate('login_top_label_text'),
+                         style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+                         textAlign: TextAlign.center
+                     ),
+                   ]
+               ) ,
+              Spacer(),
+              _currentPageState != LoginViewState.loading ? Column(children: [
+
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(width: _kStandardViewInset),
                     Expanded(child: TextFormField(
                       onEditingComplete: (){
-                        if(_currentPageState == LoginViewState.loginUser || _currentPageState == LoginViewState.registerUser){
+                        if(_currentPageState == LoginViewState.remindPassword) {
+                          _viewModel.requestRemindPassword();
+                        } else if(_currentPageState == LoginViewState.loginUser){
                          _firstFocusNode.requestFocus();
+                        }  else if (_currentPageState == LoginViewState.registerUser) {
+                          _firstFocusNode.requestFocus();
                         } else {
                           _firstFocusNode.unfocus();
-                          _viewModel.registerUser();
                         }
                     },
                        controller: _firstTextfieldController,
@@ -171,9 +199,8 @@ class LoginPageState extends State<LoginPage> {
                         if(_currentPageState == LoginViewState.loginUser) {
                           _firstFocusNode.unfocus();
                           _viewModel.login();
-                        } else {
-                          _secondFocusNode.requestFocus();
-                          _viewModel.registerUser();
+                        } else if(_currentPageState == LoginViewState.registerUser){
+                               _secondFocusNode.requestFocus();
                         }
                       },
                        controller: _secondTextfieldController,
@@ -199,6 +226,7 @@ class LoginPageState extends State<LoginPage> {
                         },
                         onEditingComplete: ()  async {
                           _secondFocusNode.unfocus();
+
                           _viewModel.requestRegisterUser();
                         },
                       controller: _thirdTextfieldController,
@@ -263,7 +291,7 @@ class LoginPageState extends State<LoginPage> {
                             side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                         ),
                         onPressed: () {
-                          this._viewModel.registerUser();
+                          _currentPageState == LoginViewState.loginUser ? this._viewModel.registerUser() : this._viewModel.requestRegisterUser();
                         },
                         color: ColorProvider.shared.standardAppButtonColor,
                         textColor: ColorProvider.shared.standardAppButtonTextColor,
@@ -279,10 +307,30 @@ class LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                       SizedBox(height: _kBottomButtonBottomInset)
                   ]
-              )
-            ],
-          ) : Center(child: LoadingIndicator()),
-        )
+              )]) : LoadingIndicator(),
+              _currentPageState == LoginViewState.loading ? Spacer() : SizedBox(height: 1,),
+          ])
+        ),
     );
   }
+
+  void showAlert(BuildContext context, String text) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text(text),
+            actions: [
+              okButton,
+            ],
+        ),
+      );
+  }
+
 }

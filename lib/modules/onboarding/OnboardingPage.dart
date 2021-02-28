@@ -152,6 +152,7 @@ class OnboardingPageState extends State<OnboardingPage>  {
                      SizedBox(height: 60),
                      Image.asset('assets/whiffLogo.png', width: _kImageWidth,
                                                         height: _kImageHeight),
+
                       FailurePage(error,onPressedReloadButton,onPressedContactButton),
         ],
       );
@@ -178,8 +179,9 @@ class OnboardingPageState extends State<OnboardingPage>  {
           Image.asset('assets/whiffLogo.png', width: _kImageWidth,
               height: _kImageHeight),
           Text("Select Sensor",  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
-          SizedBox(height: 20), _didLoad ? sensorListView(): LoadingIndicator(),
-           ],
+          _didLoad ? SizedBox(height: 20) : SizedBox(height: 100) ,
+          _didLoad ? sensorListView(): LoadingIndicator(),
+        ],
     ),),
       drawer: Theme(
         data:  Theme.of(context).copyWith(

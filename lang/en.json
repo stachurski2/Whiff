@@ -7,6 +7,13 @@
   "login_login_password_button_title": "FORGOTTEN PASSWORD",
   "login_login_password_password_button_title": "REMIND PASSWORD",
   "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection",
+  "login_login_incorrect_login_format": "You haven't provided email in the textfield.",
+  "login_login_passwords_do_not_match": "Passwords don't match.",
+  "login_login_password_do_too_short": "Password too short. It requires at least 6 letters.",
+  "login_login_registration_title": "Registration",
+  "login_login_remind_password_title": "Forgotten Password",
+
+
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",
   "error_server_response_decode_problem" : "An error occurred within the server communication process",

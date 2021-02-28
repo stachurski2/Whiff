@@ -95,13 +95,23 @@ class AutheticationService extends AutheticatingServicing  {
        _didRequestRegister = true;
        var response = await networkService.makeRequest(RequestMethod.post, "/registerUser", { "email": email, "password": password}, null);
        _didRequestRegister = false;
-       if(response.responseObject["token"] != null) {
-         this._authorizationToken = response.responseObject["token"];
-         this._signedInEmail = email;
-         this._authorizationMethod = "Basic";
-         final state = AutheticationState(true, null);
-         _subject.add(state);
-         _storeCredientials();
+       if(response.responseObject == null) {
+         if(response.error != null) {
+           _registrationErrorSubject.add(response.error);
+         } else {
+           _registrationErrorSubject.add(
+               WhiffError(0, "unknown_error_message"));
+         }
+       } else {
+         if (response.responseObject["token"] != null) {
+           this._authorizationToken = response.responseObject["token"];
+           this._signedInEmail = email;
+           this._authorizationMethod = "Basic";
+           final state = AutheticationState(true, null);
+           _subject.add(state);
+           _storeCredientials();
+         }
+
        }
     }
 
@@ -110,6 +120,7 @@ class AutheticationService extends AutheticatingServicing  {
     _didRequestRemind = true;
     var response = await networkService.makeRequest(RequestMethod.post, "/resetPassword", { "email": email }, null);
     _didRequestRemind = false;
+    _subject.add( AutheticationState(false, null));
   }
 
   _storeCredientials() async {

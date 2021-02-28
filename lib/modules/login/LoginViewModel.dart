@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
+import 'package:Whiff/model/WhiffError.dart';
+
 import 'package:rxdart/rxdart.dart';
+
 
 enum LoginViewState {
   loginUser,
@@ -14,6 +17,8 @@ abstract class LoginViewModelContract {
 
   Stream<AutheticationState> currentAuthState();
   Stream<LoginViewState> curentViewState();
+  Stream<String> alertStream();
+
 
   void setLogin(String login);
   void setPassword(String password);
@@ -35,6 +40,7 @@ class LoginViewModel extends LoginViewModelContract {
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
 
   final _stateSubject = PublishSubject<LoginViewState>();
+  final _alertSubject = PublishSubject<String>();
 
   LoginViewModel() {
     _stateSubject.add(LoginViewState.loginUser);
@@ -50,7 +56,22 @@ class LoginViewModel extends LoginViewModelContract {
 
     @override
     Stream<LoginViewState> curentViewState() {
-        return _stateSubject.stream;
+      Stream<LoginViewState> registrationState = _authenticationService.registrationState().map((error){
+        return LoginViewState.registerUser;
+      });
+        return _stateSubject.stream.mergeWith([registrationState]);
+    }
+
+    @override
+    Stream<String> alertStream() {
+        Stream<String> messageErrorStream = _authenticationService.registrationState().map((error){
+        if(error.errorMessage != null) {
+            return error.errorMessage;
+            } else {
+            return "unknown_error_message";
+            }
+        });
+        return _alertSubject.stream.mergeWith([messageErrorStream]);
     }
 
   void setLogin(String login) {
@@ -64,7 +85,6 @@ class LoginViewModel extends LoginViewModelContract {
   void setSecondPassword(String password) {
     _secondPassword = password;
   }
-
 
   void login() {
     _stateSubject.add(LoginViewState.loading);
@@ -80,16 +100,37 @@ class LoginViewModel extends LoginViewModelContract {
   }
 
   void requestRegisterUser() {
-        if(_password == _secondPassword) {
+    if(_isEmail(_login)) {
+      if(_password.length > 5) {
+        if (_password == _secondPassword) {
           _authenticationService.register(_login, _password);
+          _stateSubject.add(LoginViewState.loading);
         } else {
-            print("show error");
+          _alertSubject.add("login_login_passwords_do_not_match");
         }
-        _stateSubject.add(LoginViewState.loading);
+      } else {
+        _alertSubject.add("login_login_password_do_too_short");
+      }
+    } else {
+      _alertSubject.add("login_login_incorrect_login_format");
+    }
   }
 
   void requestRemindPassword() {
-       _authenticationService.remindPassword(_login);
-       _stateSubject.add(LoginViewState.loginUser);
+        if(_isEmail(_login)) {
+          _authenticationService.remindPassword(_login);
+          _stateSubject.add(LoginViewState.loading);
+        } else {
+          _alertSubject.add("login_login_incorrect_login_format");
+        }
+  }
+
+  bool _isEmail(String phrase) {
+
+    String p = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+    RegExp regExp = new RegExp(p);
+
+    return regExp.hasMatch(phrase);
   }
 }
