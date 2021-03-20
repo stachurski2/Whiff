@@ -28,7 +28,7 @@ class LoadingIndicator extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(ColorProvider.shared.standardAppButtonColor),))),
                 ),
               ]),
-        ]);
+        ] );
 
   }
 }

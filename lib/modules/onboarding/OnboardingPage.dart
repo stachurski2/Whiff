@@ -6,6 +6,8 @@ import 'package:Whiff/customView/FailurePage.dart';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
+import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
+
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 
@@ -47,7 +49,6 @@ class OnboardingPageState extends State<OnboardingPage> {
 
   void _launchURL(url) async {
     if (await canLaunch(url)) {
-      print(url);
       await launch(url);
     } else {
       throw 'Could not launch $url';
@@ -240,10 +241,11 @@ class OnboardingPageState extends State<OnboardingPage> {
                       child:
                       Row(children: [
                         TextButton(onPressed: () {
-
+                          Navigator.of(context).pop();
                         },
                             child: Text(
-                                "Current data", textAlign: TextAlign.left,
+                                AppLocalizations.of(context).translate('menu_current_data_button'),
+                                textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.black,
                                     fontSize: 14,
                                     fontFamily: 'Poppins')))
@@ -259,7 +261,8 @@ class OnboardingPageState extends State<OnboardingPage> {
 
                         },
                             child: Text(
-                                "Historical data", textAlign: TextAlign.left,
+                                AppLocalizations.of(context).translate('menu_historical_data_button'),
+                                textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.black,
                                     fontSize: 14,
                                     fontFamily: 'Poppins')))
@@ -272,10 +275,12 @@ class OnboardingPageState extends State<OnboardingPage> {
                       child:
                       Row(children: [
                         TextButton(onPressed: () {
-
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => AccountSettingsPage()));
                         },
                             child: Text(
-                                "Account Settings", textAlign: TextAlign.left,
+                                AppLocalizations.of(context).translate('menu_account_settings_button'),
+                                textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.black,
                                     fontSize: 14,
                                     fontFamily: 'Poppins')))
@@ -292,7 +297,8 @@ class OnboardingPageState extends State<OnboardingPage> {
                         TextButton(onPressed: () {
                           _viewModel.signOut();
                         },
-                            child: Text("Sign out", textAlign: TextAlign.left,
+                            child: Text(AppLocalizations.of(context).translate('menu_sing_out_button'),
+                                textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.black,
                                     fontSize: 14,
                                     fontFamily: 'Poppins')))

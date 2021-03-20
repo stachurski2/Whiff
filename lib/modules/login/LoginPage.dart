@@ -60,8 +60,6 @@ class LoginPageState extends State<LoginPage> {
     });
 
     this.alertSubscription = _viewModel.alertStream().listen((message) {
-        print("test");
-       // AlertDialog(title: Text(AppLocalizations.of(context).translate(message)));
       this.showAlert(context,AppLocalizations.of(context).translate(message));
     });
   }
@@ -86,7 +84,6 @@ class LoginPageState extends State<LoginPage> {
         _firstTextfieldController.clear();
         _secondTextfieldController.clear();
         _thirdTextfieldController.clear();
-
         setState(() {
         });
         _didShowOnboarding = true;
@@ -96,7 +93,8 @@ class LoginPageState extends State<LoginPage> {
       _loginMessage = state.errorMessage;
     } else {
         _didShowOnboarding = false;
-      _loginMessage = AppLocalizations.of(context).translate('login_login_textfield_placeholder');
+      _loginMessage = null;
+      setState(() {});
     }
   }
 
@@ -109,8 +107,12 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () {
+        this._handleViewState(LoginViewState.loginUser);
+        this.setState((){});
+      },
+      child: Scaffold(
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
         body: Container(
           child:
@@ -311,7 +313,7 @@ class LoginPageState extends State<LoginPage> {
               _currentPageState == LoginViewState.loading ? Spacer() : SizedBox(height: 1,),
           ])
         ),
-    );
+    ),);
   }
 
   void showAlert(BuildContext context, String text) {

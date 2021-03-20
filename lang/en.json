@@ -22,6 +22,13 @@
   "failure_page_empty_sensors_list_title" : "Your sensors list is empty",
   "failure_page_empty_sensors_list_message": "Please contact our support and request to add sensors to your account",
   "failure_page_contact_support_button_title" : "Contact Support",
-  "failure_page_try_again_button_title" : "Try reload"
+  "failure_page_try_again_button_title" : "Try reload",
+
+
+
+  "menu_current_data_button": "Current data",
+  "menu_historical_data_button": "Historical data",
+  "menu_account_settings_button": "Account Settings",
+  "menu_sing_out_button": "Sign out"
 
 }
