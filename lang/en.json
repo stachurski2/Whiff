@@ -19,6 +19,8 @@
   "error_server_response_decode_problem" : "An error occurred within the server communication process",
   "error_server_response_message" : "The server respond with error: ",
   "failure_page_title" : "We couldn't collect data. ",
+  "failure_page_empty_sensors_list_title" : "Your sensors list is empty",
+  "failure_page_empty_sensors_list_message": "Please contact our support and request to add sensors to your account",
   "failure_page_contact_support_button_title" : "Contact Support",
   "failure_page_try_again_button_title" : "Try reload"
 

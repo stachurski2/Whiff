@@ -22,17 +22,16 @@ class FailurePage extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-         //   crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/sad-tear-solid.png', width: _kImageWidth,
-                  height: _kImageHeight),
+              _error.errorCode != 1002 ? Image.asset('assets/sad-tear-solid.png', width: _kImageWidth,
+                  height: _kImageHeight) :  Image.asset('assets/meh-solid.png', width: _kImageWidth,
+                  height: _kImageHeight) ,
             ],
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text( AppLocalizations.of(context).translate("failure_page_title"), style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+                _error.errorCode != 1002 ? Text( AppLocalizations.of(context).translate("failure_page_title"), style: TextStyle(fontSize: 17, fontFamily: 'Poppins')) : Text( AppLocalizations.of(context).translate("failure_page_empty_sensors_list_title"), style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
                 ]),
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
