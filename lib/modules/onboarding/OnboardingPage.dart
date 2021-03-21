@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Whiff/modules/historical/HistoricalPage.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
@@ -7,7 +8,6 @@ import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
-
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 
@@ -258,7 +258,8 @@ class OnboardingPageState extends State<OnboardingPage> {
                       child:
                       Row(children: [
                         TextButton(onPressed: () {
-
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => HistoricalPage()));
                         },
                             child: Text(
                                 AppLocalizations.of(context).translate('menu_historical_data_button'),

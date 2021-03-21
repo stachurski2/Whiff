@@ -29,6 +29,16 @@
   "menu_current_data_button": "Current data",
   "menu_historical_data_button": "Historical data",
   "menu_account_settings_button": "Account Settings",
-  "menu_sing_out_button": "Sign out"
+  "menu_sing_out_button": "Sign out",
+
+
+  "account_settings_top_label_text": "Account",
+  "account_settings_change_password_label_text": "Change your password",
+  "account_settings_new_password_textfield_label": "New password",
+  "account_settings_new_password_confirm_textfield_label": "New password confirm",
+  "account_setting_change_password_button_text": "Change password",
+  "account_setting_your_sensors_label_text": "Your sensors",
+  "account_setting_missing_errors_label_text": "Some sensors are missing?",
+  "account_setting_missing_contact_support_button_text": "Contact Support"
 
 }
