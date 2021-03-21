@@ -13,6 +13,8 @@
   "login_login_registration_title": "Registration",
   "login_login_remind_password_title": "Forgotten Password",
 
+  "sensor_word": "Sensor",
+  "location_word": "Location",
 
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",
@@ -39,6 +41,10 @@
   "account_setting_change_password_button_text": "Change password",
   "account_setting_your_sensors_label_text": "Your sensors",
   "account_setting_missing_errors_label_text": "Some sensors are missing?",
+  "account_setting_sensors_loading_label_text": "Loading sensors list",
+  "account_setting_no_sensor_label_text": "There aren't any sensors assigned to your account.",
+  "account_setting_cant_load_sensor_label_text": "Couldn't fetch the sensors list.",
+
   "account_setting_missing_contact_support_button_text": "Contact Support"
 
 }

@@ -9,7 +9,8 @@ import 'package:Whiff/helpers/app_localizations.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
-
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   @override
@@ -23,13 +24,23 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
 
   AccountSettingsViewModelContract _viewModel = AccountSettingsViewModel();
 
+  var _firstFocusNode = FocusNode();
+  var _secondFocusNode = FocusNode();
+  var _firstEditController = TextEditingController();
+  var _secondEditController = TextEditingController();
+
+
   StreamSubscription onboardingState;
 
   StreamSubscription sensorListSubscription;
 
   StreamSubscription sensorListErrorSubscription;
 
+  StreamSubscription changePasswordResultSubscription;
+
   bool _didLoadSensors = false;
+  bool _didFailLoadSensors = false;
+
   var _sensors = List<Sensor>();
 
   @override
@@ -44,8 +55,12 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
 
     sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
       this.setState(() {
-        this._didLoadSensors = true;
-        this._sensors = sensorList;
+        if(sensorList != null) {
+          this._didLoadSensors = true;
+          this._sensors = sensorList;
+        } else {
+          this._didFailLoadSensors = true;
+        }
       });
     });
 
@@ -53,6 +68,20 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
         _viewModel.sensorsListFetchError().listen((error) {
 
         });
+
+    changePasswordResultSubscription = _viewModel.changePasswordResult().listen((response) {
+      _firstEditController.clear();
+      _secondEditController.clear();
+        if(response.responseObject == true){
+            showAlert(context, "Success");
+        } else {
+          if(response.error != null) {
+            showAlert(context, AppLocalizations.of(context).translate(response.error.errorMessage));
+          } else {
+            showAlert(context, "error");
+          }
+        }
+    });
 
     _viewModel.fetchSensors();
 
@@ -64,11 +93,30 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
     super.deactivate();
   }
 
+  void showAlert(BuildContext context, String text) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(text),
+        actions: [
+          okButton,
+        ],
+      ),
+    );
+  }
+
 
   Widget build(BuildContext context) {
 
     Widget sensorListView() {
-      return ListView.builder(
+      return _sensors.length > 0 ? ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
@@ -101,12 +149,14 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
 
                   ],)
             ),
-              onTap: () =>
-              {
-
-              },
             );
-        },);
+        },
+      ):Text(AppLocalizations.of(context).translate('account_setting_no_sensor_label_text'),
+          textAlign: TextAlign.center,
+
+          style: TextStyle(color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Poppins'));
     }
 
     return WillPopScope(child: Scaffold(
@@ -146,12 +196,14 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                 SizedBox(width: _kStandardViewInset),
                 Expanded(child: TextFormField(
                   obscureText: true,
+                  focusNode: _firstFocusNode,
+                  controller: _firstEditController,
                   onEditingComplete: (){
-
+                    _secondFocusNode.requestFocus();
                   },
 
                   onChanged: (value){
-
+                    _viewModel.setFirstPassword(value);
                   },
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context).translate('account_settings_new_password_textfield_label'),
@@ -166,17 +218,16 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
               children: <Widget>[
                 SizedBox(width: _kStandardViewInset),
                 Expanded(child: TextFormField(
-                //    focusNode:  _firstFocusNode,
+                   focusNode:  _secondFocusNode,
+                    controller: _secondEditController,
                     onChanged: (value){
-                      // _viewModel.setPassword(value);
+                      _viewModel.setSecondPassword(value);
                     },
                     onEditingComplete: ()  async {
-
+                      _viewModel.requestPasswordChange();
                     },
-                //    controller: _secondTextfieldController,
                     obscureText: true,
                     decoration: InputDecoration(
-                //      errorText: _loginMessage,
                       hintText: AppLocalizations.of(context).translate('account_settings_new_password_confirm_textfield_label'),
                     )
                 )
@@ -195,6 +246,7 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                 side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
               ),
               onPressed: () {
+                _viewModel.requestPasswordChange();
               //  _currentPageState == LoginViewState.loginUser ? this._viewModel.registerUser() : this._viewModel.requestRegisterUser();
               },
               color: ColorProvider.shared.standardAppButtonColor,
@@ -208,7 +260,12 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
           ]),
           SizedBox(height: 20),
           Row(mainAxisAlignment: MainAxisAlignment.center,
-            children: [ Text(AppLocalizations.of(context).translate('account_setting_your_sensors_label_text'),
+            children: [ _didFailLoadSensors ? Text(AppLocalizations.of(context).translate('account_setting_cant_load_sensor_label_text'),
+          style: TextStyle(color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Poppins'),
+
+            ) :Text((_didLoadSensors ? AppLocalizations.of(context).translate('account_setting_your_sensors_label_text'):  AppLocalizations.of(context).translate('account_setting_sensors_loading_label_text')),
                 textAlign: TextAlign.center,
 
                 style: TextStyle(color: Colors.black,
@@ -216,8 +273,9 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                     fontFamily: 'Poppins')),
             ],),
           SizedBox(height: 20),
-          _didLoadSensors == true ? sensorListView(): LoadingIndicator(),
+          _didFailLoadSensors ? SizedBox() : _didLoadSensors == true ? sensorListView(): LoadingIndicator(),
           SizedBox(height: 20),
+          _didLoadSensors ?
           Row(mainAxisAlignment: MainAxisAlignment.center,
             children: [ Text(AppLocalizations.of(context).translate('account_setting_missing_errors_label_text'),
                 textAlign: TextAlign.center,
@@ -225,9 +283,9 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                 style: TextStyle(color: Colors.black,
                     fontSize: 22,
                     fontFamily: 'Poppins')),
-            ],),
+            ],): SizedBox(),
           SizedBox(height: 10),
-          Row(
+          (_didLoadSensors || _didFailLoadSensors) ? Row(
               children: <Widget>[
                 SizedBox(width: 10),
                 Expanded(child:
@@ -236,8 +294,8 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                       borderRadius: BorderRadius.circular(_kButtonCornerRadius),
                       side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                     ),
-                    onPressed: () {
-                      //  _currentPageState == LoginViewState.loginUser ? this._viewModel.registerUser() : this._viewModel.requestRegisterUser();
+                    onPressed: () async {
+                      await this._mailToSupport();
                     },
                     color: ColorProvider.shared.standardAppButtonColor,
                     textColor: ColorProvider.shared.standardAppButtonTextColor,
@@ -247,7 +305,7 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                 )
                 ),
                 SizedBox(width: 10),
-              ]),
+              ]) : SizedBox(),
           SizedBox(height: 10),
         ],
       ),),
@@ -349,8 +407,6 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                       Row(children: [
                         TextButton(onPressed: () {
                           _viewModel.signOut();
-                         //  Navigator.pop(context);
-                         //  Navigator.of(context).pop(true);
                         },
                             child: Text(AppLocalizations.of(context).translate('menu_sing_out_button'),
                                 textAlign: TextAlign.left,
@@ -370,5 +426,24 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
     ),
       onWillPop: () async => false,
     );
+  }
+
+  void _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _mailToSupport() async {
+    final mailtoLink = Mailto(
+      to: ['to@example.com'],
+      cc: ['cc1@example.com', 'cc2@example.com'],
+      subject: 'mailto example subject',
+      body: 'mailto example body',
+    );
+
+    await _launchURL(mailtoLink.toString());
   }
 }

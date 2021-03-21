@@ -133,15 +133,15 @@ class OnboardingPageState extends State<OnboardingPage> {
                     SizedBox(height: 20),
 
                     Row(mainAxisAlignment: MainAxisAlignment.center,
-                        children: [ Text("Sensor " + (index + 1).toString(),
+                        children: [ Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
                             style: TextStyle(fontSize: 22,
                                 fontFamily: 'Poppins')),
                           SizedBox(width: 20),
                           Column(
                             children: [ Text(
-                                "Sensor: " + _sensors[index].name,
+                                AppLocalizations.of(context).translate("sensor_word") + ": " +_sensors[index].name,
                                 textAlign: TextAlign.left), Text(
-                                "Location: " + _sensors[index].locationName,
+                                AppLocalizations.of(context).translate("location_word") + ": " + _sensors[index].locationName,
                                 textAlign: TextAlign.left)
                             ],)
 

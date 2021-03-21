@@ -1,6 +1,8 @@
 import 'package:Whiff/Services/Networking/Networking.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
+import 'package:Whiff/Services/Networking/ServerResponse.dart';
 import 'package:Whiff/model/WhiffError.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,10 +10,13 @@ abstract class AutheticatingServicing {
   void login(String email, String password) async { }
   void register(String email, String password) async { }
   void remindPassword(String email) async { }
+  void changePassword(String password) async { }
+
   String authorizationHeader();
   String signedInEmail();
   Stream<AutheticationState> currentAuthState();
   Stream<WhiffError> registrationState();
+  Stream<ServerResponse<bool>> changePasswordState();
 
   void signOut();
 }
@@ -43,6 +48,7 @@ class AutheticationService extends AutheticatingServicing  {
 
   final _subject = PublishSubject<AutheticationState>();
   final _registrationErrorSubject = PublishSubject<WhiffError>();
+  final _changePasswordSubject = PublishSubject<ServerResponse<bool>>();
 
 
   String authorizationHeader() {
@@ -149,6 +155,28 @@ class AutheticationService extends AutheticatingServicing  {
     prefs.remove(_kEmailKey);
     prefs.remove(_kAuthTokenKey);
     prefs.remove(_kAuthMethodKey);
+  }
+
+  void changePassword(String password) async {
+    var response = await networkService.makeRequest(
+        RequestMethod.post, "/changePassword", { "password": password}, authorizationHeader());
+    if (response.responseObject != null && response.responseObject["token"] != null) {
+      _authorizationToken = response.responseObject["token"];
+      _storeCredientials();
+      _changePasswordSubject.add(ServerResponse(true, null));
+    } else {
+      if (response.error != null) {
+        _changePasswordSubject.add(ServerResponse(false, response.error));
+      } else {
+        _changePasswordSubject.add(
+            ServerResponse(false, WhiffError(0, "unknown_error_message")));
+      }
+    }
+  }
+
+
+  Stream<ServerResponse<bool>> changePasswordState() {
+    return _changePasswordSubject;
   }
 
 }
