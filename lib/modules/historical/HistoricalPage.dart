@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalViewModel.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
+import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:flutter/rendering.dart';
@@ -122,8 +124,8 @@ class HistoricalPageState extends State<HistoricalPage> {
                       Row(children: [
                         TextButton(onPressed: () {
                           Navigator.pop(context);
-                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => HistoricalPage()));
-                        },
+                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => AccountSettingsPage()));
+                          },
                             child: Text(
                                 AppLocalizations.of(context).translate('menu_account_settings_button'),
                                 textAlign: TextAlign.left,

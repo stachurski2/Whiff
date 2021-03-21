@@ -26,13 +26,10 @@
   "failure_page_contact_support_button_title" : "Contact Support",
   "failure_page_try_again_button_title" : "Try reload",
 
-
-
   "menu_current_data_button": "Current data",
   "menu_historical_data_button": "Historical data",
   "menu_account_settings_button": "Account Settings",
   "menu_sing_out_button": "Sign out",
-
 
   "account_settings_top_label_text": "Account",
   "account_settings_change_password_label_text": "Change your password",
@@ -44,7 +41,9 @@
   "account_setting_sensors_loading_label_text": "Loading sensors list",
   "account_setting_no_sensor_label_text": "There aren't any sensors assigned to your account.",
   "account_setting_cant_load_sensor_label_text": "Couldn't fetch the sensors list.",
+  "account_setting_missing_contact_support_button_text": "Contact Support",
+  "account_setting_changed_password_message": "Password changed",
+  "account_setting_changed_password_message_unknown_error": "Couldn't change password."
 
-  "account_setting_missing_contact_support_button_text": "Contact Support"
 
 }

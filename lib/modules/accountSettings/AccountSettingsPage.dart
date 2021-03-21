@@ -72,19 +72,18 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
     changePasswordResultSubscription = _viewModel.changePasswordResult().listen((response) {
       _firstEditController.clear();
       _secondEditController.clear();
+      hideLoader();
         if(response.responseObject == true){
-            showAlert(context, "Success");
+            showAlert(context, AppLocalizations.of(context).translate('account_setting_changed_password_message'));
         } else {
           if(response.error != null) {
             showAlert(context, AppLocalizations.of(context).translate(response.error.errorMessage));
           } else {
-            showAlert(context, "error");
+            showAlert(context, AppLocalizations.of(context).translate('account_setting_changed_password_message_unknown_error'));
           }
         }
     });
-
     _viewModel.fetchSensors();
-
   }
 
   @override
@@ -224,7 +223,9 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                       _viewModel.setSecondPassword(value);
                     },
                     onEditingComplete: ()  async {
+
                       _viewModel.requestPasswordChange();
+                      showLoader();
                     },
                     obscureText: true,
                     decoration: InputDecoration(
@@ -247,7 +248,7 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
               ),
               onPressed: () {
                 _viewModel.requestPasswordChange();
-              //  _currentPageState == LoginViewState.loginUser ? this._viewModel.registerUser() : this._viewModel.requestRegisterUser();
+                showLoader();
               },
               color: ColorProvider.shared.standardAppButtonColor,
               textColor: ColorProvider.shared.standardAppButtonTextColor,
@@ -445,5 +446,19 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
     );
 
     await _launchURL(mailtoLink.toString());
+  }
+
+  void showLoader() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return LoadingIndicator();
+      },
+    );
+  }
+
+  void hideLoader() {
+    Navigator.pop(context);
   }
 }
