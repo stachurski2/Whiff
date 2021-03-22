@@ -16,6 +16,9 @@
   "sensor_word": "Sensor",
   "location_word": "Location",
 
+  "onboarding_select_sensor_text": "Select Sensor",
+  "onboarding_loading_sensors_text": "Loading sensors list",
+
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",
   "error_server_response_decode_problem" : "An error occurred within the server communication process",
