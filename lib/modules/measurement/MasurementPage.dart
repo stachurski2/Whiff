@@ -103,7 +103,9 @@ class MeasurementPageState extends State<MeasurementPage>  {
 
     List<Widget> measurementDataWidget() {
 
-        return [
+      final screenWidth = MediaQuery.of(context).size.width;
+
+      return [
             SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -135,147 +137,412 @@ class MeasurementPageState extends State<MeasurementPage>  {
               ],
             ),
             SizedBox(height: 20),
+
             Row(
+             mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(width: 70),
-                (_measurement != null)
-                    ? Text("Temperature: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(
-                    _measurement.temperature.toString(), style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("deegres", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                 children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Temperature: ",
+                 textAlign: TextAlign.end,
+
+                 style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+                        ),
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                    Row(
+                      children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.temperature.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                        SizedBox(width: 5,),
+
+                        Text("℃", style: TextStyle(
+                       fontSize: 17,
+                       fontFamily: 'Poppins',
+                       fontWeight: FontWeight.bold))
+
+      ],)
+
+         ,)])
               ],
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 105),
-                (_measurement != null)
-                    ? Text("Pm1 level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(_measurement.pm1Level.toString(),
-                    style: TextStyle(fontSize: 17,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Humidity: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+            ),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.humidity.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("%RH", style: TextStyle(
+                        fontSize: 17,
                         fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM10: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 90),
-                (_measurement != null)
-                    ? Text("Pm25 level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(_measurement.pm25level.toString(),
-                    style: TextStyle(fontSize: 17,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.pm10Level.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("μg/m³", style: TextStyle(
+                        fontSize: 17,
                         fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM2.5: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 95),
-                (_measurement != null)
-                    ? Text("Pm10 level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(_measurement.pm10Level.toString(),
-                    style: TextStyle(fontSize: 17,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.pm25level.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("μg/m³", style: TextStyle(
+                        fontSize: 17,
                         fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM1: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 55),
-                (_measurement != null)
-                    ? Text("Humidility level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(_measurement.humidity.toString(),
-                    style: TextStyle(fontSize: 17,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.pm1Level.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("μg/m³", style: TextStyle(
+                        fontSize: 17,
                         fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("CO2: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
             ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 20),
-                (_measurement != null)
-                    ? Text("Formaldehyd: level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(
-                    _measurement.formaldehyde.toString(), style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                SizedBox(width: 97),
-                (_measurement != null)
-                    ? Text("CO2: level: ",
-                    style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-                    : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text(_measurement.co2level.toString(),
-                    style: TextStyle(fontSize: 17,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.co2level.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("ppm", style: TextStyle(
+                        fontSize: 17,
                         fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold)) : SizedBox(),
-                SizedBox(width: 10),
-                (_measurement != null) ? Text("ug/m3", style: TextStyle(
-                    fontSize: 17,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)) : SizedBox(),
-              ],
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Formaldehyde: ",
+                    textAlign: TextAlign.end,
+
+                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
             ),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[Container(
+                  alignment: Alignment.centerLeft,
+                  height:30, width: screenWidth * 0.5, child:
+                Row(
+                  children: [
+                    SizedBox(width: 10,),
+                    Text(
+                        _measurement.formaldehyde.toString(),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(width: 5,),
+
+                    Text("μg/m³", style: TextStyle(
+                        fontSize: 17,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold))
+
+                  ],)
+
+                  ,)])
+          ],
+        ),
+            // SizedBox(height: 5),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //  //   SizedBox(width: 105),
+            //     (_measurement != null)
+            //         ? Text("Pm1 level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(_measurement.pm1Level.toString(),
+            //         style: TextStyle(fontSize: 17,
+            //             fontFamily: 'Poppins',
+            //             fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
+            // SizedBox(height: 5),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //    // SizedBox(width: 90),
+            //     (_measurement != null)
+            //         ? Text("Pm25 level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(_measurement.pm25level.toString(),
+            //         style: TextStyle(fontSize: 17,
+            //             fontFamily: 'Poppins',
+            //             fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
+            // SizedBox(height: 5),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //    // SizedBox(width: 95),
+            //     (_measurement != null)
+            //         ? Text("Pm10 level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(_measurement.pm10Level.toString(),
+            //         style: TextStyle(fontSize: 17,
+            //             fontFamily: 'Poppins',
+            //             fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
+            // SizedBox(height: 5),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //   //  SizedBox(width: 55),
+            //     (_measurement != null)
+            //         ? Text("Humidility level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(_measurement.humidity.toString(),
+            //         style: TextStyle(fontSize: 17,
+            //             fontFamily: 'Poppins',
+            //             fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
+            // SizedBox(height: 5),
+            // Row(
+            //   children: [
+            // //    SizedBox(width: 20),
+            //     (_measurement != null)
+            //         ? Text("Formaldehyd: level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(
+            //         _measurement.formaldehyde.toString(), style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
+            // SizedBox(height: 5),
+            // Row(
+            //   children: [
+            //     SizedBox(width: 97),
+            //     (_measurement != null)
+            //         ? Text("CO2: level: ",
+            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
+            //         : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text(_measurement.co2level.toString(),
+            //         style: TextStyle(fontSize: 17,
+            //             fontFamily: 'Poppins',
+            //             fontWeight: FontWeight.bold)) : SizedBox(),
+            //     SizedBox(width: 10),
+            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
+            //         fontSize: 17,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold)) : SizedBox(),
+            //   ],
+            // ),
           ];
       }
 
