@@ -25,6 +25,31 @@ class HistoricalPageState extends State<HistoricalPage> {
 
   MeasurementType _currentMeasurementType = MeasurementType.temperature;
 
+  DateTimeRange range = DateTimeRange(start:  DateTime.now(), end: DateTime.now());
+  DateTime startSelectedDate = DateTime.now();
+  DateTime endSelectedDate = DateTime.now();
+
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTimeRange picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime.now(),
+        initialEntryMode:  DatePickerEntryMode.input,
+        routeSettings: RouteSettings(),
+        initialDateRange: DateTimeRange(
+        end: DateTime.now(),
+        start:DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day - 13),
+      )
+    );
+    setState(() {
+      if(picked != null) {
+        range = picked;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,11 +81,11 @@ class HistoricalPageState extends State<HistoricalPage> {
               color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
       SingleChildScrollView(child: Column(children: [
-        SizedBox(height: 60,),
+        SizedBox(height: 100,),
         Row( mainAxisAlignment: MainAxisAlignment.center, children: [
           measerementSelector(context),
-          SizedBox(width: 80,),
-          measerementSelector(context)
+          SizedBox(width: 10,),
+          dateRangeSelector(context),
 
 
 
@@ -190,26 +215,60 @@ class HistoricalPageState extends State<HistoricalPage> {
   }
 
   Widget measerementSelector(BuildContext context) {
-    return DropdownButton<MeasurementType>(
-        value: _currentMeasurementType,
-        iconSize: 24,
-        elevation: 16,
-        style: const TextStyle(color: Colors.deepPurple),
-        underline: Container(
-          height: 2,
-          color: Colors.deepPurpleAccent,
-        ),
-        onChanged: (MeasurementType newValue) {
-          setState(() {
-             _viewModel.set(newValue);
-          });
-        },
-        items: MeasurementType.values.map<DropdownMenuItem<MeasurementType>>((MeasurementType value) {
-          return DropdownMenuItem<MeasurementType>(
-            value: value,
-            child: Text(AppLocalizations.of(context).translate(value.stringName())),
-          );
-        }).toList()
-    );
+    return
+      Container(
+          width: 160,
+          alignment: Alignment.center,
+          color: ColorProvider.shared.standardAppButtonColor,
+          child:
+
+          DropdownButton<MeasurementType>(
+            // isExpanded: true,
+              value: _currentMeasurementType,
+              iconSize: 24,
+              iconEnabledColor: ColorProvider.shared.standardAppButtonTextColor,
+              dropdownColor: ColorProvider.shared.standardAppButtonColor,
+              elevation: 16,
+              style: TextStyle(
+                  color: ColorProvider.shared.standardAppButtonTextColor),
+
+              onChanged: (MeasurementType newValue) {
+                setState(() {
+                  _viewModel.set(newValue);
+                });
+              },
+              items: MeasurementType.values.map<
+                  DropdownMenuItem<MeasurementType>>((MeasurementType value) {
+                return DropdownMenuItem<MeasurementType>(
+                  value: value,
+                  child: Text(AppLocalizations.of(context).translate(
+                      value.stringName())),
+                );
+              }).toList()
+          ));
+  }
+
+    Widget dateRangeSelector(BuildContext context) {
+      return
+        Container(
+            width: 160,
+            alignment: Alignment.center,
+            color: ColorProvider.shared.standardAppButtonColor,
+            child: TextButton(child: Text(this.range.start.year.toString() + "/" + range.start.month.toString() +"/"+ range.start.day.toString() + "-" + range.end.year.toString() + "/" + range.end.month.toString() + "/" +  range.end.day.toString() , style: TextStyle(color: ColorProvider.shared.standardAppButtonTextColor),), onPressed: () {
+              this._selectDate(context);
+
+            } ),
+      //       child:   RaisedButton(
+      //     child:
+      //
+      //
+      //
+      //     Text("Date"),
+      // onPressed: () async {
+      // _selectDate(context); }
+      //
+      // ));
+        );
+
   }
 }
