@@ -1,7 +1,9 @@
+import 'package:Whiff/helpers/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:Whiff/model/MeasurementType.dart';
 
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/modules/measurement/MeasurementViewModel.dart';
@@ -145,7 +147,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                 Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                 children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Temperature: ",
+                 children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.temperature.stringName())),
                  textAlign: TextAlign.end,
 
                  style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -168,7 +170,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                               fontWeight: FontWeight.bold)),
                         SizedBox(width: 5,),
 
-                        Text("℃", style: TextStyle(
+                        Text(AppLocalizations.of(context).translate(MeasurementType.temperature.unitName()), style: TextStyle(
                        fontSize: 17,
                        fontFamily: 'Poppins',
                        fontWeight: FontWeight.bold))
@@ -185,7 +187,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Humidity: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.humidity.stringName())),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -208,7 +210,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("%RH", style: TextStyle(
+                    Text(AppLocalizations.of(context).translate(MeasurementType.humidity.unitName()), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -225,7 +227,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM10: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.stringName()),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -248,7 +250,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("μg/m³", style: TextStyle(
+                    Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.unitName()), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -265,7 +267,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM2.5: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm25level.stringName())),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -288,7 +290,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("μg/m³", style: TextStyle(
+                    Text(AppLocalizations.of(context).translate(MeasurementType.pm25level.unitName()), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -305,7 +307,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("PM1: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm1level.stringName())),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -328,7 +330,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("μg/m³", style: TextStyle(
+                    Text(AppLocalizations.of(context).translate(MeasurementType.pm1level.unitName()), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -345,7 +347,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("CO2: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.co2level.stringName())),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -368,7 +370,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("ppm", style: TextStyle(
+                    Text((AppLocalizations.of(context).translate(MeasurementType.co2level.stringName())), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -385,7 +387,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text("Formaldehyde: ",
+                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.stringName())),
                     textAlign: TextAlign.end,
 
                     style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
@@ -408,7 +410,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text("μg/m³", style: TextStyle(
+                    Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.stringName())), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -418,131 +420,6 @@ class MeasurementPageState extends State<MeasurementPage>  {
                   ,)])
           ],
         ),
-            // SizedBox(height: 5),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //  //   SizedBox(width: 105),
-            //     (_measurement != null)
-            //         ? Text("Pm1 level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(_measurement.pm1Level.toString(),
-            //         style: TextStyle(fontSize: 17,
-            //             fontFamily: 'Poppins',
-            //             fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
-            // SizedBox(height: 5),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //    // SizedBox(width: 90),
-            //     (_measurement != null)
-            //         ? Text("Pm25 level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(_measurement.pm25level.toString(),
-            //         style: TextStyle(fontSize: 17,
-            //             fontFamily: 'Poppins',
-            //             fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
-            // SizedBox(height: 5),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //    // SizedBox(width: 95),
-            //     (_measurement != null)
-            //         ? Text("Pm10 level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(_measurement.pm10Level.toString(),
-            //         style: TextStyle(fontSize: 17,
-            //             fontFamily: 'Poppins',
-            //             fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
-            // SizedBox(height: 5),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //   //  SizedBox(width: 55),
-            //     (_measurement != null)
-            //         ? Text("Humidility level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(_measurement.humidity.toString(),
-            //         style: TextStyle(fontSize: 17,
-            //             fontFamily: 'Poppins',
-            //             fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
-            // SizedBox(height: 5),
-            // Row(
-            //   children: [
-            // //    SizedBox(width: 20),
-            //     (_measurement != null)
-            //         ? Text("Formaldehyd: level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(
-            //         _measurement.formaldehyde.toString(), style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
-            // SizedBox(height: 5),
-            // Row(
-            //   children: [
-            //     SizedBox(width: 97),
-            //     (_measurement != null)
-            //         ? Text("CO2: level: ",
-            //         style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
-            //         : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text(_measurement.co2level.toString(),
-            //         style: TextStyle(fontSize: 17,
-            //             fontFamily: 'Poppins',
-            //             fontWeight: FontWeight.bold)) : SizedBox(),
-            //     SizedBox(width: 10),
-            //     (_measurement != null) ? Text("ug/m3", style: TextStyle(
-            //         fontSize: 17,
-            //         fontFamily: 'Poppins',
-            //         fontWeight: FontWeight.bold)) : SizedBox(),
-            //   ],
-            // ),
           ];
       }
 
@@ -573,7 +450,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _viewModel.fetchMeasurement(widget.sensor.externalIdentfier);
                      },  () async {
                          await this._mailToSupport();
-                     }): this._didLoad ? Column(children: measurementDataWidget(),) :LoadingIndicator(),
+                     }): this._didLoad ? Column(children: measurementDataWidget(),):LoadingIndicator(),
                   ),
                 ),
                 ),

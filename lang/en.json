@@ -34,6 +34,23 @@
   "menu_account_settings_button": "Account Settings",
   "menu_sing_out_button": "Sign out",
 
+
+  "measurement_type_temperature": "Temperature",
+  "measurement_type_pm1level": "Pm1",
+  "measurement_type_pm10level": "Pm10",
+  "measurement_type_pm25level": "Pm25",
+  "measurement_type_humidity": "Humidity",
+  "measurement_type_formaldehyde": "Formaldehyde",
+  "measurement_type_co2level": "CO2",
+
+  "measurement_type_temperature_unit": "℃",
+  "measurement_type_pm1level_unit": "%RH",
+  "measurement_type_pm10level_unit": "μg/m³",
+  "measurement_type_pm25level_unit": "μg/m³",
+  "measurement_type_humidity_unit": "μg/m³",
+  "measurement_type_formaldehyde_unit": "ppm",
+  "measurement_type_co2level_unit": "μg/m³",
+
   "account_settings_top_label_text": "Account",
   "account_settings_change_password_label_text": "Change your password",
   "account_settings_new_password_textfield_label": "New password",

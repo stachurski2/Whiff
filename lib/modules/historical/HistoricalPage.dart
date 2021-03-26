@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/modules/historical/HistoricalViewModel.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
-
+import 'package:Whiff/model/MeasurementType.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:flutter/rendering.dart';
@@ -20,6 +21,10 @@ class HistoricalPageState extends State<HistoricalPage> {
 
   StreamSubscription onboardingState;
 
+  StreamSubscription _mesurementTypeSubscription;
+
+  MeasurementType _currentMeasurementType = MeasurementType.temperature;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +33,10 @@ class HistoricalPageState extends State<HistoricalPage> {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
       }
+    });
+
+    _mesurementTypeSubscription = _viewModel.currentMeasurementType().listen((measurementType) {
+      _currentMeasurementType = measurementType;
     });
   }
 
@@ -46,7 +55,22 @@ class HistoricalPageState extends State<HistoricalPage> {
           iconTheme: IconThemeData(
               color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
-      SingleChildScrollView(),
+      SingleChildScrollView(child: Column(children: [
+        SizedBox(height: 60,),
+        Row( mainAxisAlignment: MainAxisAlignment.center, children: [
+          measerementSelector(context),
+          SizedBox(width: 80,),
+          measerementSelector(context)
+
+
+
+        ],)
+
+
+      ],) ,),
+
+
+
       drawer: Theme(
         data: Theme.of(context).copyWith(
           canvasColor: ColorProvider.shared
@@ -162,6 +186,30 @@ class HistoricalPageState extends State<HistoricalPage> {
       ),
     ),
       onWillPop: () async => false,
+    );
+  }
+
+  Widget measerementSelector(BuildContext context) {
+    return DropdownButton<MeasurementType>(
+        value: _currentMeasurementType,
+        iconSize: 24,
+        elevation: 16,
+        style: const TextStyle(color: Colors.deepPurple),
+        underline: Container(
+          height: 2,
+          color: Colors.deepPurpleAccent,
+        ),
+        onChanged: (MeasurementType newValue) {
+          setState(() {
+             _viewModel.set(newValue);
+          });
+        },
+        items: MeasurementType.values.map<DropdownMenuItem<MeasurementType>>((MeasurementType value) {
+          return DropdownMenuItem<MeasurementType>(
+            value: value,
+            child: Text(AppLocalizations.of(context).translate(value.stringName())),
+          );
+        }).toList()
     );
   }
 }
