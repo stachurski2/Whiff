@@ -370,7 +370,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text((AppLocalizations.of(context).translate(MeasurementType.co2level.stringName())), style: TextStyle(
+                    Text((AppLocalizations.of(context).translate(MeasurementType.co2level.unitName())), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -410,7 +410,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
-                    Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.stringName())), style: TextStyle(
+                      Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.unitName())), style: TextStyle(
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))

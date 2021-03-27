@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:Whiff/model/Measurement.dart';
+import 'package:intl/intl.dart';
+import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/modules/historical/HistoricalViewModel.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
@@ -9,6 +11,7 @@ import 'package:Whiff/helpers/color_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class HistoricalPage extends StatefulWidget {
   @override
@@ -17,17 +20,32 @@ class HistoricalPage extends StatefulWidget {
 
 class HistoricalPageState extends State<HistoricalPage> {
   final AutheticatingServicing authenticationService = AutheticationService.shared;
+  final DateFormat kDateFormat = DateFormat("dd MMM yy");
+
+  List<charts.Series<dynamic, DateTime>> seriesList = [];
+
   HistoricalViewModelContract _viewModel = HistoricalViewModel();
 
   StreamSubscription onboardingState;
 
+  Sensor _selectedSensor;
+  List<Sensor> _sensors = [];
+
   StreamSubscription _mesurementTypeSubscription;
+  StreamSubscription _dateRangeSubscription;
+  StreamSubscription _sensorListSubscription;
+  StreamSubscription _sensorSelectedSubscription;
+  StreamSubscription _chartDataSubscription;
+
 
   MeasurementType _currentMeasurementType = MeasurementType.temperature;
 
-  DateTimeRange range = DateTimeRange(start:  DateTime.now(), end: DateTime.now());
-  DateTime startSelectedDate = DateTime.now();
-  DateTime endSelectedDate = DateTime.now();
+  DateTimeRange range =  DateTimeRange(
+      end: DateTime.now(),
+      start:DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day - 13)
+
+  );
 
 
   Future<void> _selectDate(BuildContext context) async {
@@ -35,24 +53,17 @@ class HistoricalPageState extends State<HistoricalPage> {
       context: context,
       firstDate: DateTime(DateTime.now().year - 5),
       lastDate: DateTime.now(),
-        initialEntryMode:  DatePickerEntryMode.input,
-        routeSettings: RouteSettings(),
-        initialDateRange: DateTimeRange(
-        end: DateTime.now(),
-        start:DateTime(
-            DateTime.now().year, DateTime.now().month, DateTime.now().day - 13),
-      )
+      initialDateRange: range
     );
-    setState(() {
-      if(picked != null) {
-        range = picked;
-      }
-    });
+    if(picked != null) {
+      _viewModel.setTimeRange(picked);
+    };
   }
 
   @override
   void initState() {
     super.initState();
+
     onboardingState = _viewModel.currentAuthState().listen((state) {
       if (state.signedIn == false) {
         Navigator.pop(context);
@@ -60,9 +71,37 @@ class HistoricalPageState extends State<HistoricalPage> {
       }
     });
 
+
+
     _mesurementTypeSubscription = _viewModel.currentMeasurementType().listen((measurementType) {
       _currentMeasurementType = measurementType;
+      setState(() {});
     });
+
+    _dateRangeSubscription = _viewModel.currentDateRange().listen((dateRange) {
+      range = dateRange;
+      setState(() {});
+    });
+
+    _sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
+      _sensors = sensorList;
+      _selectedSensor = sensorList.first;
+      _viewModel.setSensor(_selectedSensor);
+      setState(() {});
+    });
+
+    _sensorSelectedSubscription = _viewModel.selectedSensor().listen((sensor) {
+      _selectedSensor = sensor;
+      setState(() {});
+    });
+
+    _chartDataSubscription = _viewModel.chartData().listen((chartData) {
+      seriesList = chartData;
+      print("test");
+      setState(() {});
+    });
+    _viewModel.fetchSensors();
+    _viewModel.setTimeRange(range);
   }
 
   @override
@@ -82,16 +121,48 @@ class HistoricalPageState extends State<HistoricalPage> {
       body:
       SingleChildScrollView(child: Column(children: [
         SizedBox(height: 100,),
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [ Text("Select Sensor",
+              textAlign: TextAlign.center,
+
+              style: TextStyle(color: Colors.black,
+                  fontSize: 22,
+                  fontFamily: 'Poppins')),
+          ],),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            sensorSelector(context),
+          ],),
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+        children: [ Text("Select Date Range",
+            textAlign: TextAlign.center,
+
+            style: TextStyle(color: Colors.black,
+                fontSize: 22,
+                fontFamily: 'Poppins')),
+      ],),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          dateRangeSelector(context),
+        ],),
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [ Text("Select Measurement type",
+              textAlign: TextAlign.center,
+
+              style: TextStyle(color: Colors.black,
+                  fontSize: 22,
+                  fontFamily: 'Poppins')),
+          ],),
+
         Row( mainAxisAlignment: MainAxisAlignment.center, children: [
           measerementSelector(context),
-          SizedBox(width: 10,),
-          dateRangeSelector(context),
-
-
-
-        ],)
-
-
+        ],),
+        SizedBox(height: 30,),
+        Row( mainAxisAlignment: MainAxisAlignment.center, children: [
+          chart(context),
+        ],),
       ],) ,),
 
 
@@ -217,7 +288,7 @@ class HistoricalPageState extends State<HistoricalPage> {
   Widget measerementSelector(BuildContext context) {
     return
       Container(
-          width: 160,
+          width: 200,
           alignment: Alignment.center,
           color: ColorProvider.shared.standardAppButtonColor,
           child:
@@ -251,24 +322,59 @@ class HistoricalPageState extends State<HistoricalPage> {
     Widget dateRangeSelector(BuildContext context) {
       return
         Container(
-            width: 160,
+          width: 200,
+          alignment: Alignment.center,
+          color: ColorProvider.shared.standardAppButtonColor,
+          child: TextButton(child: Text(
+            kDateFormat.format(range.start) + " - " +
+                (kDateFormat.format(range.end)), style: TextStyle(
+              color: ColorProvider.shared.standardAppButtonTextColor),),
+              onPressed: () {
+                this._selectDate(context);
+              }),
+
+        );
+    }
+
+      Widget sensorSelector(BuildContext context) {
+        return
+          Container(
+            width: 200,
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppButtonColor,
-            child: TextButton(child: Text(this.range.start.year.toString() + "/" + range.start.month.toString() +"/"+ range.start.day.toString() + "-" + range.end.year.toString() + "/" + range.end.month.toString() + "/" +  range.end.day.toString() , style: TextStyle(color: ColorProvider.shared.standardAppButtonTextColor),), onPressed: () {
-              this._selectDate(context);
+            child:   DropdownButton<Sensor>(
+              // isExpanded: true,
+                value: _selectedSensor,
+                iconSize: 24,
+                iconEnabledColor: ColorProvider.shared.standardAppButtonTextColor,
+                dropdownColor: ColorProvider.shared.standardAppButtonColor,
+                elevation: 16,
+                style: TextStyle(
+                    color: ColorProvider.shared.standardAppButtonTextColor),
 
-            } ),
-      //       child:   RaisedButton(
-      //     child:
-      //
-      //
-      //
-      //     Text("Date"),
-      // onPressed: () async {
-      // _selectDate(context); }
-      //
-      // ));
-        );
+                onChanged: (Sensor newValue) {
+                  setState(() {
+                    _viewModel.setSensor(newValue);
+                  });
+                },
+                items: _sensors.map<
+                    DropdownMenuItem<Sensor>>((Sensor value) {
+                  return DropdownMenuItem<Sensor>(
+                    value: value,
+                    child: Text(value.name),
+                  );
+                }).toList()),
+            );
+   }
 
+  Widget chart(BuildContext context) {
+    return
+      Container(
+        width: MediaQuery.of(context).size.width,
+        height: 300,
+        alignment: Alignment.center,
+        color: Colors.transparent,
+        child: charts.TimeSeriesChart(seriesList),
+      );
   }
 }

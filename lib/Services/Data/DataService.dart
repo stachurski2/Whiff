@@ -9,8 +9,10 @@ import 'package:rxdart/rxdart.dart';
 abstract class DataServicing {
    void fetchSensors() async { }
    void fetchCurrentMeasurement(int sensorId) async { }
+   void fetchHistoricalData(DateTime startDate, DateTime endDate, int sensorId) async { }
    Stream<ServerResponse<List<Sensor>>> fetchedSensors();
    Stream<ServerResponse<Measurement>> currentMeasurement();
+   Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
 
 }
 
@@ -27,12 +29,19 @@ class DataService extends DataServicing  {
 
   final _currentMeasurementSubject = PublishSubject<ServerResponse<Measurement>>();
 
+  final _historicalMeasurementsSubject = PublishSubject<ServerResponse<List<Measurement>>>();
+
+
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
   }
 
   Stream<ServerResponse<Measurement>> currentMeasurement() {
     return _currentMeasurementSubject.stream;
+  }
+
+  Stream<ServerResponse<List<Measurement>>> historicalMeasurements() {
+    return _historicalMeasurementsSubject.stream;
   }
 
   NetworkingServicing networkService = NetworkService.shared;
@@ -94,4 +103,40 @@ class DataService extends DataServicing  {
       _currentMeasurementSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
     }
   }
+
+  void fetchHistoricalData(DateTime startDate, DateTime endDate, int sensorId) async {
+
+
+    String startDateString = startDate.year.toString() + (startDate.month > 9 ? "-":"-0") + startDate.month.toString() + (startDate.day > 9 ? "-":"-0") +startDate.day.toString() + " 0";
+    String endDateString = endDate.year.toString() + (endDate.month > 9 ? "-":"-0") + endDate.month.toString() + (endDate.day > 9 ? "-":"-0") + endDate.day.toString() + " 23";
+
+    print(startDateString);
+    print(endDateString);
+    var response = await networkService.makeRequest(RequestMethod.get, "/sensorData", {"sensorId": sensorId.toString(), "startDate": startDateString, "endDate":endDateString}, _autheticatingService.authorizationHeader());
+    if(response.error != null) {
+      _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+    } else if (response.responseObject["data"] != null) {
+      Map<String, dynamic> data = response.responseObject["data"];
+      List<dynamic> measures = data["measures"];
+      final measuresList = measures.map((dictionary){
+        return Measurement(double.parse(dictionary["PM1"]),
+                           double.parse(dictionary["PM10"]),
+                              double.parse(dictionary["PM25"]),
+                             double.parse(dictionary["WILGOTNOSC"]),
+                            double.parse(dictionary["FORMALDEHYD"]),
+                             double.parse(dictionary["CO2"]),
+                             double.parse(dictionary["TEMPERATURA"]),
+                             DateTime.parse(dictionary["DATA_GODZINA"]));
+      }).toList();
+
+      _historicalMeasurementsSubject.add(ServerResponse(measuresList, null));
+    } else {
+      _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+    }
+
+
+
+  }
+
+
 }
