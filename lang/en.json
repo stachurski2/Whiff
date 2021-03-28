@@ -44,10 +44,10 @@
   "measurement_type_co2level": "CO2",
 
   "measurement_type_temperature_unit": "℃",
-  "measurement_type_pm1level_unit": "%RH",
+  "measurement_type_pm1level_unit": "μg/m³",
   "measurement_type_pm10level_unit": "μg/m³",
   "measurement_type_pm25level_unit": "μg/m³",
-  "measurement_type_humidity_unit": "μg/m³",
+  "measurement_type_humidity_unit": "%RH",
   "measurement_type_formaldehyde_unit": "μg/m³",
   "measurement_type_co2level_unit": "ppm",
 

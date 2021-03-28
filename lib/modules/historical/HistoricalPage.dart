@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +27,7 @@ class HistoricalPage extends StatefulWidget {
 class HistoricalPageState extends State<HistoricalPage> {
 
 
+
   final AutheticatingServicing authenticationService = AutheticationService.shared;
   final DateFormat kDateFormat = DateFormat("dd MMM yy");
 
@@ -46,8 +48,10 @@ class HistoricalPageState extends State<HistoricalPage> {
 
   var _didLoadSensors = false;
   var _didLoadChart = false;
-  var selectedDatum = [];
+  DateTime selectedDate = null;
+  double selectedMeasurement = null;
 
+  var symbolRenderer = MySymbolRenderer();
   MeasurementType _currentMeasurementType = MeasurementType.temperature;
 
   DateTimeRange range =  DateTimeRange(
@@ -421,6 +425,7 @@ class HistoricalPageState extends State<HistoricalPage> {
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppBackgroundColor,
             child: charts.TimeSeriesChart(seriesList,
+
               animate: false,
               flipVerticalAxis: false,
               selectionModels: [
@@ -430,10 +435,19 @@ class HistoricalPageState extends State<HistoricalPage> {
                       if(model.hasDatumSelection) {
                         print(model.selectedSeries[0].domainFn(model.selectedDatum[0].index));
                         print(model.selectedSeries[0].measureFn(model.selectedDatum[0].index));
+                        symbolRenderer.set(model.selectedSeries[0].domainFn(model.selectedDatum[0].index), model.selectedSeries[0].measureFn(model.selectedDatum[0].index), AppLocalizations.of(context).translate(_currentMeasurementType.unitName()), MediaQuery.of(context).size.width);
                       }
                     }
 
                 )
+              ],
+              behaviors: [
+                charts.SelectNearest(
+                    eventTrigger: charts.SelectionTrigger.tapAndDrag
+                ),
+                charts.LinePointHighlighter(
+                  symbolRenderer: symbolRenderer,
+                ),
               ],
 
               primaryMeasureAxis: new charts.NumericAxisSpec(
@@ -478,6 +492,64 @@ class HistoricalPageState extends State<HistoricalPage> {
     }
   }
 
+
+
 }
 
+
+class MySymbolRenderer extends charts.CustomSymbolRenderer {
+
+  final DateFormat kDateFormat = DateFormat("dd MMM yy hh:mm");
+
+  DateTime _selectedDate = DateTime.now();
+  double _selectedMeasurement = 0;
+  String _unit = "";
+  double _screenWidth = 0;
+
+
+  void set(DateTime date, double measurement, String unit, double screenWidth ) {
+        this._selectedMeasurement = measurement;
+        this._selectedDate = date;
+        this._unit = unit;
+        this._screenWidth = screenWidth;
+
+  }
+
+  Rect _getRect(Rectangle<num> rectangle) {
+    return new Rect.fromLTWH(
+        rectangle.left.toDouble(),
+        rectangle.top.toDouble(),
+        rectangle.width.toDouble(),
+        rectangle.height.toDouble());
+  }
+
+  @override
+  Widget build(BuildContext context, {Color color, Size size, bool enabled}) {
+    print('test');
+    return new Container(height: 100, width: 100, color: Colors.red);
+  }
+
+  @override
+  void paint(charts.ChartCanvas canvas, Rectangle<num> bounds,
+      {List<int> dashPattern,
+        charts.Color fillColor,
+        charts.FillPatternType fillPattern,
+        charts.Color strokeColor,
+        double strokeWidthPx}) {
+    print(this._screenWidth);
+    var textStyle = chartStyle.TextStyle();
+
+    textStyle.fontSize = 14;
+    textStyle.fontFamily = 'Poppins';
+    textStyle.color = charts.Color.white;
+
+    var paint1 = Paint()
+      ..color = Color(0xff638965)
+      ..style = PaintingStyle.fill;
+    double left = bounds.left + 150 > _screenWidth ? bounds.left - 110 : bounds.left;
+    canvas.drawRect(Rectangle(left, bounds.top, 110, 45), fill: charts.Color.fromHex(code: "#00916E"));
+    canvas.drawText(chartText.TextElement(kDateFormat.format(_selectedDate), style: textStyle) , (left + 5).toInt(), (bounds.top + 5).toInt());
+    canvas.drawText(chartText.TextElement(_selectedMeasurement.toString()+" " + _unit, style: textStyle) , (left + 5).toInt(), (bounds.top + 5).toInt() + 20);
+  }
+}
 
