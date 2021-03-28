@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:intl/intl.dart';
 import 'package:Whiff/model/Sensor.dart';
@@ -37,6 +38,9 @@ class HistoricalPageState extends State<HistoricalPage> {
   StreamSubscription _sensorSelectedSubscription;
   StreamSubscription _chartDataSubscription;
 
+  var _didLoadSensors = false;
+  var _didLoadChart = false;
+
 
   MeasurementType _currentMeasurementType = MeasurementType.temperature;
 
@@ -56,6 +60,7 @@ class HistoricalPageState extends State<HistoricalPage> {
       initialDateRange: range
     );
     if(picked != null) {
+      _didLoadChart = false;
       _viewModel.setTimeRange(picked);
     };
   }
@@ -84,8 +89,12 @@ class HistoricalPageState extends State<HistoricalPage> {
     });
 
     _sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
+      if(sensorList.length > 0) {
+        _didLoadSensors = true;
+      }
       _sensors = sensorList;
       _selectedSensor = sensorList.first;
+      _didLoadChart = false;
       _viewModel.setSensor(_selectedSensor);
       setState(() {});
     });
@@ -96,8 +105,8 @@ class HistoricalPageState extends State<HistoricalPage> {
     });
 
     _chartDataSubscription = _viewModel.chartData().listen((chartData) {
+      _didLoadChart = true;
       seriesList = chartData;
-      print("test");
       setState(() {});
     });
     _viewModel.fetchSensors();
@@ -113,57 +122,67 @@ class HistoricalPageState extends State<HistoricalPage> {
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
+      backgroundColor: _didLoadSensors ?  ColorProvider.shared.standardAppLeftMenuBackgroundColor:  ColorProvider.shared.standardAppBackgroundColor,
       appBar: AppBar(backgroundColor: Colors.transparent,
           elevation: 0,
           iconTheme: IconThemeData(
-              color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
+              color: Colors.white)),
       body:
-      SingleChildScrollView(child: Column(children: [
-        SizedBox(height: 100,),
-        Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [ Text("Select Sensor",
+      _didLoadSensors ? Column(children: [
+        Container(height: 250,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+            children: [
+              SizedBox(height: 80,),
+          Row(mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+
+            SizedBox(width: 20,),
+            Text("Sensor:",
               textAlign: TextAlign.center,
 
-              style: TextStyle(color: Colors.black,
-                  fontSize: 22,
+              style: TextStyle(color: Colors.white,
+                  fontSize: 14,
                   fontFamily: 'Poppins')),
-          ],),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+            Spacer(),
             sensorSelector(context),
+            SizedBox(width: 20,),
           ],),
-        Row(mainAxisAlignment: MainAxisAlignment.center,
-        children: [ Text("Select Date Range",
-            textAlign: TextAlign.center,
-
-            style: TextStyle(color: Colors.black,
-                fontSize: 22,
-                fontFamily: 'Poppins')),
-      ],),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        SizedBox(height: 10,),
+        Row(mainAxisAlignment: MainAxisAlignment.start,
           children: [
-          dateRangeSelector(context),
-        ],),
-        Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [ Text("Select Measurement type",
+            SizedBox(width: 20,),
+            Text("Date Range:",
               textAlign: TextAlign.center,
 
-              style: TextStyle(color: Colors.black,
-                  fontSize: 22,
+              style: TextStyle(color: Colors.white,
+                  fontSize: 14,
                   fontFamily: 'Poppins')),
+            Spacer(),
+            dateRangeSelector(context),
+            SizedBox(width: 20,),
+          ],),
+              SizedBox(height: 10,),
+              Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 20,),
+            Text("Type:",
+                textAlign: TextAlign.center,
+
+                style: TextStyle(color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'Poppins')),
+            Spacer(),
+            measerementSelector(context),
+            SizedBox(width: 20,),
           ],),
 
-        Row( mainAxisAlignment: MainAxisAlignment.center, children: [
-          measerementSelector(context),
-        ],),
-        SizedBox(height: 30,),
+          ],
+        ),),
         Row( mainAxisAlignment: MainAxisAlignment.center, children: [
           chart(context),
         ],),
-      ],) ,),
+      ],) : LoadingIndicator(),
 
 
 
@@ -177,7 +196,7 @@ class HistoricalPageState extends State<HistoricalPage> {
         Drawer(
           child: Container(
             padding: EdgeInsets.only(top: 20),
-            color: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
+            color:  ColorProvider.shared.standardAppLeftMenuBackgroundColor,
             child:
 
             Container(
@@ -354,6 +373,7 @@ class HistoricalPageState extends State<HistoricalPage> {
 
                 onChanged: (Sensor newValue) {
                   setState(() {
+                    _didLoadChart = false;
                     _viewModel.setSensor(newValue);
                   });
                 },
@@ -368,13 +388,54 @@ class HistoricalPageState extends State<HistoricalPage> {
    }
 
   Widget chart(BuildContext context) {
-    return
+    if(_didLoadChart == true) {
+      List<MeasurementData> data = seriesList.first.data as List<
+          MeasurementData>;
+      List<DateTime> dataTime = data.map((e) {
+        return DateTime(e.time.year, e.time.month, e.time.day);
+      }).toList().toSet().toList();
+      print(dataTime.length);
+      final xScaleCount = (dataTime.length / 7).round() + 1;
+      return Expanded(child:
+        Container(
+            padding: EdgeInsets.all(20),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height - 250,
+            alignment: Alignment.center,
+            color: ColorProvider.shared.standardAppBackgroundColor,
+            child: charts.TimeSeriesChart(seriesList,
+              animate: false,
+              flipVerticalAxis: false,
+              //primaryMeasureAxis: charts.AxisSpec(showAxisLine: false),
+              domainAxis: charts.DateTimeAxisSpec(
+                showAxisLine: true,
+                tickProviderSpec: charts.DayTickProviderSpec(
+                    increments: [xScaleCount]),
+                tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+                    day: new charts.TimeFormatterSpec(
+                        format: 'dd MMM',
+                        transitionFormat: 'dd MMM',
+                        noonFormat: 'dd MMM')),
+
+              ),
+              // behaviors: [ charts.RangeAnnotation(data.map((e){charts.LineAnnotationSegment(e.time, charts.RangeAnnotationAxisType.domain, middleLabel: '\e.sales');}).toList())],
+            )
+        ));
+    } else {
+      return  Expanded(child:
       Container(
-        width: MediaQuery.of(context).size.width,
-        height: 300,
-        alignment: Alignment.center,
-        color: Colors.transparent,
-        child: charts.TimeSeriesChart(seriesList),
-      );
+          height: MediaQuery
+              .of(context)
+              .size
+              .height - 250,
+          color: ColorProvider.shared.standardAppBackgroundColor,
+          child:LoadingIndicator()));
+    }
   }
 }

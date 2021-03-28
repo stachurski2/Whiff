@@ -118,6 +118,8 @@ class DataService extends DataServicing  {
     } else if (response.responseObject["data"] != null) {
       Map<String, dynamic> data = response.responseObject["data"];
       List<dynamic> measures = data["measures"];
+      
+      
       final measuresList = measures.map((dictionary){
         return Measurement(double.parse(dictionary["PM1"]),
                            double.parse(dictionary["PM10"]),
@@ -127,9 +129,30 @@ class DataService extends DataServicing  {
                              double.parse(dictionary["CO2"]),
                              double.parse(dictionary["TEMPERATURA"]),
                              DateTime.parse(dictionary["DATA_GODZINA"]));
-      }).toList();
+      });
+      // if(measuresList.length < 300) {
+      //
+      //
+      //
+      //
+      // } else {
+        int paramater = (measuresList.length/300).round() + 1;
 
-      _historicalMeasurementsSubject.add(ServerResponse(measuresList, null));
+        List<Measurement> list = [];
+        for (int i = 0; i < measuresList.length; i++) {
+          if (i % paramater == 0) {
+            list.add(measuresList.elementAt(i));
+          }
+        }
+        print(paramater);
+        print(measuresList);
+        print(list.length);
+      _historicalMeasurementsSubject.add(ServerResponse(list, null));
+
+     // }
+
+
+
     } else {
       _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
     }
