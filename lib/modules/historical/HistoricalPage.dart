@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
+
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/modules/historical/HistoricalViewModel.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
@@ -13,6 +15,8 @@ import 'package:flutter/rendering.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:charts_flutter/src/text_element.dart' as chartText;
+import 'package:charts_flutter/src/text_style.dart' as chartStyle;
 
 class HistoricalPage extends StatefulWidget {
   @override
@@ -20,6 +24,8 @@ class HistoricalPage extends StatefulWidget {
 }
 
 class HistoricalPageState extends State<HistoricalPage> {
+
+
   final AutheticatingServicing authenticationService = AutheticationService.shared;
   final DateFormat kDateFormat = DateFormat("dd MMM yy");
 
@@ -40,7 +46,7 @@ class HistoricalPageState extends State<HistoricalPage> {
 
   var _didLoadSensors = false;
   var _didLoadChart = false;
-
+  var selectedDatum = [];
 
   MeasurementType _currentMeasurementType = MeasurementType.temperature;
 
@@ -142,7 +148,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               textAlign: TextAlign.center,
 
               style: TextStyle(color: Colors.white,
-                  fontSize: 14,
+                  fontSize: 13,
                   fontFamily: 'Poppins')),
             Spacer(),
             sensorSelector(context),
@@ -156,7 +162,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               textAlign: TextAlign.center,
 
               style: TextStyle(color: Colors.white,
-                  fontSize: 14,
+                  fontSize: 13,
                   fontFamily: 'Poppins')),
             Spacer(),
             dateRangeSelector(context),
@@ -170,7 +176,7 @@ class HistoricalPageState extends State<HistoricalPage> {
                 textAlign: TextAlign.center,
 
                 style: TextStyle(color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontFamily: 'Poppins')),
             Spacer(),
             measerementSelector(context),
@@ -307,7 +313,7 @@ class HistoricalPageState extends State<HistoricalPage> {
   Widget measerementSelector(BuildContext context) {
     return
       Container(
-          width: 200,
+          width: 180,
           alignment: Alignment.center,
           color: ColorProvider.shared.standardAppButtonColor,
           child:
@@ -341,7 +347,7 @@ class HistoricalPageState extends State<HistoricalPage> {
     Widget dateRangeSelector(BuildContext context) {
       return
         Container(
-          width: 200,
+          width: 180,
           alignment: Alignment.center,
           color: ColorProvider.shared.standardAppButtonColor,
           child: TextButton(child: Text(
@@ -358,7 +364,7 @@ class HistoricalPageState extends State<HistoricalPage> {
       Widget sensorSelector(BuildContext context) {
         return
           Container(
-            width: 200,
+            width: 180,
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppButtonColor,
             child:   DropdownButton<Sensor>(
@@ -388,7 +394,12 @@ class HistoricalPageState extends State<HistoricalPage> {
    }
 
   Widget chart(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     if(_didLoadChart == true) {
+      final currentUnit = AppLocalizations.of(context).translate(_currentMeasurementType.unitName());
+      final simpleCurrencyFormatter =  charts.BasicNumericTickFormatterSpec((num value){ return '$value' + currentUnit;});
+
       List<MeasurementData> data = seriesList.first.data as List<
           MeasurementData>;
       List<DateTime> dataTime = data.map((e) {
@@ -412,7 +423,35 @@ class HistoricalPageState extends State<HistoricalPage> {
             child: charts.TimeSeriesChart(seriesList,
               animate: false,
               flipVerticalAxis: false,
-              //primaryMeasureAxis: charts.AxisSpec(showAxisLine: false),
+              selectionModels: [
+                charts.SelectionModelConfig(
+                    type: charts.SelectionModelType.info,
+                    changedListener: (charts.SelectionModel model) {
+                      if(model.hasDatumSelection) {
+                        print(model.selectedSeries[0].domainFn(model.selectedDatum[0].index));
+                        print(model.selectedSeries[0].measureFn(model.selectedDatum[0].index));
+                      }
+                    }
+
+                )
+              ],
+
+              primaryMeasureAxis: new charts.NumericAxisSpec(
+              tickFormatterSpec: simpleCurrencyFormatter,
+                  renderSpec: new charts.GridlineRendererSpec(
+                    // Display the measure axis labels below the gridline.
+                    //
+                    // 'Before' & 'after' follow the axis value direction.
+                    // Vertical axes draw 'before' below & 'after' above the tick.
+                    // Horizontal axes draw 'before' left & 'after' right the tick.
+                    labelAnchor: charts.TickLabelAnchor.centered,
+
+                    // Left justify the text in the axis.
+                    //
+                    // Note: outside means that the secondary measure axis would right
+                    // justify.
+                    labelJustification: charts.TickLabelJustification.outside,
+                  )),
               domainAxis: charts.DateTimeAxisSpec(
                 showAxisLine: true,
                 tickProviderSpec: charts.DayTickProviderSpec(
@@ -438,4 +477,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           child:LoadingIndicator()));
     }
   }
+
 }
+
+
