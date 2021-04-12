@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:flutter/rendering.dart';
+import 'package:Whiff/customView/AirStatePage.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -25,6 +26,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   final double _kImageWidth = 120;
   final double _kImageHeight = 60;
   bool _didLoad = false;
+  bool _showState = false;
 
   OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
@@ -111,7 +113,7 @@ class OnboardingPageState extends State<OnboardingPage> {
 
     _airStateSubscription = _viewModel.currentState().listen((airState) {
         this._currentAirState = airState;
-        print(airState);
+        this._showState = true;
         this.setState(() {});
     });
 
@@ -193,13 +195,15 @@ class OnboardingPageState extends State<OnboardingPage> {
           iconTheme: IconThemeData(
               color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
-      SingleChildScrollView(
-        child: (_error != null) ? failureView(_error, () {
-          this._reload();
-        }, () async {
-          await this._mailToSupport();
-        }) :
-        Column(
+      (_error != null) ? failureView(_error, () {
+        this._reload();
+      }, () async {
+        await this._mailToSupport();
+      }) :
+      (_showState == true) ?
+      this.showAirState()
+          :SingleChildScrollView(
+        child: Column(
           children: [
             SizedBox(height: 60),
             Image.asset('assets/cloud-sun-solid.png', width: _kImageWidth,
@@ -345,6 +349,25 @@ class OnboardingPageState extends State<OnboardingPage> {
           await this._mailToSupport();
         })
       ],
+    );
+  }
+
+  Widget showAirState() {
+    return Center(
+      child:
+        Column(
+
+        mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+
+      children: [
+        AirStatePage(this._currentAirState, () {
+          this._showState = false;
+          setState(() {});
+        }),
+        ]),
+
+
     );
   }
 }
