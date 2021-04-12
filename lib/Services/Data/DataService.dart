@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 abstract class DataServicing {
    void fetchSensors() async { }
+   void fetchState() async { }
    void fetchCurrentMeasurement(int sensorId) async { }
    void fetchHistoricalData(DateTime startDate, DateTime endDate, int sensorId) async { }
    Stream<ServerResponse<List<Sensor>>> fetchedSensors();
@@ -30,7 +31,6 @@ class DataService extends DataServicing  {
   final _currentMeasurementSubject = PublishSubject<ServerResponse<Measurement>>();
 
   final _historicalMeasurementsSubject = PublishSubject<ServerResponse<List<Measurement>>>();
-
 
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
@@ -105,8 +105,6 @@ class DataService extends DataServicing  {
   }
 
   void fetchHistoricalData(DateTime startDate, DateTime endDate, int sensorId) async {
-
-
     String startDateString = startDate.year.toString() + (startDate.month > 9 ? "-":"-0") + startDate.month.toString() + (startDate.day > 9 ? "-":"-0") +startDate.day.toString() + " 0";
     String endDateString = endDate.year.toString() + (endDate.month > 9 ? "-":"-0") + endDate.month.toString() + (endDate.day > 9 ? "-":"-0") + endDate.day.toString() + " 23";
 
@@ -118,8 +116,7 @@ class DataService extends DataServicing  {
     } else if (response.responseObject["data"] != null) {
       Map<String, dynamic> data = response.responseObject["data"];
       List<dynamic> measures = data["measures"];
-      
-      
+
       final measuresList = measures.map((dictionary){
         return Measurement(double.parse(dictionary["PM1"]),
                            double.parse(dictionary["PM10"]),
@@ -130,12 +127,7 @@ class DataService extends DataServicing  {
                              double.parse(dictionary["TEMPERATURA"]),
                              DateTime.parse(dictionary["DATA_GODZINA"]));
       });
-      // if(measuresList.length < 300) {
-      //
-      //
-      //
-      //
-      // } else {
+
         int paramater = (measuresList.length/300).round() + 1;
 
         List<Measurement> list = [];
@@ -148,18 +140,13 @@ class DataService extends DataServicing  {
         print(measuresList);
         print(list.length);
       _historicalMeasurementsSubject.add(ServerResponse(list, null));
-
-     // }
-
-
-
     } else {
       _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
     }
 
-
-
+    void fetchState() async {
+      var response = await networkService.makeRequest(RequestMethod.get, "/currentStateData", null ,_autheticatingService.authorizationHeader());
+      print(response);
+    }
   }
-
-
 }
