@@ -1,10 +1,12 @@
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Networking/Networking.dart';
 import 'package:Whiff/Services/Networking/ServerResponse.dart';
+import 'package:Whiff/model/AirState.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:Whiff/model/AirState.dart';
 
 abstract class DataServicing {
    void fetchSensors() async { }
@@ -14,6 +16,8 @@ abstract class DataServicing {
    Stream<ServerResponse<List<Sensor>>> fetchedSensors();
    Stream<ServerResponse<Measurement>> currentMeasurement();
    Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
+   Stream<ServerResponse<AirState>> currentState();
+
 
 }
 
@@ -32,6 +36,9 @@ class DataService extends DataServicing  {
 
   final _historicalMeasurementsSubject = PublishSubject<ServerResponse<List<Measurement>>>();
 
+  final _curentStateSubject = ReplaySubject<ServerResponse<AirState>>(maxSize: 1);
+
+
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
   }
@@ -44,6 +51,10 @@ class DataService extends DataServicing  {
     return _historicalMeasurementsSubject.stream;
   }
 
+  Stream<ServerResponse<AirState>> currentState() {
+    return _curentStateSubject.stream;
+  }
+
   NetworkingServicing networkService = NetworkService.shared;
 
   NetworkingServicing _networkService = NetworkService.shared;
@@ -52,7 +63,6 @@ class DataService extends DataServicing  {
   void fetchSensors() async {
     var response = await networkService.makeRequest(RequestMethod.get, "/sensorList", { }, _autheticatingService.authorizationHeader());
     if (response.error != null) {
-      print("error");
       _fetchedSensorsSubject.add(ServerResponse(null, response.error));
     } else {
       if (response.responseObject != null) {
@@ -108,8 +118,6 @@ class DataService extends DataServicing  {
     String startDateString = startDate.year.toString() + (startDate.month > 9 ? "-":"-0") + startDate.month.toString() + (startDate.day > 9 ? "-":"-0") +startDate.day.toString() + " 0";
     String endDateString = endDate.year.toString() + (endDate.month > 9 ? "-":"-0") + endDate.month.toString() + (endDate.day > 9 ? "-":"-0") + endDate.day.toString() + " 23";
 
-    print(startDateString);
-    print(endDateString);
     var response = await networkService.makeRequest(RequestMethod.get, "/sensorData", {"sensorId": sensorId.toString(), "startDate": startDateString, "endDate":endDateString}, _autheticatingService.authorizationHeader());
     if(response.error != null) {
       _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
@@ -136,17 +144,31 @@ class DataService extends DataServicing  {
             list.add(measuresList.elementAt(i));
           }
         }
-        print(paramater);
-        print(measuresList);
-        print(list.length);
       _historicalMeasurementsSubject.add(ServerResponse(list, null));
     } else {
       _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
     }
+  }
 
-    void fetchState() async {
-      var response = await networkService.makeRequest(RequestMethod.get, "/currentStateData", null ,_autheticatingService.authorizationHeader());
-      print(response);
-    }
+
+  void fetchState() async {
+    var response = await networkService.makeRequest(RequestMethod.get, "/currentStateData", {} ,_autheticatingService.authorizationHeader());
+     if(response.error != null) {
+       _curentStateSubject.add(ServerResponse(null, response.error));
+     } else if(response.responseObject["data"] != null) {
+       var data = response.responseObject["data"];
+       var measurement = Measurement(double.parse(data["PM1"]),
+           double.parse(data["PM10"]),
+           double.parse(data["PM25"]),
+           double.parse(data["WILGOTNOSC"]),
+           double.parse(data["FORMALDEHYD"]),
+           double.parse(data["CO2"]),
+           double.parse(data["TEMPERATURA"]),
+           DateTime.parse(data["CZAS"]));
+           _curentStateSubject.add(ServerResponse(measurement.getState(), null));
+     } else {
+       _curentStateSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+
+     }
   }
 }

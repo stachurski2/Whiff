@@ -10,7 +10,7 @@ import 'package:Whiff/modules/measurement/MasurementPage.dart';
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
-
+import 'package:Whiff/model/AirState.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
@@ -30,6 +30,8 @@ class OnboardingPageState extends State<OnboardingPage> {
 
   StreamSubscription onboardingState;
 
+  StreamSubscription _airStateSubscription;
+
   StreamSubscription sensorListSubscription;
 
   StreamSubscription sensorListErrorSubscription;
@@ -37,6 +39,7 @@ class OnboardingPageState extends State<OnboardingPage> {
 
   var _sensors = List<Sensor>();
   WhiffError _error;
+  AirState _currentAirState;
 
   final AutheticatingServicing authenticationService = AutheticationService
       .shared;
@@ -71,6 +74,7 @@ class OnboardingPageState extends State<OnboardingPage> {
     _didLoad = false;
     setState(() {});
     _viewModel.fetchSensors();
+    _viewModel.fetchState();
   }
 
   @override
@@ -84,6 +88,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
+    _viewModel.fetchState();
     onboardingState = _viewModel.currentAuthState().listen((state) {
       if (state.signedIn == false) {
         Navigator.pop(context);
@@ -102,6 +107,13 @@ class OnboardingPageState extends State<OnboardingPage> {
           this._error = error;
           this.setState(() {});
         });
+
+
+    _airStateSubscription = _viewModel.currentState().listen((airState) {
+        this._currentAirState = airState;
+        print(airState);
+        this.setState(() {});
+    });
 
     _viewModel.fetchSensors();
   }

@@ -61,6 +61,9 @@ flutter:
     - assets/cloud-sun-solid.png
     - assets/sad-tear-solid.png
     - assets/meh-solid.png
+    - assets/sad-tear-solid.png
+    - assets/smile-solid.png
+    - assets/frown-solid.png
     - lang/
     - lang/en.json
   fonts:
