@@ -26,7 +26,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   final double _kImageWidth = 120;
   final double _kImageHeight = 60;
   bool _didLoad = false;
-  bool _showState = false;
+  bool _showState = true;
 
   OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
@@ -90,7 +90,6 @@ class OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    _viewModel.fetchState();
     onboardingState = _viewModel.currentAuthState().listen((state) {
       if (state.signedIn == false) {
         Navigator.pop(context);
@@ -101,6 +100,13 @@ class OnboardingPageState extends State<OnboardingPage> {
       this.setState(() {
         this._sensors = sensorList;
         this._didLoad = true;
+        if(sensorList.isEmpty) {
+          this._showState = false;
+        } else {
+          if(this._currentAirState == AirState.unknown) {
+            this._showState = false;
+          }
+        }
       });
     });
 
@@ -113,80 +119,17 @@ class OnboardingPageState extends State<OnboardingPage> {
 
     _airStateSubscription = _viewModel.currentState().listen((airState) {
         this._currentAirState = airState;
-        this._showState = true;
+        if(airState == AirState.unknown && this._sensors.isNotEmpty == true) {
+          this._showState = false;
+        }
         this.setState(() {});
     });
 
     _viewModel.fetchSensors();
+    _viewModel.fetchState();
   }
 
   Widget build(BuildContext context) {
-    Widget sensorListView() {
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.zero,
-        itemCount: _sensors.length,
-        itemBuilder: (BuildContext context, int index) {
-          return
-            GestureDetector(child:
-            Container(
-                decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(
-                        color: ColorProvider.shared
-                            .standardAppButtonBorderColor),
-                        top: BorderSide(
-                            color: index == 0 ? ColorProvider.shared
-                                .standardAppButtonBorderColor : Colors
-                                .transparent)),
-                    color: ColorProvider.shared.sensorCellBackgroundColor),
-                child:
-                Column(
-                  children: [
-                    SizedBox(height: 20),
-
-                    Row(mainAxisAlignment: MainAxisAlignment.center,
-                        children: [ Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
-                            style: TextStyle(fontSize: 22,
-                                fontFamily: 'Poppins')),
-                          SizedBox(width: 20),
-                          Column(
-                            children: [ Text(
-                                AppLocalizations.of(context).translate("sensor_word") + ": " +_sensors[index].name,
-                                textAlign: TextAlign.left), Text(
-                                AppLocalizations.of(context).translate("location_word") + ": " + _sensors[index].locationName,
-                                textAlign: TextAlign.left)
-                            ],)
-
-                        ]),
-
-
-                    SizedBox(height: 20)
-
-                  ],)
-            ),
-              onTap: () =>
-              {
-                this.showMeasurementPage(_sensors[index])
-              },
-            );
-        },);
-    }
-
-    Widget failureView(WhiffError error, VoidCallback onPressedReloadButton,
-        VoidCallback onPressedContactButton) {
-      return Column(
-        children: [
-          SizedBox(height: 60),
-          Image.asset('assets/whiffLogo.png', width: _kImageWidth,
-              height: _kImageHeight),
-
-          FailurePage(error, onPressedReloadButton, onPressedContactButton),
-        ],
-      );
-    }
-
     return WillPopScope(child: Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
@@ -199,7 +142,7 @@ class OnboardingPageState extends State<OnboardingPage> {
         this._reload();
       }, () async {
         await this._mailToSupport();
-      }) :
+      }) : (_didLoad == true && _sensors.isEmpty == true) ? emptyList() :
       (_showState == true) ?
       this.showAirState()
           :SingleChildScrollView(
@@ -335,25 +278,82 @@ class OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
+  Widget sensorListView() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      padding: EdgeInsets.zero,
+      itemCount: _sensors.length,
+      itemBuilder: (BuildContext context, int index) {
+        return
+          GestureDetector(child:
+          Container(
+              decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(
+                      color: ColorProvider.shared
+                          .standardAppButtonBorderColor),
+                      top: BorderSide(
+                          color: index == 0 ? ColorProvider.shared
+                              .standardAppButtonBorderColor : Colors
+                              .transparent)),
+                  color: ColorProvider.shared.sensorCellBackgroundColor),
+              child:
+              Column(
+                children: [
+                  SizedBox(height: 20),
+
+                  Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [ Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
+                          style: TextStyle(fontSize: 22,
+                              fontFamily: 'Poppins')),
+                        SizedBox(width: 20),
+                        Column(
+                          children: [ Text(
+                              AppLocalizations.of(context).translate("sensor_word") + ": " +_sensors[index].name,
+                              textAlign: TextAlign.left), Text(
+                              AppLocalizations.of(context).translate("location_word") + ": " + _sensors[index].locationName,
+                              textAlign: TextAlign.left)
+                          ],)
+
+                      ]),
+
+
+                  SizedBox(height: 20)
+
+                ],)
+          ),
+            onTap: () =>
+            {
+              this.showMeasurementPage(_sensors[index])
+            },
+          );
+      },);
+  }
+
 
   Widget emptyList() {
-    return Column(
-      children: [
-        // SizedBox(height: 60),
-        // Image.asset('assets/whiffLogo.png', width: _kImageWidth,
-        //     height: _kImageHeight),
-
+    return
+         Center(child:
         FailurePage(WhiffError(1002,     AppLocalizations.of(context).translate('failure_page_empty_sensors_list_message')), () {
           this._reload();
         }, () async {
           await this._mailToSupport();
         })
-      ],
+
     );
   }
 
   Widget showAirState() {
-    return Center(
+    return
+
+      AnimatedOpacity(
+        // If the widget is visible, animate to 0.0 (invisible).
+        // If the widget is hidden, animate to 1.0 (fully visible).
+        opacity: _showState ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 2000),
+      child:
+      Center(
       child:
         Column(
 
@@ -363,11 +363,24 @@ class OnboardingPageState extends State<OnboardingPage> {
       children: [
         AirStatePage(this._currentAirState, () {
           this._showState = false;
-          setState(() {});
+            setState(() {});
         }),
         ]),
 
 
+    ));
+  }
+
+  Widget failureView(WhiffError error, VoidCallback onPressedReloadButton,
+      VoidCallback onPressedContactButton) {
+    return Column(
+      children: [
+        SizedBox(height: 60),
+        Image.asset('assets/whiffLogo.png', width: _kImageWidth,
+            height: _kImageHeight),
+
+        FailurePage(error, onPressedReloadButton, onPressedContactButton),
+      ],
     );
   }
 }

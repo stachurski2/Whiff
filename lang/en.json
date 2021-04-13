@@ -16,8 +16,26 @@
   "sensor_word": "Sensor",
   "location_word": "Location",
 
+  "air_page_loading_label_text": "Loading",
+  "air_page_show_details_label_text": "Show Details",
+
   "onboarding_select_sensor_text": "Select Sensor",
-  "onboarding_loading_sensors_text": "Loading sensors list",
+  "onboarding_loading_sensors_text": "Loading current data",
+
+  "onboarding_air_state_good": "Air is good outside",
+  "onboarding_air_state_good_description": "No critical alerts about the air outside. \nFeel free with physical activity outside or ventilating rooms.",
+
+  "onboarding_air_state_moderate": "Air is moderate outside",
+  "onboarding_air_state_moderate_description": "No critical alerts about the air outside.  \nFeel free with physical activity outside or ventilating rooms.",
+
+  "onboarding_air_state_bad": "Air is bad outside",
+  "onboarding_air_state_bad_description": "Consider limit or postpone physical activity outside. Symptoms like cough or sore throat could occur, especially in sensitive ones (pregnant women or children).",
+
+  "onboarding_air_state_very_bad": "Air is very bad outside",
+  "onboarding_air_state_very_bad_description": "Do not ventilate rooms. Sensitive ones (especially pregnant women and children) should avoid activity outside.",
+
+  "onboarding_air_state_unknown": "Air state is unknown",
+  "onboarding_air_state_unknown_description": "The WhiffApp couldn't get air state, please contact support to resolve problem.",
 
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",

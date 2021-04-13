@@ -205,12 +205,14 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.humidity.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                     Text(AppLocalizations.of(context).translate(MeasurementType.humidity.unitName()), style: TextStyle(
+                        color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -245,12 +247,14 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.pm10Level.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: _measurement.pm10LevelNorm().levelColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                     Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.unitName()), style: TextStyle(
+                        color: _measurement.pm10LevelNorm().levelColor,
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -285,12 +289,14 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.pm25level.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: _measurement.pm25LevelNorm().levelColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                     Text(AppLocalizations.of(context).translate(MeasurementType.pm25level.unitName()), style: TextStyle(
+                        color: _measurement.pm25LevelNorm().levelColor,
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -325,12 +331,14 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.pm1Level.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: _measurement.pm1LevelNorm().levelColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                     Text(AppLocalizations.of(context).translate(MeasurementType.pm1level.unitName()), style: TextStyle(
+                        color: _measurement.pm1LevelNorm().levelColor,
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -365,12 +373,14 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.co2level.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                     Text((AppLocalizations.of(context).translate(MeasurementType.co2level.unitName())), style: TextStyle(
+                        color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
                         fontSize: 17,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
@@ -405,14 +415,16 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _measurement.formaldehyde.toString(),
                         textAlign: TextAlign.start,
                         style: TextStyle(
+                            color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
                             fontSize: 17,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold)),
                     SizedBox(width: 5,),
 
                       Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.unitName())), style: TextStyle(
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
+                          fontSize: 17,
+                          color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                          fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold))
 
                   ],)

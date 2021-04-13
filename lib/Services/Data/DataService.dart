@@ -17,8 +17,6 @@ abstract class DataServicing {
    Stream<ServerResponse<Measurement>> currentMeasurement();
    Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
    Stream<ServerResponse<AirState>> currentState();
-
-
 }
 
 class DataService extends DataServicing  {
@@ -36,8 +34,7 @@ class DataService extends DataServicing  {
 
   final _historicalMeasurementsSubject = PublishSubject<ServerResponse<List<Measurement>>>();
 
-  final _curentStateSubject = ReplaySubject<ServerResponse<AirState>>(maxSize: 1);
-
+  final _curentStateSubject = PublishSubject<ServerResponse<AirState>>();
 
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
@@ -76,7 +73,8 @@ class DataService extends DataServicing  {
                   sensorsData[i]["locationName"],
                   sensorsData[i]["locationLat"],
                   sensorsData[i]["locationLon"],
-                  sensorsData[i]["locationTimeZone"]));
+                  sensorsData[i]["locationTimeZone"],
+                  sensorsData[i]["isInsideBuilding"]));
             }
             _fetchedSensorsSubject.add(ServerResponse(sensorList, null));
           } else {
@@ -154,9 +152,10 @@ class DataService extends DataServicing  {
   void fetchState() async {
     var response = await networkService.makeRequest(RequestMethod.get, "/currentStateData", {} ,_autheticatingService.authorizationHeader());
      if(response.error != null) {
-       _curentStateSubject.add(ServerResponse(null, response.error));
+       _curentStateSubject.add(ServerResponse(AirState.unknown, null));
      } else if(response.responseObject["data"] != null) {
        var data = response.responseObject["data"];
+       print(response.responseObject);
        var measurement = Measurement(double.parse(data["PM1"]),
            double.parse(data["PM10"]),
            double.parse(data["PM25"]),
@@ -167,7 +166,7 @@ class DataService extends DataServicing  {
            DateTime.parse(data["CZAS"]));
            _curentStateSubject.add(ServerResponse(measurement.getState(), null));
      } else {
-       _curentStateSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+       _curentStateSubject.add(ServerResponse(AirState.unknown, null));
 
      }
   }
