@@ -1,14 +1,12 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '9.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-project 'Runner', {
-  'Debug' => :debug,
-  'Profile' => :release,
-  'Release' => :release,
-}
+project 'Runner.xcproj'
+platform :ios, '9.0'
+use_frameworks!
+use_modular_headers!
 
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
@@ -28,9 +26,10 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
-  use_modular_headers!
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
 
+target 'Whiff' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

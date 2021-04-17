@@ -3,10 +3,18 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@android:color/white" />
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+
+    <item
+        android:top="100dp"
+        android:bottom="100dp"
+        android:left="30dp"
+        android:right="30dp">
+
         <bitmap
-            android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/export" />
+    </item>
+
 </layer-list>

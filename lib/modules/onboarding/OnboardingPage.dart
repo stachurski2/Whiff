@@ -345,11 +345,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget showAirState() {
-    return
-
-      AnimatedOpacity(
-        // If the widget is visible, animate to 0.0 (invisible).
-        // If the widget is hidden, animate to 1.0 (fully visible).
+    return AnimatedOpacity(
         opacity: _showState ? 1.0 : 0.0,
         duration: Duration(milliseconds: 2000),
       child:
