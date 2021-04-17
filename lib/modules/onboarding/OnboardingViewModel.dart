@@ -7,13 +7,22 @@ import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/model/AirState.dart';
 abstract class OnboardingViewModelContract {
   Stream<AutheticationState> currentAuthState();
+
   Stream<List<Sensor>> sensorsList();
+
   Stream<WhiffError> sensorsListFetchError();
+
   Stream<AirState> currentState();
+
   String signedInEmail();
+
   void signOut();
+
   void fetchSensors();
+
   void fetchState();
+
+  void fetchMeasurement(Sensor sensor);
 }
 
 class OnboardingViewModel extends OnboardingViewModelContract {
@@ -39,6 +48,10 @@ class OnboardingViewModel extends OnboardingViewModelContract {
 
   void fetchState() {
     _dataService.fetchState();
+  }
+
+  void fetchMeasurement(Sensor sensor) {
+    _dataService.fetchCurrentMeasurement(sensor.externalIdentfier);
   }
 
   Stream<List<Sensor>> sensorsList() {

@@ -35,6 +35,7 @@ dependencies:
 
 
   flutter_launcher_icons: "^0.8.1"
+  maps_launcher: ^1.2.2+2
 
 flutter_icons:
   image_path: "assets/AppIcon.png"
@@ -64,6 +65,11 @@ flutter:
     - assets/sad-tear-solid.png
     - assets/smile-solid.png
     - assets/frown-solid.png
+    - assets/good_small.png
+    - assets/room_24px.png
+    - assets/moderate_small.png
+    - assets/sad_small.png
+    - assets/verysad_small.png
     - lang/
     - lang/en.json
   fonts:

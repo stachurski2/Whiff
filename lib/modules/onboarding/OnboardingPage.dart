@@ -5,6 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/customView/FailurePage.dart';
 import 'package:Whiff/model/WhiffError.dart';
+import 'package:Whiff/model/Measurement.dart';
+
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
@@ -16,7 +18,7 @@ import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:flutter/rendering.dart';
 import 'package:Whiff/customView/AirStatePage.dart';
-
+import 'package:maps_launcher/maps_launcher.dart';
 class OnboardingPage extends StatefulWidget {
   @override
   OnboardingPageState createState() => OnboardingPageState();
@@ -39,7 +41,9 @@ class OnboardingPageState extends State<OnboardingPage> {
   StreamSubscription sensorListErrorSubscription;
 
 
-  var _sensors = List<Sensor>();
+  List<Sensor> _sensors = [];
+  List<Measurement> _measurements = [];
+
   WhiffError _error;
   AirState _currentAirState;
 
@@ -108,6 +112,9 @@ class OnboardingPageState extends State<OnboardingPage> {
           }
         }
       });
+      sensorList.forEach((sensor) {
+        _viewModel.fetchMeasurement(sensor);
+      });
     });
 
     sensorListErrorSubscription =
@@ -151,8 +158,6 @@ class OnboardingPageState extends State<OnboardingPage> {
         child: Column(
           children: [
             SizedBox(height: 60),
-            Image.asset('assets/cloud-sun-solid.png', width: _kImageWidth,
-                height: _kImageHeight),
             Image.asset('assets/whiffLogo.png', width: _kImageWidth,
                 height: _kImageHeight),
             (_didLoad && _sensors.length > 0) ? Text(AppLocalizations.of(context).translate('onboarding_select_sensor_text'),
@@ -289,36 +294,82 @@ class OnboardingPageState extends State<OnboardingPage> {
       itemCount: _sensors.length,
       itemBuilder: (BuildContext context, int index) {
         return
+          Wrap(
+            children:[
+              SizedBox(height: 13, width: 100,),
           GestureDetector(child:
           Container(
               decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(
+                    width: 0.5,
                       color: ColorProvider.shared
-                          .standardAppButtonBorderColor),
+                          .standardAppButtonBorderColor,),
                       top: BorderSide(
-                          color: index == 0 ? ColorProvider.shared
-                              .standardAppButtonBorderColor : Colors
-                              .transparent)),
+                          width: 0.5,
+                          color:  ColorProvider.shared.standardAppButtonBorderColor)),
                   color: ColorProvider.shared.sensorCellBackgroundColor),
               child:
               Column(
                 children: [
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  Row(mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 15),
+                        Expanded(child:
+                        Column(children: [
+                          Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
+                              style: TextStyle(fontSize: 22,
+                                  fontFamily: 'Poppins')),
+                          TextButton(
+                              onPressed: () {
+                                MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, "Whiff Sensor");
+                              },
+                              child: Image.asset('assets/room_24px.png', scale: 2))
+                                    ],),),
 
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [ Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
-                          style: TextStyle(fontSize: 22,
-                              fontFamily: 'Poppins')),
-                        SizedBox(width: 20),
+                        Expanded(child:
+
                         Column(
-                          children: [ Text(
-                              AppLocalizations.of(context).translate("sensor_word") + ": " +_sensors[index].name,
-                              textAlign: TextAlign.left), Text(
-                              AppLocalizations.of(context).translate("location_word") + ": " + _sensors[index].locationName,
-                              textAlign: TextAlign.left)
-                          ],)
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
+                          children: [
+                            SizedBox(height: 18),
+
+                            _sensors[index].isInsideBuilding ? Text(AppLocalizations.of(context).translate("device_indoor_sensor"),   textAlign: TextAlign.left,   style: TextStyle(fontSize: 12,
+                                fontFamily: 'Poppins',)): Text(AppLocalizations.of(context).translate("device_outdoor_sensor"),    textAlign: TextAlign.left,  style: TextStyle(fontSize: 12,
+                                fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+
+                            Text(
+                              AppLocalizations.of(context).translate("device_number_word") +_sensors[index].externalIdentfier.toString(),
+                              textAlign: TextAlign.left,  style: TextStyle(fontSize: 12,
+                              fontFamily: 'Poppins',),), Text(
+                              AppLocalizations.of(context).translate("location_word")  + _sensors[index].locationName,
+                              textAlign: TextAlign.left, maxLines: 2,style: TextStyle(fontSize: 12,
+        fontFamily: 'Poppins',))
+                          ],),
+                        ),
+                        SizedBox(width: 5),
+                        Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                              SizedBox(height: 45),
+                              Text("- *C")]),
+                        SizedBox(width: 15),
+                        Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                                SizedBox(height: 25),
+                                Image.asset('assets/good_small.png', width: 54,
+                                    height: 54)]),
+                        SizedBox(width: 15),
                       ]),
+
 
 
                   SizedBox(height: 20)
@@ -329,7 +380,7 @@ class OnboardingPageState extends State<OnboardingPage> {
             {
               this.showMeasurementPage(_sensors[index])
             },
-          );
+          )]);
       },);
   }
 

@@ -14,12 +14,15 @@
   "login_login_remind_password_title": "Forgotten Password",
 
   "sensor_word": "Sensor",
-  "location_word": "Location",
+  "device_outdoor_sensor": "outdoor sensor",
+  "device_indoor_sensor": "indoor sensor",
+  "device_number_word": "device number: ",
+  "location_word": "location: ",
 
   "air_page_loading_label_text": "Loading",
   "air_page_show_details_label_text": "Show Details",
 
-  "onboarding_select_sensor_text": "Select Sensor",
+  "onboarding_select_sensor_text": "CURRENT DATA",
   "onboarding_loading_sensors_text": "Loading current data",
 
   "onboarding_air_state_good": "Air is good outside",
@@ -51,7 +54,6 @@
   "menu_historical_data_button": "Historical data",
   "menu_account_settings_button": "Account Settings",
   "menu_sing_out_button": "Sign out",
-
 
   "measurement_type_temperature": "Temperature",
   "measurement_type_pm1level": "PM1",
