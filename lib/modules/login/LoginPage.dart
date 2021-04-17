@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
 import 'dart:async';
+import 'dart:io' show Platform;
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -27,7 +29,6 @@ class LoginPageState extends State<LoginPage> {
   var _firstTextfieldController = TextEditingController();
   var _secondTextfieldController = TextEditingController();
   var _thirdTextfieldController = TextEditingController();
-
 
   final double _kImageWidth = 300;
   final double _kImageHeight = 150;
@@ -107,7 +108,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return  WillPopScope(
       onWillPop: () {
         this._handleViewState(LoginViewState.loginUser);
         this.setState((){});
@@ -128,6 +129,13 @@ class LoginPageState extends State<LoginPage> {
                _currentPageState == LoginViewState.registerUser ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    (Platform.isIOS) ?  IconButton(icon: Icon(Icons.arrow_back_ios,
+                        color: ColorProvider.shared.standardAppButtonColor),
+                      onPressed: (){
+                        this._handleViewState(LoginViewState.loginUser);
+                        this.setState((){});
+                      },
+                    ):SizedBox(height: 0,width: 0),
                     Text(
                         AppLocalizations.of(context).translate('login_login_registration_title'),
                         style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),
@@ -137,6 +145,13 @@ class LoginPageState extends State<LoginPage> {
               ): _currentPageState == LoginViewState.remindPassword ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    (Platform.isIOS) ?  IconButton(icon: Icon(Icons.arrow_back_ios,
+                        color: ColorProvider.shared.standardAppButtonColor),
+                      onPressed: (){
+                        this._handleViewState(LoginViewState.loginUser);
+                        this.setState((){});
+                      },
+                    ):SizedBox(height: 0,width: 0),
                     Text(
                         AppLocalizations.of(context).translate('login_login_remind_password_title'),
                         style: TextStyle(fontSize: _kTopLabelFontSize, fontFamily: 'Poppins', fontWeight: FontWeight.bold),

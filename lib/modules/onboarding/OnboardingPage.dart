@@ -130,7 +130,9 @@ class OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget build(BuildContext context) {
-    return WillPopScope(child: Scaffold(
+
+    return WillPopScope(child:
+    Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
       appBar: AppBar(backgroundColor: Colors.transparent,
@@ -335,7 +337,8 @@ class OnboardingPageState extends State<OnboardingPage> {
   Widget emptyList() {
     return
          Center(child:
-        FailurePage(WhiffError(1002,     AppLocalizations.of(context).translate('failure_page_empty_sensors_list_message')), () {
+        FailurePage(WhiffError(1002,
+            AppLocalizations.of(context).translate('failure_page_empty_sensors_list_message')), () {
           this._reload();
         }, () async {
           await this._mailToSupport();
