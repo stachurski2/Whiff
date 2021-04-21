@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/model/Measurement.dart';
+import 'package:Whiff/modules/state/StatePage.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
@@ -230,6 +231,24 @@ class HistoricalPageState extends State<HistoricalPage> {
                   ),
                   Container(height: 80,
                       color: ColorProvider.shared.standardAppBackgroundColor),
+            Container(height: 50,
+                color: ColorProvider.shared.standardAppBackgroundColor,
+                padding: EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                child:
+                Row(children: [
+                  TextButton(onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => StatePage()));
+                  },
+                      child: Text(
+                          AppLocalizations.of(context).translate('menu_current_state_button'),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: 'Poppins')))
+                ],)
+            ),
                   Container(height: 50,
                       color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),

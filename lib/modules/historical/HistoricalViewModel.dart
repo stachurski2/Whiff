@@ -51,7 +51,7 @@ class HistoricalViewModel extends HistoricalViewModelContract {
     }).listen((data) {
 
 
-      _dataService.fetchHistoricalData(data.last.item1.start, data.last.item1.end, data.last.item2.externalIdentfier);
+      _dataService.fetchHistoricalData(data.last.item1.start, data.last.item1.end, data.last.item2);
 
     });
   }

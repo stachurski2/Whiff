@@ -26,6 +26,8 @@ extension MeasurementLevelExtension on MeasurementLevel {
 
 
 class Measurement {
+  bool isInsideBuilding;
+  int deviceNumber;
   double temperature;
   double pm1Level;
   double pm10Level;
@@ -35,9 +37,10 @@ class Measurement {
   double co2level;
   DateTime date;
 
-  Measurement(double pm1Level, double pm10Level, double pm25level,
+  Measurement(int deviceNumber, double pm1Level, double pm10Level, double pm25level,
       double humidity, double formaldehyde, double co2level, double temperature,
-      DateTime date) {
+      DateTime date,  bool isInsideBuilding) {
+    this.deviceNumber = deviceNumber;
     this.pm1Level = pm1Level;
     this.pm10Level = pm10Level;
     this.pm25level = pm25level;
@@ -46,20 +49,37 @@ class Measurement {
     this.co2level = co2level;
     this.date = date;
     this.temperature = temperature;
+    this.isInsideBuilding = isInsideBuilding;
   }
 
   AirState getState() {
-    if (pm1Level == null || pm10Level == null || pm25level == null) {
-      return AirState.unknown;
-    } else {
-      if (pm1Level < 25 && pm25level < 35 && pm10Level < 50) {
-        return AirState.good;
-      } else if (pm1Level <= 40 && pm25level <= 56 && pm10Level <= 80) {
-        return AirState.moderate;
-      } else if (pm1Level <= 50 && pm25level <= 70 && pm10Level <= 100) {
-        return AirState.bad;
+    if(isInsideBuilding == true) {
+      if (pm1Level == null || pm10Level == null || pm25level == null || humidity == null || formaldehyde == null || co2level == null ) {
+        return AirState.unknown;
       } else {
-        return AirState.veryBad;
+        if (pm1Level < 25 && pm25level < 35 && pm10Level < 50 && formaldehyde <= 50 && humidity >= 40 && humidity <= 60 && co2level <= 900) {
+          return AirState.good;
+        } else if (pm1Level <= 40 && pm25level <= 56 && pm10Level <= 80 && formaldehyde <= 120 && humidity >= 30 && humidity <= 60 && co2level <= 1000) {
+          return AirState.moderate;
+        } else if (pm1Level <= 50 && pm25level <= 70 && pm10Level <= 100) {
+          return AirState.bad;
+        } else {
+          return AirState.veryBad;
+        }
+      }
+    } else {
+      if (pm1Level == null || pm10Level == null || pm25level == null) {
+        return AirState.unknown;
+      } else {
+        if (pm1Level < 25 && pm25level < 35 && pm10Level < 50) {
+          return AirState.good;
+        } else if (pm1Level <= 40 && pm25level <= 56 && pm10Level <= 80) {
+          return AirState.moderate;
+        } else if (pm1Level <= 50 && pm25level <= 70 && pm10Level <= 100) {
+          return AirState.bad;
+        } else {
+          return AirState.veryBad;
+        }
       }
     }
   }

@@ -1,6 +1,7 @@
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
+import 'package:Whiff/modules/state/StatePage.dart';
 import 'package:Whiff/modules/login/LoginViewModel.dart';
 
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class LoginPageState extends State<LoginPage> {
       if(_didShowOnboarding == false) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => OnboardingPage()),
+          MaterialPageRoute(builder: (context) => StatePage()),
         );
         _viewModel.setSecondPassword("");
         _viewModel.setPassword("");

@@ -11,6 +11,7 @@ import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:Whiff/modules/state/StatePage.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   @override
@@ -344,6 +345,24 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                   ),
                   Container(height: 80,
                       color: ColorProvider.shared.standardAppBackgroundColor),
+                  Container(height: 50,
+                      color: ColorProvider.shared.standardAppBackgroundColor,
+                      padding: EdgeInsets.only(left: 20),
+                      alignment: Alignment.centerLeft,
+                      child:
+                      Row(children: [
+                        TextButton(onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => StatePage()));
+                        },
+                            child: Text(
+                                AppLocalizations.of(context).translate('menu_current_state_button'),
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'Poppins')))
+                      ],)
+                  ),
                   Container(height: 50,
                       color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),

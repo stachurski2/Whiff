@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'package:Whiff/Services/Networking/ServerResponse.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/Services/Data/DataService.dart';
+import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/model/AirState.dart';
@@ -9,6 +13,8 @@ abstract class OnboardingViewModelContract {
   Stream<AutheticationState> currentAuthState();
 
   Stream<List<Sensor>> sensorsList();
+
+  Stream<List<Measurement>> currentMeasurements();
 
   Stream<WhiffError> sensorsListFetchError();
 
@@ -51,7 +57,7 @@ class OnboardingViewModel extends OnboardingViewModelContract {
   }
 
   void fetchMeasurement(Sensor sensor) {
-    _dataService.fetchCurrentMeasurement(sensor.externalIdentfier);
+    _dataService.fetchCurrentMeasurement(sensor);
   }
 
   Stream<List<Sensor>> sensorsList() {
@@ -71,5 +77,20 @@ class OnboardingViewModel extends OnboardingViewModelContract {
     }).where((responseObject){
       return responseObject != null;
     });
+  }
+
+  Stream<List<Measurement>> currentMeasurements() {
+    return _dataService.currentMeasurement().transform(ScanStreamTransformer((List<Measurement> array, ServerResponse response, int index){
+
+      if(response.responseObject != null) {
+        Measurement newMeasurement = response.responseObject;
+        List<Measurement> newMeasurements = array.where((measurement) => measurement.deviceNumber != newMeasurement.deviceNumber).toList();
+        newMeasurements.add(newMeasurement);
+        return newMeasurements;
+      } else {
+        return array;
+      }
+
+    }, []));
   }
 }

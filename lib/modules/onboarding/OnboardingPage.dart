@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalPage.dart';
+import 'package:Whiff/modules/login/LoginPage.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/customView/FailurePage.dart';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/model/Measurement.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
+import 'package:Whiff/modules/state/StatePage.dart';
+
 import 'package:Whiff/modules/accountSettings/AccountSettingsPage.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
@@ -28,31 +32,32 @@ class OnboardingPageState extends State<OnboardingPage> {
   final double _kImageWidth = 120;
   final double _kImageHeight = 60;
   bool _didLoad = false;
-  bool _showState = true;
 
   OnboardingViewModelContract _viewModel = OnboardingViewModel();
 
   StreamSubscription onboardingState;
 
-  StreamSubscription _airStateSubscription;
-
   StreamSubscription sensorListSubscription;
 
+  StreamSubscription<List<Measurement>> measurementListSubscription;
+
   StreamSubscription sensorListErrorSubscription;
+  
+  Map<String, double> temperatures = Map<String, double>();
+  Map<String, AirState> states = Map<String, AirState>();
 
 
   List<Sensor> _sensors = [];
-  List<Measurement> _measurements = [];
+  Map<String, Measurement> _measurements = Map<String, Measurement>();
 
   WhiffError _error;
-  AirState _currentAirState;
 
   final AutheticatingServicing authenticationService = AutheticationService
       .shared;
 
-  void showMeasurementPage(Sensor sensor) {
+  void showMeasurementPage(Sensor sensor, Measurement measurement) {
     Navigator.push(context,
-      MaterialPageRoute(builder: (context) => MeasurementPage(sensor)),
+      MaterialPageRoute(builder: (context) => MeasurementPage(sensor, measurement)),
     );
   }
 
@@ -104,13 +109,6 @@ class OnboardingPageState extends State<OnboardingPage> {
       this.setState(() {
         this._sensors = sensorList;
         this._didLoad = true;
-        if(sensorList.isEmpty) {
-          this._showState = false;
-        } else {
-          if(this._currentAirState == AirState.unknown) {
-            this._showState = false;
-          }
-        }
       });
       sensorList.forEach((sensor) {
         _viewModel.fetchMeasurement(sensor);
@@ -124,11 +122,10 @@ class OnboardingPageState extends State<OnboardingPage> {
         });
 
 
-    _airStateSubscription = _viewModel.currentState().listen((airState) {
-        this._currentAirState = airState;
-        if(airState == AirState.unknown && this._sensors.isNotEmpty == true) {
-          this._showState = false;
-        }
+    measurementListSubscription = _viewModel.currentMeasurements().listen((list) {
+        this.temperatures = Map.fromIterable(list, key: (e) => e.deviceNumber.toString(), value: (e) => e.temperature);
+        this.states = Map.fromIterable(list, key: (e) => e.deviceNumber.toString(), value: (e) => e.getState());
+        this._measurements = Map.fromIterable(list, key: (e) => e.deviceNumber.toString(), value: (e) => e);;
         this.setState(() {});
     });
 
@@ -152,9 +149,7 @@ class OnboardingPageState extends State<OnboardingPage> {
       }, () async {
         await this._mailToSupport();
       }) : (_didLoad == true && _sensors.isEmpty == true) ? emptyList() :
-      (_showState == true) ?
-      this.showAirState()
-          :SingleChildScrollView(
+      SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 60),
@@ -201,6 +196,24 @@ class OnboardingPageState extends State<OnboardingPage> {
                   ),
                   Container(height: 80,
                       color: ColorProvider.shared.standardAppBackgroundColor),
+                  Container(height: 50,
+                      color: ColorProvider.shared.standardAppBackgroundColor,
+                      padding: EdgeInsets.only(left: 20),
+                      alignment: Alignment.centerLeft,
+                      child:
+                      Row(children: [
+                        TextButton(onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement( MaterialPageRoute(builder: (context) => StatePage()));
+                        },
+                            child: Text(
+                                AppLocalizations.of(context).translate('menu_current_state_button'),
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'Poppins')))
+                      ],)
+                  ),
                   Container(height: 50,
                       color: ColorProvider.shared.standardAppBackgroundColor,
                       padding: EdgeInsets.only(left: 20),
@@ -293,6 +306,12 @@ class OnboardingPageState extends State<OnboardingPage> {
       padding: EdgeInsets.zero,
       itemCount: _sensors.length,
       itemBuilder: (BuildContext context, int index) {
+        double temperature =  temperatures[_sensors[index].externalIdentfier.toString()];
+        AirState state = states[_sensors[index].externalIdentfier.toString()];
+      Measurement measurement = _measurements[_sensors[index].externalIdentfier.toString()];
+        if(temperature == null || state == null) {
+          _viewModel.fetchMeasurement(_sensors[index]);
+        }
         return
           Wrap(
             children:[
@@ -315,20 +334,22 @@ class OnboardingPageState extends State<OnboardingPage> {
                   Row(mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(width: 15),
-                        Expanded(child:
+                        SizedBox(width: 10),
+                      //  Expanded(child:
                         Column(children: [
                           Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
-                              style: TextStyle(fontSize: 22,
+                              style: TextStyle(fontSize: 17,
                                   fontFamily: 'Poppins')),
                           TextButton(
                               onPressed: () {
                                 MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, "Whiff Sensor");
                               },
                               child: Image.asset('assets/room_24px.png', scale: 2))
-                                    ],),),
-
-                        Expanded(child:
+                                    ],),//),
+                        SizedBox(width: 10),
+                        Expanded(
+                          flex: 7,
+                          child:
 
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -343,21 +364,24 @@ class OnboardingPageState extends State<OnboardingPage> {
 
                             Text(
                               AppLocalizations.of(context).translate("device_number_word") +_sensors[index].externalIdentfier.toString(),
-                              textAlign: TextAlign.left,  style: TextStyle(fontSize: 12,
+                            /*  textAlign: TextAlign.left,*/  style: TextStyle(fontSize: 12,
                               fontFamily: 'Poppins',),), Text(
                               AppLocalizations.of(context).translate("location_word")  + _sensors[index].locationName,
-                              textAlign: TextAlign.left, maxLines: 2,style: TextStyle(fontSize: 12,
+                              /* textAlign: TextAlign.c,*/ maxLines: 2,style: TextStyle(fontSize: 12,
         fontFamily: 'Poppins',))
                           ],),
                         ),
-                        SizedBox(width: 5),
+                        SizedBox(width: 10),
+                        Expanded(
+                            flex: 3,
+                            child:
                         Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
 
                               children: [
                               SizedBox(height: 45),
-                              Text("- *C")]),
+                                temperature == null ? Text("- ℃"): Text(  sprintf('%0.0f ℃' , [temperature]) ) ])),
                         SizedBox(width: 15),
                         Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -365,8 +389,11 @@ class OnboardingPageState extends State<OnboardingPage> {
 
                               children: [
                                 SizedBox(height: 25),
-                                Image.asset('assets/good_small.png', width: 54,
-                                    height: 54)]),
+                                state == null ? CircularProgressIndicator(backgroundColor: ColorProvider.shared.loadingIndicatorCircleColor, valueColor: AlwaysStoppedAnimation<Color>(ColorProvider.shared.standardAppButtonColor)): state == AirState.good ? Image.asset('assets/good_small.png', width: 54,
+                                    height: 54): state == AirState.moderate ? Image.asset('assets/moderate_small.png', width: 54,
+                                    height: 54) :  state == AirState.bad ?  Image.asset('assets/sad_small.png', width: 54,
+                                    height: 54): Image.asset('assets/verysad_small.png', width: 54,
+                                    height: 54) ])  ,
                         SizedBox(width: 15),
                       ]),
 
@@ -378,7 +405,7 @@ class OnboardingPageState extends State<OnboardingPage> {
           ),
             onTap: () =>
             {
-              this.showMeasurementPage(_sensors[index])
+              this.showMeasurementPage(_sensors[index], measurement)
             },
           )]);
       },);
@@ -398,28 +425,7 @@ class OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget showAirState() {
-    return AnimatedOpacity(
-        opacity: _showState ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 2000),
-      child:
-      Center(
-      child:
-        Column(
 
-        mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-
-      children: [
-        AirStatePage(this._currentAirState, () {
-          this._showState = false;
-            setState(() {});
-        }),
-        ]),
-
-
-    ));
-  }
 
   Widget failureView(WhiffError error, VoidCallback onPressedReloadButton,
       VoidCallback onPressedContactButton) {

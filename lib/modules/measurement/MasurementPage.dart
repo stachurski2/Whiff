@@ -19,11 +19,14 @@ import 'package:Whiff/model/WhiffError.dart';
 
 class MeasurementPage extends StatefulWidget {
   Sensor sensor;
+  Measurement measurement;
   @override
   MeasurementPageState createState() => MeasurementPageState();
 
-  MeasurementPage(Sensor sensor) {
+  MeasurementPage(Sensor sensor, Measurement measurement) {
     this.sensor = sensor;
+    this.measurement = measurement;
+
   }
 }
 
@@ -77,11 +80,17 @@ class MeasurementPageState extends State<MeasurementPage>  {
   @override
   void initState() {
     super.initState();
+    _measurement = widget.measurement;
+    if(_measurement != null) {
+      this._didLoad = true;
+    }
     currentMeasurementSubscription = _viewModel.currentMeasurement().listen((measurement) {
-          if(measurement != null) {
-            this._measurement = measurement;
-            this._didLoad = true;
-            this.setState(() {});
+          if(measurement != null ) {
+            if(measurement.deviceNumber == widget.sensor.externalIdentfier) {
+              this._measurement = measurement;
+              this._didLoad = true;
+              this.setState(() {});
+            }
           }
     });
 
@@ -91,7 +100,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
         this.setState(() {});
       }
     });
-    _viewModel.fetchMeasurement(widget.sensor.externalIdentfier);
+    _viewModel.fetchMeasurement(widget.sensor);
   }
 
   @override
@@ -101,340 +110,8 @@ class MeasurementPageState extends State<MeasurementPage>  {
     super.deactivate();
   }
 
+
   Widget build(BuildContext context)  {
-
-    List<Widget> measurementDataWidget() {
-
-      final screenWidth = MediaQuery.of(context).size.width;
-
-      return [
-            SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                (_measurement != null)
-                    ? Text(_dateformatter.format(_measurement.date),
-                    style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
-                    : SizedBox(),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                (_measurement != null)
-                    ? Text(_hourformatter.format(_measurement.date),
-                    style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
-                    : SizedBox(),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                (_measurement != null)
-                    ? Text(widget.sensor.name,
-                    style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
-                    : SizedBox(),
-              ],
-            ),
-            SizedBox(height: 20),
-
-            Row(
-             mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                 children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.temperature.stringName())),
-                 textAlign: TextAlign.end,
-
-                 style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-                        ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                    Row(
-                      children: [
-                      SizedBox(width: 10,),
-                      Text(
-                          _measurement.temperature.toString(),
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.bold)),
-                        SizedBox(width: 5,),
-
-                        Text(AppLocalizations.of(context).translate(MeasurementType.temperature.unitName()), style: TextStyle(
-                       fontSize: 17,
-                       fontFamily: 'Poppins',
-                       fontWeight: FontWeight.bold))
-
-      ],)
-
-         ,)])
-              ],
-            ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.humidity.stringName())),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.humidity.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                    Text(AppLocalizations.of(context).translate(MeasurementType.humidity.unitName()), style: TextStyle(
-                        color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.stringName()),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.pm10Level.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: _measurement.pm10LevelNorm().levelColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                    Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.unitName()), style: TextStyle(
-                        color: _measurement.pm10LevelNorm().levelColor,
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm25level.stringName())),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.pm25level.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: _measurement.pm25LevelNorm().levelColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                    Text(AppLocalizations.of(context).translate(MeasurementType.pm25level.unitName()), style: TextStyle(
-                        color: _measurement.pm25LevelNorm().levelColor,
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm1level.stringName())),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.pm1Level.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: _measurement.pm1LevelNorm().levelColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                    Text(AppLocalizations.of(context).translate(MeasurementType.pm1level.unitName()), style: TextStyle(
-                        color: _measurement.pm1LevelNorm().levelColor,
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.co2level.stringName())),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.co2level.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                    Text((AppLocalizations.of(context).translate(MeasurementType.co2level.unitName())), style: TextStyle(
-                        color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
-                        fontSize: 17,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.stringName())),
-                    textAlign: TextAlign.end,
-
-                    style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:[Container(
-                  alignment: Alignment.centerLeft,
-                  height:30, width: screenWidth * 0.5, child:
-                Row(
-                  children: [
-                    SizedBox(width: 10,),
-                    Text(
-                        _measurement.formaldehyde.toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
-                            fontSize: 17,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5,),
-
-                      Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.unitName())), style: TextStyle(
-                          fontSize: 17,
-                          color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
-                          fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold))
-
-                  ],)
-
-                  ,)])
-          ],
-        ),
-          ];
-      }
-
       Widget content() {
         return
           Column(children: [
@@ -459,10 +136,10 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         this._didLoad = false;
                         this._error = null;
                         this.setState(() {});
-                        _viewModel.fetchMeasurement(widget.sensor.externalIdentfier);
+                        _viewModel.fetchMeasurement(widget.sensor);
                      },  () async {
                          await this._mailToSupport();
-                     }): this._didLoad ? Column(children: measurementDataWidget(),):LoadingIndicator(),
+                     }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget()],):LoadingIndicator(),
                   ),
                 ),
                 ),
@@ -484,5 +161,362 @@ class MeasurementPageState extends State<MeasurementPage>  {
         extendBodyBehindAppBar:true,
         body: content(),
       );
+  }
+
+
+  Widget measurementHeaderWidget() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Column(children: [
+      SizedBox(height: 40),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          (_measurement != null)
+              ? Text(_dateformatter.format(_measurement.date),
+              style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
+              : SizedBox(),
+        ],
+      ),
+      SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          (_measurement != null)
+              ? Text(_hourformatter.format(_measurement.date),
+              style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
+              : SizedBox(),
+        ],
+      ),
+      SizedBox(height: 20),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          (_measurement != null)
+              ? Text(widget.sensor.name,
+              style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
+              : SizedBox(),
+        ],
+      ),
+      SizedBox(height: 20),
+
+
+    ]);
+  }
+
+  Widget measurementDataWidget() {
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return
+
+      Container( //color: Colors.white,
+          decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(
+                width: 0.5,
+                color: ColorProvider.shared
+                    .standardAppButtonBorderColor,),
+                  top: BorderSide(
+                      width: 0.5,
+                      color:  ColorProvider.shared.standardAppButtonBorderColor)),
+              color: ColorProvider.shared.sensorCellBackgroundColor),
+      child:
+      Column(
+        children:[
+          SizedBox(height: 10,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.temperature.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.temperature.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text(AppLocalizations.of(context).translate(MeasurementType.temperature.unitName()), style: TextStyle(
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.humidity.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.humidity.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text(AppLocalizations.of(context).translate(MeasurementType.humidity.unitName()), style: TextStyle(
+                          color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.stringName()),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.pm10Level.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: _measurement.pm10LevelNorm().levelColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text(AppLocalizations.of(context).translate(MeasurementType.pm10level.unitName()), style: TextStyle(
+                          color: _measurement.pm10LevelNorm().levelColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm25level.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.pm25level.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: _measurement.pm25LevelNorm().levelColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text(AppLocalizations.of(context).translate(MeasurementType.pm25level.unitName()), style: TextStyle(
+                          color: _measurement.pm25LevelNorm().levelColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.pm1level.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.pm1Level.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: _measurement.pm1LevelNorm().levelColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text(AppLocalizations.of(context).translate(MeasurementType.pm1level.unitName()), style: TextStyle(
+                          color: _measurement.pm1LevelNorm().levelColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.co2level.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.co2level.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text((AppLocalizations.of(context).translate(MeasurementType.co2level.unitName())), style: TextStyle(
+                          color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(height:30, width: screenWidth * 0.5, alignment: Alignment.centerRight, child: Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.stringName())),
+                      textAlign: TextAlign.end,
+
+                      style: TextStyle(fontSize: 17,  fontFamily: 'Poppins')))]
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[Container(
+                    alignment: Alignment.centerLeft,
+                    height:30, width: screenWidth * 0.5, child:
+                  Row(
+                    children: [
+                      SizedBox(width: 10,),
+                      Text(
+                          _measurement.formaldehyde.toString(),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                              fontSize: 17,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(width: 5,),
+
+                      Text((AppLocalizations.of(context).translate(MeasurementType.formaldehyde.unitName())), style: TextStyle(
+                          fontSize: 17,
+                          color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+
+                    ],)
+
+                    ,)])
+            ],
+          ),
+          SizedBox(height: 10,),
+        ]));
   }
 }
