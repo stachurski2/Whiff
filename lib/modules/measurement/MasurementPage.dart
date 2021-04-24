@@ -1,9 +1,11 @@
 import 'package:Whiff/helpers/app_localizations.dart';
+import 'package:Whiff/model/AirState.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/model/MeasurementType.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/modules/measurement/MeasurementViewModel.dart';
@@ -168,38 +170,69 @@ class MeasurementPageState extends State<MeasurementPage>  {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Column(children: [
-      SizedBox(height: 40),
+      SizedBox(height: 20),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          SizedBox(width: 30,),
           (_measurement != null)
               ? Text(_dateformatter.format(_measurement.date),
               style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
               : SizedBox(),
-        ],
-      ),
-      SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+          SizedBox(width: 10,),
           (_measurement != null)
               ? Text(_hourformatter.format(_measurement.date),
               style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
-              : SizedBox(),
+              : SizedBox()
         ],
       ),
-      SizedBox(height: 20),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        Flex(
+          direction:  Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.start,
         children: [
+    Flexible(flex: 6,child:Column(
+              crossAxisAlignment:  CrossAxisAlignment.start,
+
+              children: [
+      SizedBox(height: 5),
+      Row(  mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 30),
           (_measurement != null)
               ? Text(widget.sensor.name,
               style: TextStyle(fontSize: 21, fontFamily: 'Poppins'))
               : SizedBox(),
         ],
       ),
+      SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 30),
+          (_measurement != null)
+              ? Text("device number: " + widget.sensor.externalIdentfier.toString(),
+              style: TextStyle(fontSize: 16, fontFamily: 'Poppins'))
+              : SizedBox(),
+        ],
+      ),
+      SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 30),
+          (_measurement != null)
+              ? Flexible(child:Text("location: " + widget.sensor.locationName, maxLines: 2,
+              style: TextStyle(fontSize: 16, fontFamily: 'Poppins')))
+              : SizedBox(),
+        ],
+      ),
       SizedBox(height: 20),
 
+    ]),),    SizedBox(width: 10),
+
+          Expanded(flex: 4, child:Column(children: [Container(height: 100, width: 100, child: _measurement.getState() == AirState.good ?  Image.asset('assets/good_small.png'):  _measurement.getState() == AirState.moderate ?  Image.asset('assets/moderate_small.png') : _measurement.getState() == AirState.bad ?  Image.asset('assets/sad_small.png') :  Image.asset('assets/verysad_small.png')  ,)],),),
+
+        ]),
 
     ]);
   }
@@ -221,6 +254,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                       color:  ColorProvider.shared.standardAppButtonBorderColor)),
               color: ColorProvider.shared.sensorCellBackgroundColor),
       child:
+
       Column(
         children:[
           SizedBox(height: 10,),
@@ -246,7 +280,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.temperature.toString(),
+                          sprintf('%0.2f' , [_measurement.temperature]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               fontSize: 17,
@@ -286,7 +320,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.humidity.toString(),
+                          sprintf('%0.0f' , [ _measurement.humidity]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: widget.sensor.isInsideBuilding == true ? _measurement.humidityNorm().levelColor: ColorProvider.shared.standardTextColor,
@@ -328,7 +362,8 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.pm10Level.toString(),
+                          sprintf('%0.2f' , [ _measurement.pm10Level]),
+
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: _measurement.pm10LevelNorm().levelColor,
@@ -370,7 +405,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.pm25level.toString(),
+                          sprintf('%0.2f' , [ _measurement.pm25level]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: _measurement.pm25LevelNorm().levelColor,
@@ -412,7 +447,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.pm1Level.toString(),
+                          sprintf('%0.2f' , [ _measurement.pm1Level]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: _measurement.pm1LevelNorm().levelColor,
@@ -454,7 +489,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.co2level.toString(),
+                          sprintf('%0.2f' , [ _measurement.co2level]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: widget.sensor.isInsideBuilding == true ? _measurement.co2LevelNorm().levelColor : ColorProvider.shared.standardTextColor,
@@ -496,7 +531,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     children: [
                       SizedBox(width: 10,),
                       Text(
-                          _measurement.formaldehyde.toString(),
+                          sprintf('%0.2f' , [ _measurement.formaldehyde]),
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
