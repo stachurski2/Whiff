@@ -72,6 +72,12 @@
   "measurement_type_formaldehyde_unit": "μg/m³",
   "measurement_type_co2level_unit": "ppm",
 
+  "measurement_state_good": "good",
+  "measurement_state_moderate": "moderate",
+  "measurement_state_bad": "bad",
+  "measurement_state_very_bad": "Very bad",
+  "measurement_state_unknown": "unknown",
+
   "account_settings_top_label_text": "Account",
   "account_settings_change_password_label_text": "Change your password",
   "account_settings_new_password_textfield_label": "New password",

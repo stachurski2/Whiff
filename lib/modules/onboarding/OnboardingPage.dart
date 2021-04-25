@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalPage.dart';
-import 'package:Whiff/modules/login/LoginPage.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
@@ -21,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:flutter/rendering.dart';
-import 'package:Whiff/customView/AirStatePage.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 class OnboardingPage extends StatefulWidget {
   @override

@@ -11,7 +11,7 @@ class ColorProvider {
 
   Color standardTextColor =  Color.fromRGBO(0, 0, 0, 1.0);
 
-  Color standardAppBackgroundColor =  Color.fromRGBO(238, 230, 230, 1.0);
+  Color standardAppBackgroundColor =  Color.fromRGBO(219, 220, 219, 1.0);
 
   Color sensorCellBackgroundColor =  Color.fromRGBO(242, 242, 242, 1.0);
 
