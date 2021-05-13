@@ -15,9 +15,11 @@ abstract class MeasurementViewModelContract {
 class MeasurementViewModel extends MeasurementViewModelContract {
 
   final DataServicing _dataService = DataService.shared;
-
+  int sensorId;
   void fetchMeasurement(Sensor sensor) {
     _dataService.fetchCurrentMeasurement(sensor);
+    this.sensorId = sensor.externalIdentfier;
+
   }
 
   Stream<Measurement> currentMeasurement() {
@@ -29,6 +31,18 @@ class MeasurementViewModel extends MeasurementViewModelContract {
   Stream<WhiffError> fetchErrorStream() {
     return _dataService.currentMeasurement().map((serverResponse){
       return serverResponse.error;
+    }).where((error){
+      print(error.sensorNumber);
+      print(sensorId);
+
+      if(error.sensorNumber == sensorId) {
+        print("true");
+
+        return true;
+      }
+      print("false");
+
+      return false;
     });
   }
 

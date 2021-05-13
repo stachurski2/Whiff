@@ -2,10 +2,11 @@
 
 class WhiffError extends Error {
 
+  final int sensorNumber;
   final int errorCode;
   final String errorMessage;
 
-  WhiffError(this.errorCode, this.errorMessage);
+  WhiffError(this.errorCode, this.errorMessage, { this.sensorNumber });
 
   static WhiffError noInternet()  {
     return WhiffError(1001, "error_no_internet_connection");

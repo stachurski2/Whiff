@@ -95,7 +95,7 @@ class DataService extends DataServicing  {
   void fetchCurrentMeasurement(Sensor sensor) async {
     var response = await networkService.makeRequest(RequestMethod.get, "/lastPieceOfDataFromSensor", {"sensorId": sensor.externalIdentfier.toString()}, _autheticatingService.authorizationHeader());
     if(response.error != null) {
-      _currentMeasurementSubject.add(ServerResponse(null, response.error));
+      _currentMeasurementSubject.add(ServerResponse(null, WhiffError(response.error.errorCode, response.error.errorMessage, sensorNumber: sensor.externalIdentfier )));
     } else if(response.responseObject["data"] != null) {
       var data = response.responseObject["data"];
       var measurement = Measurement(int.parse(data["ID_URZADZENIA"]),
@@ -108,9 +108,9 @@ class DataService extends DataServicing  {
                                     double.parse(data["TEMPERATURA"]),
                                     DateTime.parse(data["CZAS"]),
                                     sensor.isInsideBuilding);
-      _currentMeasurementSubject.add(ServerResponse(measurement, null));
+     _currentMeasurementSubject.add(ServerResponse(measurement, null));
     } else {
-      _currentMeasurementSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+      _currentMeasurementSubject.add(ServerResponse(null, WhiffError(response.error.errorCode, response.error.errorMessage, sensorNumber: sensor.externalIdentfier)));
     }
   }
 
@@ -172,7 +172,7 @@ class DataService extends DataServicing  {
            double.parse(data["CO2"]),
            double.parse(data["TEMPERATURA"]),
            DateTime.parse(data["CZAS"]),
-           true);
+           false);
            _curentStateSubject.add(ServerResponse(measurement.getState(), null));
      } else {
        _curentStateSubject.add(ServerResponse(AirState.unknown, null));
