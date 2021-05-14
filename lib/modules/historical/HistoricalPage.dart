@@ -68,7 +68,23 @@ class HistoricalPageState extends State<HistoricalPage> {
       context: context,
       firstDate: DateTime(DateTime.now().year - 5),
       lastDate: DateTime.now(),
-      initialDateRange: range
+      initialDateRange: range,
+        builder: (BuildContext context, Widget child) {
+      return Theme(
+          child: child,
+          data: ThemeData.light().copyWith(
+            backgroundColor: Colors.red,
+              primaryColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
+          colorScheme: ColorScheme.light(
+              primary: ColorProvider.shared.standardAppButtonColor,
+              primaryVariant: ColorProvider.shared.standardAppButtonColor,
+              secondary: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
+              secondaryVariant: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
+              surface: Colors.red
+          ),
+          dialogBackgroundColor:Colors.red,
+        )); },
+
     );
     if(picked != null) {
       _didLoadChart = false;
@@ -544,7 +560,6 @@ class MySymbolRenderer extends charts.CustomSymbolRenderer {
 
   @override
   Widget build(BuildContext context, {Color color, Size size, bool enabled}) {
-    print('test');
     return new Container(height: 100, width: 100, color: Colors.red);
   }
 

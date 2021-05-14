@@ -29,7 +29,6 @@ class MeasurementPage extends StatefulWidget {
   MeasurementPage(Sensor sensor, Measurement measurement) {
     this.sensor = sensor;
     this.measurement = measurement;
-
   }
 }
 
@@ -119,7 +118,10 @@ class MeasurementPageState extends State<MeasurementPage>  {
   Widget build(BuildContext context)  {
       Widget content() {
         return
-          Column(children: [
+          ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.all(0),
+              children: [
             Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -144,12 +146,11 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _viewModel.fetchMeasurement(widget.sensor);
                      },  () async {
                          await this._mailToSupport();
-                     }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget(),measurementFooterWidget()],):LoadingIndicator()
+                     }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget(),measurementFooterWidget()],):Column(children:[SizedBox(height: 125,), LoadingIndicator() ])
                   ),
                 ),
                 ),
-          ],
-          );
+          ]);
       }
 
       return Scaffold(
@@ -164,7 +165,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
         ),
         backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
         extendBodyBehindAppBar:true,
-        body: content(),
+        body: content()
       );
   }
 
@@ -565,13 +566,16 @@ class MeasurementPageState extends State<MeasurementPage>  {
         .width;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 15),
 
-        Row(children: [
-          SizedBox(width: 15),
+        Row(
+
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
           TextButton(
               onPressed: () {
                 MapsLauncher.launchCoordinates(widget.sensor.locationLat, widget.sensor.locationLon, "Whiff Sensor");
@@ -592,99 +596,99 @@ class MeasurementPageState extends State<MeasurementPage>  {
 
               },
               child: Image.asset('assets/share_page_button.png', scale: 3)),
-          SizedBox(width: 5),
-    Container(//color: Colors.white,
-    decoration: BoxDecoration(
-    border: Border(
-        right: BorderSide(
-    width: 0.5,
-    color: ColorProvider.shared
-        .standardAppButtonBorderColor,),
-        left: BorderSide(
-          width: 0.5,
-          color: ColorProvider.shared
-              .standardAppButtonBorderColor,),
-        bottom: BorderSide(
-    width: 0.5,
-    color: ColorProvider.shared
-        .standardAppButtonBorderColor,),
-    top: BorderSide(
-    width: 0.5,
-    color: ColorProvider.shared.standardAppButtonBorderColor)),
-    color: ColorProvider.shared.sensorCellBackgroundColor),
-    child:
+        ],),
 
-    Column( crossAxisAlignment: CrossAxisAlignment.start,
-    children:[
-      Row(children:[
-        SizedBox(width: 10,),
-      Text(
-          "Legend",
-          textAlign: TextAlign.start,
+    SizedBox(height: 10,),
+    Row(
 
-          style: TextStyle(
-              color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
-              fontSize: 17,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold))
-    ]),
-    Row(crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children:[
-          SizedBox(width: 10,),
-          Text("value is good",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: ColorProvider.shared.measurumentGoodLevel,
-              fontSize: 13,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold)), SizedBox(width: 10,),]),
-    Row(crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children:[
-          SizedBox(width: 10,),
-          Text(
-          "value is moderate",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: ColorProvider.shared.measurumentModerateLevel,
-              fontSize: 13,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold)), SizedBox(width: 10,),]),
-    Row(crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children:[
-          SizedBox(width: 10,),
-          Text(
-              "value is bad",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: ColorProvider.shared.measurumentBadLevel,
-              fontSize: 13,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold)),  SizedBox(width: 10,),]),
-      Row(crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:[
-            SizedBox(width: 10,),
-            Text(
-                "value is very bad",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: ColorProvider.shared.measurumentVeryBadLevel,
-                    fontSize: 13,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold)),  SizedBox(width: 10,),])
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+        Container(//color: Colors.white,
+          decoration: BoxDecoration(
+              border: Border(
+                  right: BorderSide(
+                    width: 0.5,
+                    color: ColorProvider.shared
+                        .standardAppButtonBorderColor,),
+                  left: BorderSide(
+                    width: 0.5,
+                    color: ColorProvider.shared
+                        .standardAppButtonBorderColor,),
+                  bottom: BorderSide(
+                    width: 0.5,
+                    color: ColorProvider.shared
+                        .standardAppButtonBorderColor,),
+                  top: BorderSide(
+                      width: 0.5,
+                      color: ColorProvider.shared.standardAppButtonBorderColor)),
+              color: ColorProvider.shared.sensorCellBackgroundColor),
+          child:
 
-    ]
-    ),),
+          Column( crossAxisAlignment: CrossAxisAlignment.start,
+              children:[
+                Row(children:[
+                  SizedBox(width: 10,),
+                  Text(
+                      AppLocalizations.of(context).translate("measurement_page_legend_title"),
+                      textAlign: TextAlign.start,
 
+                      style: TextStyle(
+                          color: widget.sensor.isInsideBuilding == true ? _measurement.formaldehydeLevelNorm().levelColor : ColorProvider.shared.standardTextColor,
+                          fontSize: 17,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold))
+                ]),
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[
+                      SizedBox(width: 10,),
+                      Text(AppLocalizations.of(context).translate("measurement_page_legend_first_postion"),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: ColorProvider.shared.measurumentGoodLevel,
+                              fontSize: 13,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)), SizedBox(width: 10,),]),
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[
+                      SizedBox(width: 10,),
+                      Text(
+                          AppLocalizations.of(context).translate("measurement_page_legend_second_postion"),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: ColorProvider.shared.measurumentModerateLevel,
+                              fontSize: 13,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)), SizedBox(width: 10,),]),
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[
+                      SizedBox(width: 10,),
+                      Text(
+                          AppLocalizations.of(context).translate("measurement_page_legend_third_postion"),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: ColorProvider.shared.measurumentBadLevel,
+                              fontSize: 13,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),  SizedBox(width: 10,),]),
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[
+                      SizedBox(width: 10,),
+                      Text(
+                          AppLocalizations.of(context).translate("measurement_page_legend_fourth_postion"),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: ColorProvider.shared.measurumentVeryBadLevel,
+                              fontSize: 13,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),  SizedBox(width: 10,),])
 
-
-
-
-        ],)
-
+              ]
+          ),)]),
     ],);
   }
 }

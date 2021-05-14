@@ -77,6 +77,11 @@
   "measurement_state_bad": "bad",
   "measurement_state_very_bad": "Very bad",
   "measurement_state_unknown": "unknown",
+  "measurement_page_legend_title": "Legend",
+  "measurement_page_legend_first_postion": "value is good",
+  "measurement_page_legend_second_postion": "value is moderate",
+  "measurement_page_legend_third_postion": "value is bad",
+  "measurement_page_legend_fourth_postion": "value is very bad",
 
   "account_settings_top_label_text": "Account",
   "account_settings_change_password_label_text": "Change your password",
