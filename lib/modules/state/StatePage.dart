@@ -55,10 +55,10 @@ class StatePageState extends State<StatePage> {
 
   void _mailToSupport() async {
     final mailtoLink = Mailto(
-      to: ['to@example.com'],
-      cc: ['cc1@example.com', 'cc2@example.com'],
-      subject: 'mailto example subject',
-      body: 'mailto example body',
+      to: ['support@whiff.zone'],
+      cc: [''],
+      subject: 'An encountered issue within the Whiff App',
+      body: 'Provide here info about the issue.',
     );
 
     await _launchURL(mailtoLink.toString());
