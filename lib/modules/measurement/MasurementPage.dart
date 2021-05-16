@@ -134,10 +134,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     height: _kImageHeight),
               ],
             ),
-            Expanded(
-                child: Align(
-                  alignment: FractionalOffset.center,
-                  child: Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 10.0),
                      child: (this._error != null) ? FailurePage(this._error, (){
                         this._didLoad = false;
@@ -147,9 +144,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                      },  () async {
                          await this._mailToSupport();
                      }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget(),measurementFooterWidget()],):Column(children:[SizedBox(height: 125,), LoadingIndicator() ])
-                  ),
-                ),
-                ),
+                  )
           ]);
       }
 

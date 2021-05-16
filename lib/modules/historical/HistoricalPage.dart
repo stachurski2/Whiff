@@ -78,7 +78,7 @@ class HistoricalPageState extends State<HistoricalPage> {
       return Theme(
           child: child,
           data: ThemeData.light().copyWith(
-            backgroundColor: Colors.red,
+            backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
               primaryColor: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
           colorScheme: ColorScheme.light(
               primary: ColorProvider.shared.standardAppButtonColor,
@@ -87,7 +87,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               secondaryVariant: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
               surface: ColorProvider.shared.standardAppBackgroundColor
           ),
-          dialogBackgroundColor:Colors.red,
+          dialogBackgroundColor:ColorProvider.shared.standardAppBackgroundColor,
         )); },
 
     );
@@ -645,7 +645,7 @@ class MySymbolRenderer extends charts.CustomSymbolRenderer {
 
   @override
   Widget build(BuildContext context, {Color color, Size size, bool enabled}) {
-    return new Container(height: 100, width: 100, color: Colors.red);
+    return new Container(height: 100, width: 100, color: ColorProvider.shared.standardAppBackgroundColor);
   }
 
   @override

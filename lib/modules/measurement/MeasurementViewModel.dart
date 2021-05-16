@@ -32,16 +32,9 @@ class MeasurementViewModel extends MeasurementViewModelContract {
     return _dataService.currentMeasurement().map((serverResponse){
       return serverResponse.error;
     }).where((error){
-      print(error.sensorNumber);
-      print(sensorId);
-
       if(error.sensorNumber == sensorId) {
-        print("true");
-
         return true;
       }
-      print("false");
-
       return false;
     });
   }
