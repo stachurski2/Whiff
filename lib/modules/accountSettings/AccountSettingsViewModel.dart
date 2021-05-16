@@ -19,6 +19,9 @@ abstract class AccountSettingsViewModelContract {
   void setFirstPassword(String password);
   void setSecondPassword(String password);
   void requestPasswordChange();
+
+  String getTermsOfServiceUrl();
+  String getPrivacyPolicy();
 }
 
 class AccountSettingsViewModel extends AccountSettingsViewModelContract {
@@ -81,5 +84,14 @@ class AccountSettingsViewModel extends AccountSettingsViewModelContract {
       this.setSecondPassword("");
     });
   }
+
+  String getTermsOfServiceUrl() {
+    return _dataService.getTermsOfServiceUrl();
+  }
+
+  String getPrivacyPolicy() {
+    return _dataService.getPrivacyPolicyUrl();
+  }
+
 
 }

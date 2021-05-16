@@ -3,7 +3,7 @@ import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:Whiff/modules/state/StatePage.dart';
 import 'package:Whiff/modules/login/LoginViewModel.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
 import 'package:Whiff/helpers/app_localizations.dart';
@@ -45,6 +45,14 @@ class LoginPageState extends State<LoginPage> {
   StreamSubscription onboardingState;
   StreamSubscription loginState;
   StreamSubscription alertSubscription;
+
+  void _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   void initState() {
@@ -325,8 +333,29 @@ class LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                       SizedBox(height: _kBottomButtonBottomInset)
                   ]
-              )]) : LoadingIndicator(),
+              ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextButton(onPressed: (){
+                        _launchURL(_viewModel.getPrivacyPolicy());
+
+
+                      }, child: Text(AppLocalizations.of(context).translate('login_login_privacy_policy'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextButton(onPressed: (){
+                        _launchURL(_viewModel.getTermsOfServiceUrl());
+
+                      }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+                    ]),
+
+
+              ]) : LoadingIndicator(),
               _currentPageState == LoginViewState.loading ? Spacer() : SizedBox(height: 1,),
+
           ])
         ),
     ),);
@@ -350,5 +379,6 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
   }
+
 
 }

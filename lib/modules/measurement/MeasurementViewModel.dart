@@ -8,6 +8,8 @@ abstract class MeasurementViewModelContract {
 
   Stream<Measurement> currentMeasurement();
   Stream<WhiffError> fetchErrorStream();
+  String getTermsOfServiceUrl();
+  String getPrivacyPolicy();
 
   void fetchMeasurement(Sensor sensor);
 }
@@ -37,6 +39,14 @@ class MeasurementViewModel extends MeasurementViewModelContract {
       }
       return false;
     });
+  }
+
+  String getTermsOfServiceUrl() {
+    return _dataService.getTermsOfServiceUrl();
+  }
+
+  String getPrivacyPolicy() {
+    return _dataService.getPrivacyPolicyUrl();
   }
 
 }

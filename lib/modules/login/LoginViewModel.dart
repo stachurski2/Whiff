@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
 import 'package:Whiff/Services/Authetication/AutheticationState.dart';
 import 'package:Whiff/model/WhiffError.dart';
-
+import 'package:Whiff/Services/Data/DataService.dart';
 import 'package:rxdart/rxdart.dart';
 
 
@@ -28,6 +28,8 @@ abstract class LoginViewModelContract {
   void requestRemindPassword();
   void remindPassword();
   void registerUser();
+  String getTermsOfServiceUrl();
+  String getPrivacyPolicy();
 }
 
 class LoginViewModel extends LoginViewModelContract {
@@ -38,6 +40,8 @@ class LoginViewModel extends LoginViewModelContract {
   var _loginMessage = "";
 
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
+
+  final DataServicing _dataService = DataService.shared;
 
   final _stateSubject = PublishSubject<LoginViewState>();
   final _alertSubject = PublishSubject<String>();
@@ -132,5 +136,13 @@ class LoginViewModel extends LoginViewModelContract {
     RegExp regExp = new RegExp(p);
 
     return regExp.hasMatch(phrase);
+  }
+
+  String getTermsOfServiceUrl() {
+    return _dataService.getTermsOfServiceUrl();
+  }
+
+  String getPrivacyPolicy() {
+    return _dataService.getPrivacyPolicyUrl();
   }
 }

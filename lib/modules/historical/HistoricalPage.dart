@@ -195,7 +195,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           children: [
 
             SizedBox(width: 20,),
-            Text("Sensor:",
+            Text(AppLocalizations.of(context).translate("historical_top_page_sensor_word"),
               textAlign: TextAlign.center,
 
               style: TextStyle(color: Colors.white,
@@ -209,7 +209,7 @@ class HistoricalPageState extends State<HistoricalPage> {
         Row(mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(width: 20,),
-            Text("Date Range:",
+            Text(AppLocalizations.of(context).translate("historical_top_page_date_range_word"),
               textAlign: TextAlign.center,
 
               style: TextStyle(color: Colors.white,
@@ -223,7 +223,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(width: 20,),
-            Text("Type:",
+            Text(AppLocalizations.of(context).translate("historical_top_page_type_word"),
                 textAlign: TextAlign.center,
 
                 style: TextStyle(color: Colors.white,

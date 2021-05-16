@@ -17,6 +17,8 @@ abstract class DataServicing {
    Stream<ServerResponse<Measurement>> currentMeasurement();
    Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
    Stream<ServerResponse<AirState>> currentState();
+   String getTermsOfServiceUrl();
+   String getPrivacyPolicyUrl();
 }
 
 class DataService extends DataServicing  {
@@ -178,5 +180,13 @@ class DataService extends DataServicing  {
        _curentStateSubject.add(ServerResponse(AirState.unknown, null));
 
      }
+  }
+
+  String getTermsOfServiceUrl() {
+    return _networkService.getTermsOfServiceUrl();
+  }
+
+  String getPrivacyPolicyUrl() {
+    return _networkService.getPrivacyPolicyUrl();
   }
 }

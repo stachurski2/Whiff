@@ -14,6 +14,9 @@ enum RequestMethod {
 
 abstract class NetworkingServicing {
   Future<ServerResponse<Map<String, dynamic>>> makeRequest(RequestMethod method, String url, Map<String, String> body, String authHeader) async { }
+  String getTermsOfServiceUrl();
+  String getPrivacyPolicyUrl();
+
 }
 
 class NetworkService extends NetworkingServicing {
@@ -111,6 +114,14 @@ class NetworkService extends NetworkingServicing {
         }
       }
     }
+  }
+
+  String getTermsOfServiceUrl() {
+    return _kMainAdress + "/public/termsOfService.pdf";
+  }
+
+  String getPrivacyPolicyUrl() {
+    return _kMainAdress + "/public/privacypolicy.pdf";
   }
 }
 

@@ -309,6 +309,21 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
                 SizedBox(width: 10),
               ]) : SizedBox(),
           SizedBox(height: 10),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(onPressed: (){
+                  _launchURL(_viewModel.getPrivacyPolicy());
+                }, child: Text(AppLocalizations.of(context).translate('login_login_privacy_policy'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+              ]),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(onPressed: (){
+                  _launchURL(_viewModel.getTermsOfServiceUrl());
+
+                }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+              ])
         ],
       ),),
       drawer: Theme(

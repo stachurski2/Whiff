@@ -12,6 +12,8 @@
   "login_login_password_do_too_short": "Password too short. It requires at least 6 letters.",
   "login_login_registration_title": "Registration",
   "login_login_remind_password_title": "Forgotten Password",
+  "login_login_privacy_policy": "Privacy Policy",
+  "login_login_terms_of_service": "Terms of Service",
 
   "sensor_word": "Sensor",
   "device_outdoor_sensor": "outdoor sensor",
@@ -95,7 +97,10 @@
   "account_setting_cant_load_sensor_label_text": "Couldn't fetch the sensors list.",
   "account_setting_missing_contact_support_button_text": "Contact Support",
   "account_setting_changed_password_message": "Password changed",
-  "account_setting_changed_password_message_unknown_error": "Couldn't change password."
+  "account_setting_changed_password_message_unknown_error": "Couldn't change password.",
 
+  "historical_top_page_sensor_word": "Sensor:",
+  "historical_top_page_date_range_word": "Date range:",
+  "historical_top_page_type_word": "Type:"
 
 }
