@@ -120,7 +120,7 @@ class DataService extends DataServicing  {
 
     var response = await networkService.makeRequest(RequestMethod.get, "/sensorData", {"sensorId": sensor.externalIdentfier.toString(), "startDate": startDateString, "endDate":endDateString}, _autheticatingService.authorizationHeader());
     if(response.error != null) {
-      _historicalMeasurementsSubject.add(ServerResponse(null, WhiffError.responseDecodeProblem()));
+      _historicalMeasurementsSubject.add(ServerResponse(null, response.error));
     } else if (response.responseObject["data"] != null) {
       Map<String, dynamic> data = response.responseObject["data"];
       List<dynamic> measures = data["measures"];

@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:ffi';
+import 'package:Whiff/customView/FailurePage.dart';
 import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/model/Measurement.dart';
+import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/modules/state/StatePage.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
-
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/modules/historical/HistoricalViewModel.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
@@ -27,8 +30,6 @@ class HistoricalPage extends StatefulWidget {
 
 class HistoricalPageState extends State<HistoricalPage> {
 
-
-
   final AutheticatingServicing authenticationService = AutheticationService.shared;
   final DateFormat kDateFormat = DateFormat("dd MMM yy");
 
@@ -40,12 +41,16 @@ class HistoricalPageState extends State<HistoricalPage> {
 
   Sensor _selectedSensor;
   List<Sensor> _sensors = [];
+  WhiffError _error;
+  WhiffError _sensorError;
 
   StreamSubscription _mesurementTypeSubscription;
   StreamSubscription _dateRangeSubscription;
   StreamSubscription _sensorListSubscription;
   StreamSubscription _sensorSelectedSubscription;
   StreamSubscription _chartDataSubscription;
+  StreamSubscription _chartDataErrorSubscription;
+  StreamSubscription _sensorDataErrorSubscription;
 
   var _didLoadSensors = false;
   var _didLoadChart = false;
@@ -80,7 +85,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               primaryVariant: ColorProvider.shared.standardAppButtonColor,
               secondary: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
               secondaryVariant: ColorProvider.shared.standardAppLeftMenuBackgroundColor,
-              surface: Colors.red
+              surface: ColorProvider.shared.standardAppBackgroundColor
           ),
           dialogBackgroundColor:Colors.red,
         )); },
@@ -102,8 +107,6 @@ class HistoricalPageState extends State<HistoricalPage> {
         Navigator.of(context).pop(true);
       }
     });
-
-
 
     _mesurementTypeSubscription = _viewModel.currentMeasurementType().listen((measurementType) {
       _currentMeasurementType = measurementType;
@@ -132,9 +135,18 @@ class HistoricalPageState extends State<HistoricalPage> {
     });
 
     _chartDataSubscription = _viewModel.chartData().listen((chartData) {
+      _error = null;
       _didLoadChart = true;
       seriesList = chartData;
       setState(() {});
+    });
+
+    _chartDataErrorSubscription = _viewModel.dataFetchError().listen((error) {
+        showFailure(error);
+    });
+
+    _sensorDataErrorSubscription = _viewModel.sensorsListFetchError().listen((error) {
+      showGeneralFailure(error);
     });
     _viewModel.fetchSensors();
     _viewModel.setTimeRange(range);
@@ -146,6 +158,16 @@ class HistoricalPageState extends State<HistoricalPage> {
     super.deactivate();
   }
 
+  void showFailure(WhiffError error) {
+    _error = error;
+    setState(() {});
+  }
+
+  void showGeneralFailure(WhiffError error) {
+    _sensorError = error;
+    setState(() {});
+  }
+
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
       extendBodyBehindAppBar: true,
@@ -155,6 +177,14 @@ class HistoricalPageState extends State<HistoricalPage> {
           iconTheme: IconThemeData(
               color: Colors.white)),
       body:
+      (_sensorError != null) ? FailurePage(_sensorError, () {
+        _sensorError = null;
+        _didLoadSensors = false;
+        _viewModel.fetchSensors();
+        setState(() {});
+      },() async {
+        _mailToSupport();
+      }):
       _didLoadSensors ? Column(children: [
         Container(height: 250,
                   width: MediaQuery.of(context).size.width,
@@ -201,13 +231,13 @@ class HistoricalPageState extends State<HistoricalPage> {
                     fontFamily: 'Poppins')),
             Spacer(),
             measerementSelector(context),
-            SizedBox(width: 20,),
+             SizedBox(width: 20,)
           ],),
 
           ],
         ),),
         Row( mainAxisAlignment: MainAxisAlignment.center, children: [
-          chart(context),
+          _error == null ? chart(context) : innerFailurePage(context, _error)
         ],),
       ],) : LoadingIndicator(),
 
@@ -460,7 +490,6 @@ class HistoricalPageState extends State<HistoricalPage> {
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppBackgroundColor,
             child: charts.TimeSeriesChart(seriesList,
-
               animate: false,
               flipVerticalAxis: false,
               selectionModels: [
@@ -527,9 +556,65 @@ class HistoricalPageState extends State<HistoricalPage> {
     }
   }
 
+  Widget innerFailurePage(BuildContext context, WhiffError error) {
+    final size = MediaQuery.of(context).size;
 
+      final currentUnit = AppLocalizations.of(context).translate(
+          _currentMeasurementType.unitName());
+      final simpleCurrencyFormatter = charts.BasicNumericTickFormatterSpec((
+          num value) {
+        return '$value' + currentUnit;
+      });
+      return Expanded(child:
+      Container(
+          padding: EdgeInsets.all(20),
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 100,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height - 250,
+          alignment: Alignment.center,
+          color: ColorProvider.shared.standardAppBackgroundColor,
+          child:
+    Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+    FailurePage(error, (){
+      _error = null;
+      _didLoadChart = false;
+      _viewModel.setSensor(_selectedSensor);
+      setState(() {});
+    }, () async {
+    await this._mailToSupport();
+    })
+      ],)));
+  }
+
+  void _mailToSupport() async {
+    final mailtoLink = Mailto(
+      to: ['to@example.com'],
+      cc: ['cc1@example.com', 'cc2@example.com'],
+      subject: 'mailto example subject',
+      body: 'mailto example body',
+    );
+
+    await _launchURL(mailtoLink.toString());
+  }
+
+  void _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
 }
+
 
 
 class MySymbolRenderer extends charts.CustomSymbolRenderer {
@@ -585,5 +670,6 @@ class MySymbolRenderer extends charts.CustomSymbolRenderer {
     canvas.drawText(chartText.TextElement(kDateFormat.format(_selectedDate), style: textStyle) , (left + 5).toInt(), (bounds.top + 5).toInt());
     canvas.drawText(chartText.TextElement(_selectedMeasurement.toString()+" " + _unit, style: textStyle) , (left + 5).toInt(), (bounds.top + 5).toInt() + 20);
   }
+
 }
 

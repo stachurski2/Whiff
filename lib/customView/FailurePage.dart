@@ -18,7 +18,7 @@ class FailurePage extends StatelessWidget {
 
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,7 +47,7 @@ class FailurePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  width: MediaQuery.of(context).size.width - 2*10,
+                  width: MediaQuery.of(context).size.width - 2*15,
                   height: 40,
                   child:
                   RaisedButton(
@@ -70,7 +70,7 @@ class FailurePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  width: MediaQuery.of(context).size.width - 2*10,
+                  width: MediaQuery.of(context).size.width - 2*15,
                   height: 40,
                   child:
                   RaisedButton(

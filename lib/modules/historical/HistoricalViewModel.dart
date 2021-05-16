@@ -21,6 +21,8 @@ abstract class HistoricalViewModelContract {
   Stream<List<Sensor>> sensorsList();
   Stream<Sensor> selectedSensor();
   Stream<WhiffError> sensorsListFetchError();
+  Stream<WhiffError> dataFetchError();
+
   Stream<List<charts.Series<dynamic, DateTime>>> chartData();
 
   String signedInEmail();
@@ -39,7 +41,6 @@ class HistoricalViewModel extends HistoricalViewModelContract {
 
   StreamSubscription _dataFetchSubscription;
 
-
   final _currentMeasurumentTypeSubject = BehaviorSubject<MeasurementType>();
   final _selectedDateRangeSubject = BehaviorSubject<DateTimeRange>();
   final _selectedSensorSubject = BehaviorSubject<Sensor>();
@@ -49,10 +50,7 @@ class HistoricalViewModel extends HistoricalViewModelContract {
     _dataFetchSubscription =  Rx.combineLatest2(_selectedDateRangeSubject, _selectedSensorSubject, (dateRange, selectedSensor) => {
       Tuple2<DateTimeRange, Sensor>(dateRange, selectedSensor)
     }).listen((data) {
-
-
       _dataService.fetchHistoricalData(data.last.item1.start, data.last.item1.end, data.last.item2);
-
     });
   }
 
@@ -84,7 +82,6 @@ class HistoricalViewModel extends HistoricalViewModelContract {
     _selectedSensorSubject.add(sensor);
   }
 
-
   Stream<MeasurementType> currentMeasurementType(){
     return _currentMeasurumentTypeSubject.stream.startWith(MeasurementType.temperature);
   }
@@ -98,6 +95,7 @@ class HistoricalViewModel extends HistoricalViewModelContract {
       return serverResponse.error;
     });
   }
+
   Stream<List<Sensor>> sensorsList() {
     return _dataService.fetchedSensors().map((serverResponse){
       return serverResponse.responseObject;
@@ -185,6 +183,14 @@ class HistoricalViewModel extends HistoricalViewModelContract {
       return [];
     });
 
+  }
+
+  Stream<WhiffError> dataFetchError() {
+     return  _dataService.historicalMeasurements().map((serverResponse){
+       if(serverResponse.error != null) {
+         return serverResponse.error;
+       }
+     });
   }
 }
 
