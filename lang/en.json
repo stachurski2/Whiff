@@ -2,6 +2,7 @@
   "login_top_label_text": "whiff.zone",
   "login_login_textfield_placeholder": "email",
   "login_password_textfield_placeholder": "Password",
+  "login_repeat_password_textfield_placeholder": "Repeat Password",
   "login_login_register_button_title": "REGISTRATION",
   "login_login_register_register_button_title": "REGISTER",
   "login_login_password_button_title": "FORGOTTEN PASSWORD",
@@ -14,6 +15,9 @@
   "login_login_remind_password_title": "Forgotten Password",
   "login_login_privacy_policy": "Privacy Policy",
   "login_login_terms_of_service": "Terms of Service",
+  "login_login_terms_of_service_question": "Do you accept Terms of Service and Privacy Policy?",
+  "login_login_terms_of_service_answer_yes": "Yes",
+  "login_login_terms_of_service_answer_no": "No",
 
   "sensor_word": "Sensor",
   "device_outdoor_sensor": "outdoor sensor",

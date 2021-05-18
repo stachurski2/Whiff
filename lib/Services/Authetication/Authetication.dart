@@ -73,7 +73,7 @@ class AutheticationService extends AutheticatingServicing  {
      _authorizationToken = "";
      _signedInEmail = "";
     _removeStoredCredientials();
-    _subject.add( AutheticationState(false, null));
+    _subject.add( AutheticationState(false, null, false));
   }
 
    void login(String email, String password) async {
@@ -85,14 +85,14 @@ class AutheticationService extends AutheticatingServicing  {
             this._authorizationMethod = response.responseObject["authMethod"];
             this._authorizationToken = response.responseObject["token"];
             this._signedInEmail = email;
-            final state = AutheticationState(true, null);
+            final state = AutheticationState(true, null, false);
             _subject.add(state);
             _storeCredientials();
           } else if(response.error != null) {
-           final state = AutheticationState(false, response.error.errorMessage);
+           final state = AutheticationState(false, response.error.errorMessage, false);
             _subject.add(state);
           } else {
-            final state = AutheticationState(false, null);
+            final state = AutheticationState(false, null, false);
           }
   }
 
@@ -113,7 +113,7 @@ class AutheticationService extends AutheticatingServicing  {
            this._authorizationToken = response.responseObject["token"];
            this._signedInEmail = email;
            this._authorizationMethod = "Basic";
-           final state = AutheticationState(true, null);
+           final state = AutheticationState(true, null, true);
            _subject.add(state);
            _storeCredientials();
          }
@@ -126,7 +126,7 @@ class AutheticationService extends AutheticatingServicing  {
     _didRequestRemind = true;
     var response = await networkService.makeRequest(RequestMethod.post, "/resetPassword", { "email": email }, null);
     _didRequestRemind = false;
-    _subject.add( AutheticationState(false, null));
+    _subject.add( AutheticationState(false, null, false));
   }
 
   _storeCredientials() async {
@@ -144,7 +144,7 @@ class AutheticationService extends AutheticatingServicing  {
 
     if(_authorizationToken != null && _authorizationMethod != null ) {
       if (_authorizationToken.length > 0 && _authorizationMethod.length > 0) {
-        _subject.add(AutheticationState(true, null));
+        _subject.add(AutheticationState(true, null, false));
       }
     }
   }

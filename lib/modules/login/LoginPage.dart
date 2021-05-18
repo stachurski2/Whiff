@@ -3,6 +3,7 @@ import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:Whiff/modules/onboarding/OnboardingPage.dart';
 import 'package:Whiff/modules/state/StatePage.dart';
 import 'package:Whiff/modules/login/LoginViewModel.dart';
+import 'package:Whiff/modules/welcome/WelcomePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:Whiff/helpers/color_provider.dart';
@@ -43,6 +44,7 @@ class LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   StreamSubscription onboardingState;
+  StreamSubscription requestTermsServiceListener;
   StreamSubscription loginState;
   StreamSubscription alertSubscription;
 
@@ -72,6 +74,10 @@ class LoginPageState extends State<LoginPage> {
     this.alertSubscription = _viewModel.alertStream().listen((message) {
       this.showAlert(context,AppLocalizations.of(context).translate(message));
     });
+
+    this.requestTermsServiceListener = _viewModel.requestTermsStream().listen((test){
+      this.askAboutTermsOfService(context);
+    });
   }
 
   @override
@@ -84,10 +90,17 @@ class LoginPageState extends State<LoginPage> {
     if(state.signedIn == true) {
       _loginMessage = "";
       if(_didShowOnboarding == false) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => StatePage()),
-        );
+        if(state.newUser == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WelcomePage()),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StatePage()),
+          );
+        }
         _viewModel.setSecondPassword("");
         _viewModel.setPassword("");
         _viewModel.setLogin("");
@@ -220,6 +233,7 @@ class LoginPageState extends State<LoginPage> {
                       focusNode:  _firstFocusNode,
                       onChanged: (value){
                         _viewModel.setPassword(value);
+
                       },
                       onEditingComplete: ()  async {
                         if(_currentPageState == LoginViewState.loginUser) {
@@ -259,7 +273,7 @@ class LoginPageState extends State<LoginPage> {
                         obscureText: true,
                         decoration: InputDecoration(
                           errorText: _loginMessage,
-                          hintText: AppLocalizations.of(context).translate('login_password_textfield_placeholder'),
+                          hintText: AppLocalizations.of(context).translate('login_repeat_password_textfield_placeholder'),
                         )
                     )
                     ),
@@ -378,6 +392,33 @@ class LoginPageState extends State<LoginPage> {
             ],
         ),
       );
+  }
+
+  void askAboutTermsOfService(BuildContext context) {
+    Widget yesButton = TextButton(
+      child: Text(AppLocalizations.of(context).translate("login_login_terms_of_service_answer_yes")),
+      onPressed: () {
+        Navigator.of(context).pop();
+        _viewModel.executeRegister();
+      },
+    );
+
+    Widget noButton = TextButton(
+      child: Text(AppLocalizations.of(context).translate("login_login_terms_of_service_answer_no")),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(AppLocalizations.of(context).translate("login_login_terms_of_service_question")),
+        actions: [
+          yesButton,noButton
+        ],
+      ),
+    );
   }
 
 

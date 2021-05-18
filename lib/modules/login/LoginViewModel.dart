@@ -18,6 +18,7 @@ abstract class LoginViewModelContract {
   Stream<AutheticationState> currentAuthState();
   Stream<LoginViewState> curentViewState();
   Stream<String> alertStream();
+  Stream<void> requestTermsStream();
 
 
   void setLogin(String login);
@@ -28,6 +29,7 @@ abstract class LoginViewModelContract {
   void requestRemindPassword();
   void remindPassword();
   void registerUser();
+  void executeRegister();
   String getTermsOfServiceUrl();
   String getPrivacyPolicy();
 }
@@ -37,7 +39,6 @@ class LoginViewModel extends LoginViewModelContract {
   var _login = "";
   var _password = "";
   var _secondPassword = "";
-  var _loginMessage = "";
 
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
 
@@ -45,6 +46,7 @@ class LoginViewModel extends LoginViewModelContract {
 
   final _stateSubject = PublishSubject<LoginViewState>();
   final _alertSubject = PublishSubject<String>();
+  final _requestTermsSubject = PublishSubject<void>();
 
   LoginViewModel() {
     _stateSubject.add(LoginViewState.loginUser);
@@ -107,8 +109,7 @@ class LoginViewModel extends LoginViewModelContract {
     if(_isEmail(_login)) {
       if(_password.length > 5) {
         if (_password == _secondPassword) {
-          _authenticationService.register(_login, _password);
-          _stateSubject.add(LoginViewState.loading);
+          _requestTermsSubject.add(null);
         } else {
           _alertSubject.add("login_login_passwords_do_not_match");
         }
@@ -118,6 +119,11 @@ class LoginViewModel extends LoginViewModelContract {
     } else {
       _alertSubject.add("login_login_incorrect_login_format");
     }
+  }
+
+  void executeRegister() {
+    _stateSubject.add(LoginViewState.loading);
+    _authenticationService.register(_login, _password);
   }
 
   void requestRemindPassword() {
@@ -144,5 +150,9 @@ class LoginViewModel extends LoginViewModelContract {
 
   String getPrivacyPolicy() {
     return _dataService.getPrivacyPolicyUrl();
+  }
+
+  Stream<void> requestTermsStream() {
+    return _requestTermsSubject.stream;
   }
 }
