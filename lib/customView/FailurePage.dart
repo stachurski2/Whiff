@@ -8,7 +8,8 @@ class FailurePage extends StatelessWidget {
   WhiffError _error;
   VoidCallback onPressedContactButton;
   VoidCallback onPressedReloadButton;
-  FailurePage(this._error, this.onPressedReloadButton, this.onPressedContactButton);
+  bool hideButtons = false;
+  FailurePage(this._error, this.onPressedReloadButton, this.onPressedContactButton, { this.hideButtons });
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class FailurePage extends StatelessWidget {
                  )
               ]),
           SizedBox(height: 20,),
+           hideButtons == false ?
            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -64,9 +66,9 @@ class FailurePage extends StatelessWidget {
                   ),
                 )
               ]
-          ),
+          ): SizedBox(),
           SizedBox(height: 20,),
-          _error.errorCode != 1001 ? Row(
+          hideButtons == false ? _error.errorCode != 1001 ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
@@ -87,7 +89,7 @@ class FailurePage extends StatelessWidget {
                   ),
                 )
               ]
-          ) : SizedBox(height: 0,),
+          ) : SizedBox(height: 0,) :SizedBox(height: 0,) ,
         ]);
 
   }

@@ -19,8 +19,13 @@ import 'package:flutter/rendering.dart';
 import 'package:Whiff/customView/AirStatePage.dart';
 
 class SecondWelcomePage extends StatefulWidget {
+  bool _didFetchDemo;
   @override
   SecondWelcomePageState createState() => SecondWelcomePageState();
+
+  SecondWelcomePage(bool didFetchDemo) {
+    this._didFetchDemo = didFetchDemo;
+  }
 }
 
 class SecondWelcomePageState extends State<SecondWelcomePage> {
@@ -89,7 +94,7 @@ class SecondWelcomePageState extends State<SecondWelcomePage> {
                   children: [
                     Container(width:300,
                         alignment: Alignment.center,
-                        child:  Text(AppLocalizations.of(context).translate("second_welcome_subtitle"), textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontFamily: 'Poppins')))]),
+                        child:  Text(AppLocalizations.of(context).translate(widget._didFetchDemo == true ? "second_welcome_subtitle_demo" :"second_welcome_subtitle"), textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontFamily: 'Poppins')))]),
               SizedBox(height: 8,),
 
               Row(

@@ -10,7 +10,6 @@ abstract class WelcomePageViewModelContract {
   Stream<bool> demoState();
   Stream<String> demoErrorMessage();
   void requestDemo();
-
 }
 
 class WelcomePageViewModel extends WelcomePageViewModelContract {

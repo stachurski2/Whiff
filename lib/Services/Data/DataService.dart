@@ -13,6 +13,7 @@ abstract class DataServicing {
    void fetchSensors() async { }
    void fetchState() async { }
    void requestDemo() async { }
+   void requestAdd(String sensorKey) async { }
 
    void fetchCurrentMeasurement(Sensor sensor) async { }
    void fetchHistoricalData(DateTime startDate, DateTime endDate, Sensor sensor) async { }
@@ -197,6 +198,14 @@ class DataService extends DataServicing  {
       _demoSubject.add(ServerResponse(true, null));
     }
   }
+
+  void requestAdd(String sensorKey) async {
+    var response = await networkService.makeRequest(RequestMethod.post, "/requestAddSensor", {"sensorId": sensorKey} ,_autheticatingService.authorizationHeader());
+    if(response.error == null) {
+      fetchSensors();
+    }
+  }
+
 
   Stream<ServerResponse<bool>> demoState()  {
     return _demoSubject.stream;

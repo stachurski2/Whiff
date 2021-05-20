@@ -265,8 +265,6 @@ class LoginPageState extends State<LoginPage> {
                           _viewModel.setSecondPassword(value);
                         },
                         onEditingComplete: ()  async {
-                          _secondFocusNode.unfocus();
-
                           _viewModel.requestRegisterUser();
                         },
                       controller: _thirdTextfieldController,

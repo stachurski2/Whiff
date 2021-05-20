@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalPage.dart';
 import 'package:Whiff/modules/secondWelcome/secondWelcome.dart';
+import 'package:Whiff/modules/sensorManager/SensorManagerPage.dart';
 
 import 'package:Whiff/modules/state/StateViewModel.dart';
 import 'package:Whiff/modules/welcome/WelcomePageViewModel.dart';
@@ -64,7 +65,7 @@ class WelcomePageState extends State<WelcomePage> {
       print(state);
       if(state == true ) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => SecondWelcomePage()));
+            MaterialPageRoute(builder: (context) => SecondWelcomePage(true)));
       }
     });
 
@@ -130,7 +131,10 @@ class WelcomePageState extends State<WelcomePage> {
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                       ),
-                      onPressed: (){} ,
+                      onPressed: (){
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => SensorManagerPage()));
+                      } ,
                       color: ColorProvider.shared.standardAppButtonColor,
                       textColor: ColorProvider.shared.standardAppButtonTextColor,
                       child: Text(

@@ -221,7 +221,11 @@
   "welcome_page_request_demo_button_title": "Request demo",
 
   "second_welcome_page_title": "Almost there!",
-  "second_welcome_subtitle": "The Whiff has configured and added 2 sensors to your account first outdoor and second indoor located in \n Warsaw, Poland \n To get more details about Whiff visit the site: Whiff.zone",
+  "second_welcome_subtitle_demo": "The Whiff has configured and  the test sensor to your account, located in: \n Warsaw, Poland \n To get more details about Whiff visit our page.",
+  "second_welcome_subtitle": " It looks like you configured your Whiff account.  \n Be up to date to the air state with Whiff and stay healthy.",
+
   "second_welcome_page_add_sensor_button_title": "Proceed",
-  "second_welcome_page_request_demo_button_title": "Whiff.zone"
+  "second_welcome_page_request_demo_button_title": "Whiff.zone",
+
+  "sensor_manager_empty_list_description": "Please, add sensor to the list."
 }
