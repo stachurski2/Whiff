@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalPage.dart';
+import 'package:Whiff/modules/login/LoginPage.dart';
 import 'package:Whiff/modules/state/StateViewModel.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,7 +33,6 @@ class StatePageState extends State<StatePage> {
   final double _kImageWidth = 120;
   final double _kImageHeight = 60;
   bool _didLoad = false;
-  // bool _showState = true;
 
   StateViewModelContract _viewModel = StateViewModel();
 
@@ -86,6 +86,9 @@ class StatePageState extends State<StatePage> {
 
     _viewModel.fetchState();
   }
+
+
+
 
   Widget build(BuildContext context) {
 

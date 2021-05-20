@@ -5,18 +5,23 @@ import 'package:Whiff/model/AirState.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:Whiff/model/Sensor.dart';
 import 'package:Whiff/model/WhiffError.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:Whiff/model/AirState.dart';
 
 abstract class DataServicing {
    void fetchSensors() async { }
    void fetchState() async { }
+   void requestDemo() async { }
+
    void fetchCurrentMeasurement(Sensor sensor) async { }
    void fetchHistoricalData(DateTime startDate, DateTime endDate, Sensor sensor) async { }
    Stream<ServerResponse<List<Sensor>>> fetchedSensors();
    Stream<ServerResponse<Measurement>> currentMeasurement();
    Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
    Stream<ServerResponse<AirState>> currentState();
+   Stream<ServerResponse<bool>> demoState();
+
    String getTermsOfServiceUrl();
    String getPrivacyPolicyUrl();
 }
@@ -38,6 +43,8 @@ class DataService extends DataServicing  {
 
   final _curentStateSubject = PublishSubject<ServerResponse<AirState>>();
 
+  final _demoSubject = PublishSubject<ServerResponse<bool>>();
+
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
   }
@@ -53,6 +60,7 @@ class DataService extends DataServicing  {
   Stream<ServerResponse<AirState>> currentState() {
     return _curentStateSubject.stream;
   }
+
 
   NetworkingServicing networkService = NetworkService.shared;
 
@@ -178,8 +186,20 @@ class DataService extends DataServicing  {
            _curentStateSubject.add(ServerResponse(measurement.getState(), null));
      } else {
        _curentStateSubject.add(ServerResponse(AirState.unknown, null));
-
      }
+  }
+
+  void requestDemo() async {
+    var response = await networkService.makeRequest(RequestMethod.post, "/requestDemo", {} ,_autheticatingService.authorizationHeader());
+    if(response.error != null) {
+      _demoSubject.add(ServerResponse(null, response.error));
+    } else {
+      _demoSubject.add(ServerResponse(true, null));
+    }
+  }
+
+  Stream<ServerResponse<bool>> demoState()  {
+    return _demoSubject.stream;
   }
 
   String getTermsOfServiceUrl() {

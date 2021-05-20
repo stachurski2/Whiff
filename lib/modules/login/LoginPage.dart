@@ -356,17 +356,11 @@ class LoginPageState extends State<LoginPage> {
 
 
                       }, child: Text(AppLocalizations.of(context).translate('login_login_privacy_policy'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
-                    ]),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
                       TextButton(onPressed: (){
                         _launchURL(_viewModel.getTermsOfServiceUrl());
 
                       }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
                     ]),
-
-
               ]) : LoadingIndicator(),
               _currentPageState == LoginViewState.loading ? Spacer() : SizedBox(height: 1,),
 
@@ -415,7 +409,7 @@ class LoginPageState extends State<LoginPage> {
       builder: (context) => AlertDialog(
         content: Text(AppLocalizations.of(context).translate("login_login_terms_of_service_question")),
         actions: [
-          yesButton,noButton
+          noButton, yesButton
         ],
       ),
     );

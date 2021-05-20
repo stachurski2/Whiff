@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:Whiff/modules/historical/HistoricalPage.dart';
+import 'package:Whiff/modules/secondWelcome/secondWelcome.dart';
+
 import 'package:Whiff/modules/state/StateViewModel.dart';
+import 'package:Whiff/modules/welcome/WelcomePageViewModel.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/Services/Authetication/Authetication.dart';
@@ -22,9 +25,13 @@ class WelcomePage extends StatefulWidget {
 }
 
 class WelcomePageState extends State<WelcomePage> {
-  final double _kImageWidth = 250;
-  final double _kImageHeight = 250;
-  bool _didLoad = false;
+
+  WelcomePageViewModelContract _viewModel = WelcomePageViewModel();
+
+  StreamSubscription _demoStateSubscription;
+  StreamSubscription _demoErrorMessageSubscription;
+
+  bool _didRequestDemo = false;
 
   final AutheticatingServicing authenticationService = AutheticationService
       .shared;
@@ -48,20 +55,33 @@ class WelcomePageState extends State<WelcomePage> {
     await _launchURL(mailtoLink.toString());
   }
 
-  void _reload() {
+  @override
+  void initState() {
+    super.initState();
 
-    setState(() {});
+    _demoStateSubscription = _viewModel.demoState().listen((state) {
+      print("haha");
+      print(state);
+      if(state == true ) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => SecondWelcomePage()));
+      }
+    });
 
+    _demoErrorMessageSubscription = _viewModel.demoErrorMessage().listen((message) {
+      if(message != null) {
+        _didRequestDemo = false;
+        setState(() {
+          showAlert(context, message);
+        });
+      }
+    });
   }
+
 
   @override
   void deactivate() {
     super.deactivate();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Widget build(BuildContext context) {
@@ -75,21 +95,18 @@ class WelcomePageState extends State<WelcomePage> {
           iconTheme: IconThemeData(
               color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
-      Column(
+      _didRequestDemo == true ? LoadingIndicator(): Column(
       mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          Image.asset('assets/meh-solid.png', width: 300, height: 200),]),
-
-
-
+          Image.asset('assets/meh-solid.png', width: 250, height: 180),]),
               Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text( AppLocalizations.of(context).translate("Nice to see you!"))
+                Text(AppLocalizations.of(context).translate("welcome_page_title"),  style: TextStyle(fontSize: 17, fontFamily: 'Poppins'))
               ]),
           SizedBox(height: 20,),
           Row(
@@ -98,7 +115,7 @@ class WelcomePageState extends State<WelcomePage> {
               children: [
                 Container(width:300,
                     alignment: Alignment.center,
-                    child:  Text(AppLocalizations.of(context).translate("We are glad, that you use the Whiff App. However, you need the Whiff sensor to provide data to your account . If you don’t own the Whiff Sensor you could add demo sensors to your account"), textAlign: TextAlign.center,))]),
+                    child:  Text(AppLocalizations.of(context).translate("welcome_page_subtitle"), textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontFamily: 'Poppins')))]),
           SizedBox(height: 20,),
 
           Row(
@@ -117,7 +134,7 @@ class WelcomePageState extends State<WelcomePage> {
                       color: ColorProvider.shared.standardAppButtonColor,
                       textColor: ColorProvider.shared.standardAppButtonTextColor,
                       child: Text(
-                        AppLocalizations.of(context).translate("Add sensors"),
+                        AppLocalizations.of(context).translate("welcome_page_add_sensor_button_title"),
                       )
                   ),
 
@@ -138,11 +155,15 @@ class WelcomePageState extends State<WelcomePage> {
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
                       ),
-                      onPressed: (){} ,
+                      onPressed: (){
+                        _didRequestDemo = true;
+                        _viewModel.requestDemo();
+                        setState(() {});
+                      } ,
                       color: ColorProvider.shared.standardAppButtonColor,
                       textColor: ColorProvider.shared.standardAppButtonTextColor,
                       child: Text(
-                        AppLocalizations.of(context).translate("Use demo sensors"),
+                          AppLocalizations.of(context).translate("welcome_page_request_demo_button_title"),
                       )
                   ),
 
@@ -158,6 +179,25 @@ class WelcomePageState extends State<WelcomePage> {
 
   }
 
+
+  void showAlert(BuildContext context, String text) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(text),
+        actions: [
+          okButton,
+        ],
+      ),
+    );
+  }
 
 
 

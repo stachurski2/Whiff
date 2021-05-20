@@ -7,6 +7,7 @@ import 'package:Whiff/customView/FailurePage.dart';
 import 'package:Whiff/model/WhiffError.dart';
 import 'package:Whiff/model/Measurement.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:Whiff/modules/login/LoginPage.dart';
 
 import 'package:Whiff/modules/onboarding/OnboardingViewModel.dart';
 import 'package:Whiff/modules/measurement/MasurementPage.dart';
@@ -94,6 +95,12 @@ class OnboardingPageState extends State<OnboardingPage> {
     super.deactivate();
   }
 
+  final PageRouteBuilder _homeRoute = PageRouteBuilder(
+    pageBuilder: (BuildContext context, _, __) {
+      return LoginPage();
+    },
+  );
+
   @override
   void initState() {
     super.initState();
@@ -101,6 +108,7 @@ class OnboardingPageState extends State<OnboardingPage> {
       if (state.signedIn == false) {
         Navigator.pop(context);
         Navigator.of(context).pop(true);
+
       }
     });
     sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
