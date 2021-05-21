@@ -143,23 +143,24 @@ class MeasurementPageState extends State<MeasurementPage>  {
                         _viewModel.fetchMeasurement(widget.sensor);
                      },  () async {
                          await this._mailToSupport();
-                     }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget(),measurementFooterWidget()],):Column(children:[SizedBox(height: 125,), LoadingIndicator() ])
-                  ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      TextButton(onPressed: (){
-                        _launchURL(_viewModel.getPrivacyPolicy());
+                     }): this._didLoad ? Column(children:[measurementHeaderWidget(), measurementDataWidget(),measurementFooterWidget(),
+                       Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: <Widget>[
+                             TextButton(onPressed: (){
+                               _launchURL(_viewModel.getPrivacyPolicy());
 
-                      }, child: Text(AppLocalizations.of(context).translate('login_login_privacy_policy'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
-                    ]),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      TextButton(onPressed: (){
-                        _launchURL(_viewModel.getTermsOfServiceUrl());
-                      }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
-                    ])
+                             }, child: Text(AppLocalizations.of(context).translate('login_login_privacy_policy'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+                           ]),
+                       Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: <Widget>[
+                             TextButton(onPressed: (){
+                               _launchURL(_viewModel.getTermsOfServiceUrl());
+                             }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
+                           ])],):Column(children:[SizedBox(height: 125,), LoadingIndicator() ])
+                  ),
+
           ]);
 
       }
@@ -230,7 +231,16 @@ class MeasurementPageState extends State<MeasurementPage>  {
               : SizedBox(),
         ],
       ),
-      SizedBox(height: 5),
+                // _sensors[index].isInsideBuilding ? Text(AppLocalizations.of(context).translate("device_indoor_sensor"),   textAlign: TextAlign.left,   style: TextStyle(fontSize: 12,
+                //   fontFamily: 'Poppins',))
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 30),
+                      Text(widget.measurement.isInsideBuilding ? "indoor sensor" : "outdoor sensor",
+                          style: TextStyle(fontSize: 16, fontFamily: 'Poppins'))
+                      ]
+                ),
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

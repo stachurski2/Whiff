@@ -13,7 +13,8 @@ abstract class DataServicing {
    void fetchSensors() async { }
    void fetchState() async { }
    void requestDemo() async { }
-   void requestAdd(String sensorKey) async { }
+   void requestAdd(String sensorKey, String sensorNumber) async { }
+   void requestDelete(String sensorNumber) async { }
 
    void fetchCurrentMeasurement(Sensor sensor) async { }
    void fetchHistoricalData(DateTime startDate, DateTime endDate, Sensor sensor) async { }
@@ -22,6 +23,7 @@ abstract class DataServicing {
    Stream<ServerResponse<List<Measurement>>> historicalMeasurements();
    Stream<ServerResponse<AirState>> currentState();
    Stream<ServerResponse<bool>> demoState();
+   Stream<WhiffError> addSensorError();
 
    String getTermsOfServiceUrl();
    String getPrivacyPolicyUrl();
@@ -45,6 +47,10 @@ class DataService extends DataServicing  {
   final _curentStateSubject = PublishSubject<ServerResponse<AirState>>();
 
   final _demoSubject = PublishSubject<ServerResponse<bool>>();
+
+  final _addSensorErrorSubject = PublishSubject<WhiffError>();
+
+  final _deleteSensorErrorSubject = PublishSubject<WhiffError>();
 
   Stream<ServerResponse<List<Sensor>>> fetchedSensors() {
     return _fetchedSensorsSubject.stream;
@@ -199,13 +205,22 @@ class DataService extends DataServicing  {
     }
   }
 
-  void requestAdd(String sensorKey) async {
-    var response = await networkService.makeRequest(RequestMethod.post, "/requestAddSensor", {"sensorId": sensorKey} ,_autheticatingService.authorizationHeader());
+  void requestAdd(String sensorKey, String sensorNumber) async {
+    var response = await networkService.makeRequest(RequestMethod.post, "/requestAddSensor", {"sensorId": sensorNumber, "sensorKey": sensorKey} ,_autheticatingService.authorizationHeader());
     if(response.error == null) {
       fetchSensors();
+    } else {
+      _addSensorErrorSubject.add(response.error);
     }
   }
 
+  Stream<WhiffError> addSensorError() {
+    return _addSensorErrorSubject.stream;
+  }
+
+  Stream<WhiffError> deleteSensorError() {
+    return _deleteSensorErrorSubject.stream;
+  }
 
   Stream<ServerResponse<bool>> demoState()  {
     return _demoSubject.stream;
@@ -218,4 +233,15 @@ class DataService extends DataServicing  {
   String getPrivacyPolicyUrl() {
     return _networkService.getPrivacyPolicyUrl();
   }
+
+  void requestDelete(String sensorNumber) async {
+    var response = await networkService.makeRequest(RequestMethod.post, "/requestDeleteSensor", {"sensorId": sensorNumber } ,_autheticatingService.authorizationHeader());
+    if(response.error == null) {
+      fetchSensors();
+    } else {
+      _deleteSensorErrorSubject.add(response.error);
+    }
+
+  }
+
 }

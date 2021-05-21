@@ -16,16 +16,24 @@ abstract class SensorManagerViewModelContract {
 
   Stream<WhiffError> sensorsListFetchError();
 
+  Stream<WhiffError> sensorAddError();
+
   void fetchSensors();
 
-  void setSensorPreSharedKey(String key);
+  void setSensorKey(String key);
+
+  void setSensorNumber(String number);
+
+  void requestDeleteSensor(String number);
 
   void requestAddSensor();
 }
 
 class SensorManagerViewModel extends SensorManagerViewModelContract {
 
-  String preSharedKey = "";
+  String sensorKey = "";
+  String sensorNumber = "";
+
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
   final DataServicing _dataService = DataService.shared;
 
@@ -44,13 +52,27 @@ class SensorManagerViewModel extends SensorManagerViewModelContract {
     });
   }
 
-  void setSensorPreSharedKey(String key) {
-    preSharedKey = key;
+  void setSensorKey(String key){
+      sensorKey = key;
   }
 
-  void requestAddSensor() {
-    _dataService.requestAdd(preSharedKey);
+  void setSensorNumber(String number) {
+       sensorNumber = number;
   }
+
+  void requestDeleteSensor(String number) {
+      _dataService.requestDelete(number);
+  }
+
+
+  void requestAddSensor() {
+    _dataService.requestAdd(sensorKey, sensorNumber);
+  }
+
+  Stream<WhiffError> sensorAddError() {
+    return _dataService.addSensorError();
+  }
+
 
 
 }

@@ -38,6 +38,8 @@ class StatePageState extends State<StatePage> {
 
   StreamSubscription _airStateSubscription;
 
+  StreamSubscription _authState;
+
   AirState _currentAirState;
 
   final AutheticatingServicing authenticationService = AutheticationService
@@ -82,6 +84,15 @@ class StatePageState extends State<StatePage> {
     _airStateSubscription = _viewModel.currentState().listen((airState) {
         this._currentAirState = airState;
         this.setState(() {});
+    });
+
+
+    _authState = _viewModel.currentAuthState().listen((state) {
+      if (state.signedIn == false) {
+        Navigator.pop(context);
+        Navigator.of(context).pop(true);
+
+      }
     });
 
     _viewModel.fetchState();

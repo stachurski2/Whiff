@@ -27,6 +27,8 @@ import 'package:Whiff/modules/secondWelcome/secondWelcome.dart';
 class SensorManagerPage extends StatefulWidget {
   @override
   SensorManagerPageState createState() => SensorManagerPageState();
+  bool isInRegistationFlow;
+  SensorManagerPage(this.isInRegistationFlow){}
 }
 
 class SensorManagerPageState extends State<SensorManagerPage> {
@@ -35,12 +37,19 @@ class SensorManagerPageState extends State<SensorManagerPage> {
   final double _kButtonCornerRadius = 10;
 
   bool _didLoad = false;
+  bool _didAddSensor = false;
 
   SensorManagerViewModelContract _viewModel = SensorManagerViewModel();
 
   StreamSubscription sensorListSubscription;
 
   StreamSubscription sensorListErrorSubscription;
+
+  StreamSubscription sensorAddSubscription;
+
+  var _firstTextfieldController = TextEditingController();
+
+  var _secondTextfieldController = TextEditingController();
 
   List<Sensor> _sensors = [];
 
@@ -94,6 +103,9 @@ class SensorManagerPageState extends State<SensorManagerPage> {
     super.initState();
 
     sensorListSubscription = _viewModel.sensorsList().listen((sensorList) {
+      this._didAddSensor = false;
+      _secondTextfieldController.clear();
+      _firstTextfieldController.clear();
       this.setState(() {
         this._sensors = sensorList;
         this._didLoad = true;
@@ -102,27 +114,40 @@ class SensorManagerPageState extends State<SensorManagerPage> {
 
     sensorListErrorSubscription =
         _viewModel.sensorsListFetchError().listen((error) {
+
           this._error = error;
           this.setState(() {});
         });
 
+    sensorAddSubscription = _viewModel.sensorAddError().listen((error) {
+        _didAddSensor = false;
+        _secondTextfieldController.clear();
 
+        if(error.errorMessage != null) {
+          showAlert(context, error.errorMessage);
+        }
+        this.setState(() {});
+    });
     _viewModel.fetchSensors();
   }
 
   var _firstFocusNode = FocusNode();
-
+  var _secondFocusNode = FocusNode();
 
   Widget build(BuildContext context) {
 
     return WillPopScope(child:
     Scaffold(
+    appBar: AppBar(backgroundColor: Colors.transparent,
+        elevation:0,
+      leading: widget.isInRegistationFlow ? Opacity(opacity: 0.0): IconButton(icon: Icon(Icons.arrow_back_ios,
+          color: ColorProvider.shared.standardAppButtonColor),
+        onPressed: (){
+          this._popPage();
+        },
+      )),
       extendBodyBehindAppBar: true,
       backgroundColor: ColorProvider.shared.standardAppBackgroundColor,
-      appBar: AppBar(backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme: IconThemeData(
-              color: ColorProvider.shared.standardAppLeftMenuBackgroundColor)),
       body:
       (_error != null) ? failureView(_error, () {
         this._reload();
@@ -130,84 +155,115 @@ class SensorManagerPageState extends State<SensorManagerPage> {
         await this._mailToSupport();
       }) :
 
-    SingleChildScrollView(
-    reverse: true,
-    child: Column(
+    Column(
             children: [
-              SizedBox(height: 40),
-              Image.asset('assets/whiffLogo.png', width: _kImageWidth,
-                  height: _kImageHeight),
-              (_didLoad && _sensors.length > 0) ? Text(AppLocalizations.of(context).translate('onboarding_select_sensor_text'),
-                  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')) :  Text(AppLocalizations.of(context).translate('onboarding_loading_sensors_text'),
-                  style: TextStyle(fontSize: 22, fontFamily: 'Poppins')),
-              _didLoad ? SizedBox(height: 20) : SizedBox(height: 100),
-              _didLoad ? _sensors.length > 0 ? sensorListView(): emptyList() : LoadingIndicator(),
+              SizedBox(height: 80,),
+              Text("Add new sensor",  style: TextStyle(fontSize: 17, fontFamily: 'Poppins')),
+              SizedBox(height: 15,),
+              Text("Please, provide the sensor number and key",  style: TextStyle(fontSize: 14, fontFamily: 'Poppins')),
               SizedBox(height: 10,),
-              Text("Please, write down the key sensor number",  style: TextStyle(fontSize: 14, fontFamily: 'Poppins')),
-              SizedBox(height: 10,),
-
               Padding(padding: EdgeInsets.only(left: 20, right: 20), child:
-                TextField(
-                    focusNode: _firstFocusNode,
-                    onChanged: (value){
-                      _viewModel.setSensorPreSharedKey(value);
-                    },
-                    onEditingComplete: ()  async {
-                      _firstFocusNode.unfocus();
-                      _viewModel.requestAddSensor();
-
-                    },
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      hintText: "Sensor preshared key",
-                    )
-                )),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-              Container(
-              width: MediaQuery.of(context).size.width - 2*20,
-              height: 40,
-              child:
-              RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(_kButtonCornerRadius),
-                      side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
-                  ),
-                  onPressed: () {
+              TextFormField(
+                  focusNode: _firstFocusNode,
+                  controller: _firstTextfieldController ,
+                  onChanged: (value){
+                    _viewModel.setSensorNumber(value);
+                  },
+                  onEditingComplete: () async {
+                    _secondFocusNode.requestFocus();
+                  },
+                  obscureText: false,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: "Sensor number",
+                  )
+              )),
+              SizedBox(height: 10,),
+              Padding(padding: EdgeInsets.only(left: 20, right: 20), child:
+              TextFormField(
+                  focusNode: _secondFocusNode,
+                  controller: _secondTextfieldController,
+                  onChanged: (value){
+                    _viewModel.setSensorKey(value);
+                  },
+                  onEditingComplete: () async {
+                    _secondFocusNode.unfocus();
+                    _firstFocusNode.unfocus();
+                    _didAddSensor = true;
                     _viewModel.requestAddSensor();
+                    setState(() {});
                   },
-                  color: ColorProvider.shared.standardAppButtonColor,
-                  textColor: ColorProvider.shared.standardAppButtonTextColor,
-                  child: Text("Add sensor")
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    hintText: "Sensor key",
+                  )
+              )),
+              SizedBox(height: 10,),
 
-              ))]),
-              SizedBox(height: 20,),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-            Container(
-                 width: MediaQuery.of(context).size.width - 2*20,
-                 height: 40,
-                 child:
-              RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(_kButtonCornerRadius),
-                      side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => SecondWelcomePage(false)));
-                  },
-                  color: ColorProvider.shared.standardAppButtonColor,
-                  textColor: ColorProvider.shared.standardAppButtonTextColor,
-                  child: Text("Proceed")
+                    Container(
+                        width: MediaQuery.of(context).size.width - 2*20,
+                        height: 40,
+                        child:
+                        RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(_kButtonCornerRadius),
+                                side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
+                            ),
+                            onPressed: () {
+                              _secondFocusNode.unfocus();
+                              _firstFocusNode.unfocus();
+                              _didAddSensor = true;
+                              _viewModel.requestAddSensor();
+                              setState(() {});
+                            },
+                            color: ColorProvider.shared.standardAppButtonColor,
+                            textColor: ColorProvider.shared.standardAppButtonTextColor,
+                            child: Text("Add sensor")
 
-              ))])
+                        ))]),
 
+              SizedBox(height: 20),
+              _sensors.isNotEmpty ? Text("Your sensors:") : SizedBox(height: 1,width: 1,),
+
+              _didLoad ? SizedBox(height: 10) : SizedBox(height: 100),
+              _didLoad == true && _didAddSensor == false ? _sensors.length > 0 ? sensorListView() : emptyList() : LoadingIndicator(),
+              Spacer(),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    widget.isInRegistationFlow ?
+                    Container(
+                        width: MediaQuery.of(context).size.width - 2*20,
+                        height: 40,
+                        child:
+                        RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(_kButtonCornerRadius),
+                                side:BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor)
+                            ),
+                            onPressed: () {
+                              if(_sensors.isNotEmpty) {
+                                if (widget.isInRegistationFlow == true) {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (context) =>
+                                          SecondWelcomePage(false)));
+                                }
+                              } else {
+                                ensureContinue(context);
+                              }
+                            },
+                            color: ColorProvider.shared.standardAppButtonColor,
+                            textColor: ColorProvider.shared.standardAppButtonTextColor,
+                            child: Text("Proceed")
+
+                        )):SizedBox()]),
+              SizedBox(height: 30),
             ],
-          ),
-    )),
+          )
+    ),
       onWillPop: () async => false,
     );
   }
@@ -215,12 +271,10 @@ class SensorManagerPageState extends State<SensorManagerPage> {
   Widget sensorListView() {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
       padding: EdgeInsets.zero,
       itemCount: _sensors.length,
       itemBuilder: (BuildContext context, int index) {
-
         return
           Wrap(
               children:[
@@ -289,15 +343,23 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                                       crossAxisAlignment: CrossAxisAlignment.center,
 
                                       children: [
-                                        SizedBox(height: 45),])),
-                              SizedBox(width: 15),
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
 
-                                  children: [
-                                    SizedBox(height: 25),
-                                  ])  ,
+                                        SizedBox(height: 30,),
+                                        TextButton(onPressed: () {
+                                          _didAddSensor = true;
+                                          _viewModel.requestDeleteSensor(_sensors[index].externalIdentfier.toString());
+                                          setState(() {});
+                                        }, child:
+
+
+                                        Icon(
+                                          Icons.delete_outlined,
+                                          color: ColorProvider.shared.standardAppButtonColor,
+
+                                        ),
+                                        )
+
+                                        ])),
                               SizedBox(width: 15),
                             ]),
 
@@ -341,5 +403,55 @@ class SensorManagerPageState extends State<SensorManagerPage> {
       ],
     );
   }
+
+  void showAlert(BuildContext context, String text) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(text),
+        actions: [
+          okButton,
+        ],
+      ),
+    );
+  }
+
+  void _popPage() {
+    Navigator.of(context).pop();
+  }
+
+  void ensureContinue(BuildContext context) {
+    Widget yesButton = TextButton(
+      child: Text("Yes"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget noButton = TextButton(
+      child: Text("No"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text("You haven't added any sensor. Are you sure?"),
+        actions: [
+          yesButton, noButton
+        ],
+      ),
+    );
+  }
+
 }
 

@@ -133,7 +133,7 @@ class WelcomePageState extends State<WelcomePage> {
                       ),
                       onPressed: (){
                         Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => SensorManagerPage()));
+                            MaterialPageRoute(builder: (context) => SensorManagerPage(true)));
                       } ,
                       color: ColorProvider.shared.standardAppButtonColor,
                       textColor: ColorProvider.shared.standardAppButtonTextColor,

@@ -12,6 +12,7 @@ import 'package:Whiff/customView/LoadingIndicator.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Whiff/modules/state/StatePage.dart';
+import 'package:Whiff/modules/sensorManager/SensorManagerPage.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   @override
@@ -277,15 +278,30 @@ class AccountSettingsPageState  extends State<AccountSettingsPage> {
           SizedBox(height: 20),
           _didFailLoadSensors ? SizedBox() : _didLoadSensors == true ? sensorListView(): LoadingIndicator(),
           SizedBox(height: 20),
-          _didLoadSensors ?
-          Row(mainAxisAlignment: MainAxisAlignment.center,
-            children: [ Text(AppLocalizations.of(context).translate('account_setting_missing_errors_label_text'),
-                textAlign: TextAlign.center,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(width: 10),
+            Expanded(child:
+          RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(_kButtonCornerRadius),
+                side: BorderSide(color: ColorProvider.shared.standardAppButtonBorderColor),
+              ),
+              onPressed: () async {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SensorManagerPage(false)),
+                );
+              },
+              color: ColorProvider.shared.standardAppButtonColor,
+              textColor: ColorProvider.shared.standardAppButtonTextColor,
+              child: Text(
+                  "Manage sensors"
+              )
+          )),
+            SizedBox(width: 10),
 
-                style: TextStyle(color: Colors.black,
-                    fontSize: 22,
-                    fontFamily: 'Poppins')),
-            ],): SizedBox(),
+          ]),
           SizedBox(height: 10),
           (_didLoadSensors || _didFailLoadSensors) ? Row(
               children: <Widget>[

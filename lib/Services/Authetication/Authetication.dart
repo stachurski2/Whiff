@@ -40,7 +40,6 @@ class AutheticationService extends AutheticatingServicing  {
   var _didRequestRegister = false;
   var _didRequestRemind = false;
 
-
   static final AutheticationService shared = AutheticationService._internal();
   factory AutheticationService() {
     return shared;
@@ -49,7 +48,6 @@ class AutheticationService extends AutheticatingServicing  {
   final _subject = PublishSubject<AutheticationState>();
   final _registrationErrorSubject = PublishSubject<WhiffError>();
   final _changePasswordSubject = PublishSubject<ServerResponse<bool>>();
-
 
   String authorizationHeader() {
     return _authorizationMethod + " " + _authorizationToken;
@@ -66,7 +64,6 @@ class AutheticationService extends AutheticatingServicing  {
   Stream<WhiffError> registrationState() {
     return _registrationErrorSubject.stream;
   }
-
 
   void signOut() {
      _authorizationMethod = "";
@@ -117,7 +114,6 @@ class AutheticationService extends AutheticatingServicing  {
            _subject.add(state);
            _storeCredientials();
          }
-
        }
     }
 
@@ -149,7 +145,6 @@ class AutheticationService extends AutheticatingServicing  {
     }
   }
 
-
   _removeStoredCredientials() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(_kEmailKey);
@@ -174,11 +169,9 @@ class AutheticationService extends AutheticatingServicing  {
     }
   }
 
-
   Stream<ServerResponse<bool>> changePasswordState() {
     return _changePasswordSubject;
   }
-
 }
 
 

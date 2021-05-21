@@ -44,7 +44,7 @@
   "onboarding_air_state_very_bad_description": "Do not ventilate rooms. Sensitive ones (especially pregnant women and children) should avoid activity outside.",
 
   "onboarding_air_state_unknown": "Air state is unknown",
-  "onboarding_air_state_unknown_description": "The WhiffApp couldn't get air state, please contact support to resolve problem.",
+  "onboarding_air_state_unknown_description": "It looks like there is no outdoor sensor adde to your account. \n The WhiffApp couldn't get air state, please contact support to resolve problem.",
 
   "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
   "error_server_unavailable": "Our server is unavailable now, please try again later.",
@@ -215,16 +215,16 @@
   "historical_top_page_date_range_word": "Date range:",
   "historical_top_page_type_word": "Type:",
 
-  "welcome_page_title": "Nice to see you",
-  "welcome_page_subtitle": "We are glad, that you use the Whiff App. However, you need the Whiff sensor to provide data to your account. If you don’t own the Whiff Sensor you could add demo sensors to your account",
-  "welcome_page_add_sensor_button_title": "Add sensors",
-  "welcome_page_request_demo_button_title": "Request demo",
+  "welcome_page_title": "Nice to see you!",
+  "welcome_page_subtitle": "We are glad, that you use the Whiff App.\n However, you need the Whiff sensor \n to provide data to your account. \n If you don’t own the Whiff Sensor, you could add test sensors to your account",
+  "welcome_page_add_sensor_button_title": "I have own sensors",
+  "welcome_page_request_demo_button_title": "Use test sensors",
 
   "second_welcome_page_title": "Almost there!",
-  "second_welcome_subtitle_demo": "The Whiff has configured and  the test sensor to your account, located in: \n Warsaw, Poland \n To get more details about Whiff visit our page.",
+  "second_welcome_subtitle_demo": "The Whiff has configured the test sensors to your account. \n They are located in: \n Warsaw, Poland \n .To get more details about Whiff visit our page.",
   "second_welcome_subtitle": " It looks like you configured your Whiff account.  \n Be up to date to the air state with Whiff and stay healthy.",
 
-  "second_welcome_page_add_sensor_button_title": "Proceed",
+  "second_welcome_page_add_sensor_button_title": "Continue",
   "second_welcome_page_request_demo_button_title": "Whiff.zone",
 
   "sensor_manager_empty_list_description": "Please, add sensor to the list."

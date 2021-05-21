@@ -95,7 +95,7 @@ class SecondWelcomePageState extends State<SecondWelcomePage> {
                     Container(width:300,
                         alignment: Alignment.center,
                         child:  Text(AppLocalizations.of(context).translate(widget._didFetchDemo == true ? "second_welcome_subtitle_demo" :"second_welcome_subtitle"), textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontFamily: 'Poppins')))]),
-              SizedBox(height: 8,),
+              SizedBox(height: 20,),
 
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,

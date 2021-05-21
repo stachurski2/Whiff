@@ -63,7 +63,7 @@ class HistoricalPageState extends State<HistoricalPage> {
   DateTimeRange range =  DateTimeRange(
       end: DateTime.now(),
       start:DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day - 13)
+          DateTime.now().year, DateTime.now().month, DateTime.now().day - 2)
 
   );
 
@@ -186,12 +186,19 @@ class HistoricalPageState extends State<HistoricalPage> {
         _mailToSupport();
       }):
       _didLoadSensors ? Column(children: [
-        Container(height: 250,
+        Container(height: 260,
                   width: MediaQuery.of(context).size.width,
                   child: Column(
             children: [
-              SizedBox(height: 80,),
-          Row(mainAxisAlignment: MainAxisAlignment.start,
+
+              SizedBox(height: 60,),
+              Text("Historical Data",
+                  style: TextStyle(color: Colors.white,
+                      fontSize: 13,
+                      fontFamily: 'Poppins')),
+               SizedBox(height: 10,),
+
+              Row(mainAxisAlignment: MainAxisAlignment.start,
           children: [
 
             SizedBox(width: 20,),
@@ -465,6 +472,21 @@ class HistoricalPageState extends State<HistoricalPage> {
   Widget chart(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+      Map<int, Color> colorCodes = {
+        50: Color.fromRGBO(147, 205, 72, .1),
+        100: Color.fromRGBO(147, 205, 72, .2),
+        200: Color.fromRGBO(147, 205, 72, .3),
+        300: Color.fromRGBO(147, 205, 72, .4),
+        400: Color.fromRGBO(147, 205, 72, .5),
+        500: Color.fromRGBO(147, 205, 72, .6),
+        600: Color.fromRGBO(147, 205, 72, .7),
+        700: Color.fromRGBO(147, 205, 72, .8),
+        800: Color.fromRGBO(147, 205, 72, .9),
+        900: Color.fromRGBO(147, 205, 72, 1),
+      };
+
+      MaterialColor materialColor = new MaterialColor(0xFF93cd48, colorCodes);
+
     if(_didLoadChart == true) {
       final currentUnit = AppLocalizations.of(context).translate(_currentMeasurementType.unitName());
       final simpleCurrencyFormatter =  charts.BasicNumericTickFormatterSpec((num value){ return '$value' + currentUnit;});
@@ -486,10 +508,11 @@ class HistoricalPageState extends State<HistoricalPage> {
             height: MediaQuery
                 .of(context)
                 .size
-                .height - 250,
+                .height - 260,
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppBackgroundColor,
             child: charts.TimeSeriesChart(seriesList,
+
               animate: false,
               flipVerticalAxis: false,
               selectionModels: [
@@ -497,8 +520,7 @@ class HistoricalPageState extends State<HistoricalPage> {
                     type: charts.SelectionModelType.info,
                     changedListener: (charts.SelectionModel model) {
                       if(model.hasDatumSelection) {
-                        print(model.selectedSeries[0].domainFn(model.selectedDatum[0].index));
-                        print(model.selectedSeries[0].measureFn(model.selectedDatum[0].index));
+
                         symbolRenderer.set(model.selectedSeries[0].domainFn(model.selectedDatum[0].index), model.selectedSeries[0].measureFn(model.selectedDatum[0].index), AppLocalizations.of(context).translate(_currentMeasurementType.unitName()), MediaQuery.of(context).size.width);
                       }
                     }
@@ -517,6 +539,7 @@ class HistoricalPageState extends State<HistoricalPage> {
               primaryMeasureAxis: new charts.NumericAxisSpec(
               tickFormatterSpec: simpleCurrencyFormatter,
                   renderSpec: new charts.GridlineRendererSpec(
+                    lineStyle: new charts.LineStyleSpec(color: charts.Color.fromHex(code: "#0D5509")),
                     // Display the measure axis labels below the gridline.
                     //
                     // 'Before' & 'after' follow the axis value direction.
@@ -550,7 +573,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           height: MediaQuery
               .of(context)
               .size
-              .height - 250,
+              .height - 260,
           color: ColorProvider.shared.standardAppBackgroundColor,
           child:LoadingIndicator()));
     }
@@ -575,7 +598,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           height: MediaQuery
               .of(context)
               .size
-              .height - 250,
+              .height - 260,
           alignment: Alignment.center,
           color: ColorProvider.shared.standardAppBackgroundColor,
           child:

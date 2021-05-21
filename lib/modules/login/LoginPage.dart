@@ -126,6 +126,10 @@ class LoginPageState extends State<LoginPage> {
     _firstTextfieldController.clear();
     _secondTextfieldController.clear();
     _thirdTextfieldController.clear();
+    // if(state == LoginViewState.registerUser) {
+    //   _loginMessage = "";
+    // }
+    // setState(() {});
   }
 
   @override
@@ -210,7 +214,8 @@ class LoginPageState extends State<LoginPage> {
                         }
                     },
                        controller: _firstTextfieldController,
-                        onChanged: (value){
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (value){
                           _viewModel.setLogin(value);
                         },
                         decoration: InputDecoration(
@@ -251,9 +256,10 @@ class LoginPageState extends State<LoginPage> {
                         )
                     )
                     ),
-                    SizedBox(width: _kStandardViewInset),
+                   SizedBox(width: _kStandardViewInset),
                   ]
               ) : SizedBox(),
+                // _currentPageState == LoginViewState.registerUser ? SizedBox(height: _kStandardViewInset,) : SizedBox(),
               _currentPageState == LoginViewState.registerUser ?
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -359,6 +365,7 @@ class LoginPageState extends State<LoginPage> {
 
                       }, child: Text(AppLocalizations.of(context).translate('login_login_terms_of_service'),  style: TextStyle(color: ColorProvider.shared.standardAppButtonColor))),
                     ]),
+                SizedBox(height: 10,)
               ]) : LoadingIndicator(),
               _currentPageState == LoginViewState.loading ? Spacer() : SizedBox(height: 1,),
 

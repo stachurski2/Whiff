@@ -13,7 +13,8 @@ class WhiffApp extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Whiff',
-      theme: ThemeData(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
         supportedLocales: [
