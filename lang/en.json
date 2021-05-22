@@ -18,6 +18,7 @@
   "login_login_terms_of_service_question": "Do you accept Terms of Service and Privacy Policy?",
   "login_login_terms_of_service_answer_yes": "Yes",
   "login_login_terms_of_service_answer_no": "No",
+  "login_login_ok_button": "OK",
 
   "sensor_word": "Sensor",
   "device_outdoor_sensor": "outdoor sensor",
@@ -28,6 +29,7 @@
   "air_page_loading_label_text": "Loading",
   "air_page_show_details_label_text": "Show Details",
 
+  "onboarding_whiff_sensor_text": "Whiff Sensor",
   "onboarding_select_sensor_text": "CURRENT DATA",
   "onboarding_loading_sensors_text": "Loading current data",
 
@@ -103,120 +105,13 @@
   "account_setting_changed_password_message": "Password changed",
   "account_setting_changed_password_message_unknown_error": "Couldn't change password.",
 
-  "historical_top_page_sensor_word": "Sensor:",
-  "historical_top_page_date_range_word": "Date range:",
-  "historical_top_page_type_word": "Type:",
-
-  "login_top_label_text": "whiff.zone",
-  "login_login_textfield_placeholder": "email",
-  "login_password_textfield_placeholder": "Password",
-  "login_repeat_password_textfield_placeholder": "Repeat Password",
-  "login_login_register_button_title": "REGISTRATION",
-  "login_login_register_register_button_title": "REGISTER",
-  "login_login_password_button_title": "FORGOTTEN PASSWORD",
-  "login_login_password_password_button_title": "REMIND PASSWORD",
-  "login_login_unknown_login_error": "Cannot reach Whiff server, check internet connection",
-  "login_login_incorrect_login_format": "You haven't provided email in the textfield.",
-  "login_login_passwords_do_not_match": "Passwords don't match.",
-  "login_login_password_do_too_short": "Password too short. It requires at least 6 letters.",
-  "login_login_registration_title": "Registration",
-  "login_login_remind_password_title": "Forgotten Password",
-  "login_login_privacy_policy": "Privacy Policy",
-  "login_login_terms_of_service": "Terms of Service",
-  "login_login_terms_of_service_question": "Do you accept Terms of Service and Privacy Policy?",
-  "login_login_terms_of_service_answer_yes": "Yes",
-  "login_login_terms_of_service_answer_no": "No",
-
-  "sensor_word": "Sensor",
-  "device_outdoor_sensor": "outdoor sensor",
-  "device_indoor_sensor": "indoor sensor",
-  "device_number_word": "device number: ",
-  "location_word": "location: ",
-
-  "air_page_loading_label_text": "Loading",
-  "air_page_show_details_label_text": "Show Details",
-
-  "onboarding_select_sensor_text": "CURRENT DATA",
-  "onboarding_loading_sensors_text": "Loading current data",
-
-  "onboarding_air_state_good": "Air is good outside",
-  "onboarding_air_state_good_description": "No critical alerts about the air outside. \nFeel free with physical activity outside or ventilating rooms.",
-
-  "onboarding_air_state_moderate": "Air is moderate outside",
-  "onboarding_air_state_moderate_description": "No critical alerts about the air outside.  \nFeel free with physical activity outside or ventilating rooms.",
-
-  "onboarding_air_state_bad": "Air is bad outside",
-  "onboarding_air_state_bad_description": "Consider limit or postpone physical activity outside. Symptoms like cough or sore throat could occur, especially in sensitive ones (pregnant women or children).",
-
-  "onboarding_air_state_very_bad": "Air is very bad outside",
-  "onboarding_air_state_very_bad_description": "Do not ventilate rooms. Sensitive ones (especially pregnant women and children) should avoid activity outside.",
-
-  "onboarding_air_state_unknown": "Air state is unknown",
-  "onboarding_air_state_unknown_description": "The WhiffApp couldn't get air state, please contact support to resolve problem.",
-
-  "error_no_internet_connection": "No internet connection, check out your system settings and phone's network reception.",
-  "error_server_unavailable": "Our server is unavailable now, please try again later.",
-  "error_server_response_decode_problem" : "An error occurred within the server communication process",
-  "error_server_response_message" : "The server respond with error: ",
-  "failure_page_title" : "We couldn't collect data. ",
-  "failure_page_empty_sensors_list_title" : "Your sensors list is empty",
-  "failure_page_empty_sensors_list_message": "Please contact our support and request to add sensors to your account",
-  "failure_page_contact_support_button_title" : "Contact Support",
-  "failure_page_try_again_button_title" : "Try reload",
-
-  "menu_current_state_button": "Current state",
-  "menu_current_data_button": "Current data",
-  "menu_historical_data_button": "Historical data",
-  "menu_account_settings_button": "Account Settings",
-  "menu_sing_out_button": "Sign out",
-
-  "measurement_type_temperature": "Temperature",
-  "measurement_type_pm1level": "PM1",
-  "measurement_type_pm10level": "PM10",
-  "measurement_type_pm25level": "PM2.5",
-  "measurement_type_humidity": "Humidity",
-  "measurement_type_formaldehyde": "Formaldehyde",
-  "measurement_type_co2level": "CO2",
-
-  "measurement_type_temperature_unit": "℃",
-  "measurement_type_pm1level_unit": "μg/m³",
-  "measurement_type_pm10level_unit": "μg/m³",
-  "measurement_type_pm25level_unit": "μg/m³",
-  "measurement_type_humidity_unit": "%RH",
-  "measurement_type_formaldehyde_unit": "μg/m³",
-  "measurement_type_co2level_unit": "ppm",
-
-  "measurement_state_good": "good",
-  "measurement_state_moderate": "moderate",
-  "measurement_state_bad": "bad",
-  "measurement_state_very_bad": "Very bad",
-  "measurement_state_unknown": "unknown",
-  "measurement_page_legend_title": "Legend",
-  "measurement_page_legend_first_postion": "value is good",
-  "measurement_page_legend_second_postion": "value is moderate",
-  "measurement_page_legend_third_postion": "value is bad",
-  "measurement_page_legend_fourth_postion": "value is very bad",
-
-  "account_settings_top_label_text": "Account",
-  "account_settings_change_password_label_text": "Change your password",
-  "account_settings_new_password_textfield_label": "New password",
-  "account_settings_new_password_confirm_textfield_label": "New password confirm",
-  "account_setting_change_password_button_text": "Change password",
-  "account_setting_your_sensors_label_text": "Your sensors",
-  "account_setting_missing_errors_label_text": "Some sensors are missing?",
-  "account_setting_sensors_loading_label_text": "Loading sensors list",
-  "account_setting_no_sensor_label_text": "There aren't any sensors assigned to your account.",
-  "account_setting_cant_load_sensor_label_text": "Couldn't fetch the sensors list.",
-  "account_setting_missing_contact_support_button_text": "Contact Support",
-  "account_setting_changed_password_message": "Password changed",
-  "account_setting_changed_password_message_unknown_error": "Couldn't change password.",
-
+  "historical_data_module_title": "Historical data",
   "historical_top_page_sensor_word": "Sensor:",
   "historical_top_page_date_range_word": "Date range:",
   "historical_top_page_type_word": "Type:",
 
   "welcome_page_title": "Nice to see you!",
-  "welcome_page_subtitle": "We are glad, that you use the Whiff App.\n However, you need the Whiff sensor \n to provide data to your account. \n If you don’t own the Whiff Sensor, you could add test sensors to your account",
+  "welcome_page_subtitle": "We are glad, that you use the Whiff App.\n However, you need the Whiff sensor \n to provide data to the app. \n If you don’t own the Whiff Sensor, you could add test sensors to your account",
   "welcome_page_add_sensor_button_title": "I have own sensors",
   "welcome_page_request_demo_button_title": "Use test sensors",
 
@@ -227,5 +122,26 @@
   "second_welcome_page_add_sensor_button_title": "Continue",
   "second_welcome_page_request_demo_button_title": "Whiff.zone",
 
-  "sensor_manager_empty_list_description": "Please, add sensor to the list."
+  "sensor_manager_empty_list_description": "Please, add sensor to the list.",
+
+  "measurement_device_number_label" : "device number: ",
+  "measurement_indoor_sensor_label" : "indoor sensor",
+  "measurement_outdoor_sensor_label" : "outdoor sensor",
+  "measurement_location_label" :"location: ",
+  "measurement_whiff_sensor_label" :"Whiff Sensor",
+  "welcome_page_ok_button": "OK",
+
+  "sensor_manager_whiff_sensor_label": "Whiff Sensor",
+"sensor_manager_whiff_sensor_warning_text": "You haven't added any sensor. Are you sure?",
+  "sensor_manager_whiff_delete_sensor_warning_text":"You are going to delete sensor from your account. Are you sure?\"",
+  "sensor_manager_whiff_yes_answer":"Yes",
+  "sensor_manager_whiff_no_answer":"No",
+  "sensor_manager_continue_button_text":"Continue",
+"sensor_manager_your_sensors_text": "Your sensors:",
+  "sensor_manager_add_sensor_text": "Add sensor:",
+  "sensor_manager_sensor_key_text": "Sensor key",
+  "sensor_manager_sensor_number_text": "Sensor number",
+  "sensor_manager_add_sensor_text": "Add Sensor",
+  "sensor_manager_subtitle_text": "Please, provide the sensor number and key"
+
 }

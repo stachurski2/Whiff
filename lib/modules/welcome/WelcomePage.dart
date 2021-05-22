@@ -61,7 +61,6 @@ class WelcomePageState extends State<WelcomePage> {
     super.initState();
 
     _demoStateSubscription = _viewModel.demoState().listen((state) {
-      print("haha");
       print(state);
       if(state == true ) {
         Navigator.of(context).pushReplacement(
@@ -103,7 +102,7 @@ class WelcomePageState extends State<WelcomePage> {
           Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          Image.asset('assets/meh-solid.png', width: 250, height: 180),]),
+          Image.asset('assets/meh-solid.png', width: 250, height: 140),]),
               Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -186,7 +185,7 @@ class WelcomePageState extends State<WelcomePage> {
 
   void showAlert(BuildContext context, String text) {
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text(AppLocalizations.of(context).translate("welcome_page_ok_button")),
       onPressed: () {
         Navigator.of(context).pop();
       },

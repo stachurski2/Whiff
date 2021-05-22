@@ -145,6 +145,7 @@ class LoginPageState extends State<LoginPage> {
           child:
             Column(
             children: [
+              SizedBox(height: MediaQuery.of(context).padding.top + 5,),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -376,7 +377,7 @@ class LoginPageState extends State<LoginPage> {
 
   void showAlert(BuildContext context, String text) {
     Widget okButton = FlatButton(
-      child: Text("OK"),
+      child: Text(AppLocalizations.of(context).translate("login_login_ok_button")),
       onPressed: () {
         Navigator.of(context).pop();
       },

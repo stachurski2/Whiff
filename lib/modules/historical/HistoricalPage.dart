@@ -186,17 +186,17 @@ class HistoricalPageState extends State<HistoricalPage> {
         _mailToSupport();
       }):
       _didLoadSensors ? Column(children: [
-        Container(height: 260,
+        Container(height: 280,
                   width: MediaQuery.of(context).size.width,
                   child: Column(
             children: [
 
-              SizedBox(height: 60,),
-              Text("Historical Data",
+              SizedBox(height: MediaQuery.of(context).viewPadding.top + 20),
+              Text(AppLocalizations.of(context).translate("historical_data_module_title"),
                   style: TextStyle(color: Colors.white,
                       fontSize: 13,
                       fontFamily: 'Poppins')),
-               SizedBox(height: 10,),
+               SizedBox(height: 20,),
 
               Row(mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -508,7 +508,7 @@ class HistoricalPageState extends State<HistoricalPage> {
             height: MediaQuery
                 .of(context)
                 .size
-                .height - 260,
+                .height - 280,
             alignment: Alignment.center,
             color: ColorProvider.shared.standardAppBackgroundColor,
             child: charts.TimeSeriesChart(seriesList,
@@ -573,7 +573,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           height: MediaQuery
               .of(context)
               .size
-              .height - 260,
+              .height - 280,
           color: ColorProvider.shared.standardAppBackgroundColor,
           child:LoadingIndicator()));
     }
@@ -598,7 +598,7 @@ class HistoricalPageState extends State<HistoricalPage> {
           height: MediaQuery
               .of(context)
               .size
-              .height - 260,
+              .height - 280,
           alignment: Alignment.center,
           color: ColorProvider.shared.standardAppBackgroundColor,
           child:

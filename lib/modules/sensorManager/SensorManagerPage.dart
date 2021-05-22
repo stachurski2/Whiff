@@ -154,13 +154,12 @@ class SensorManagerPageState extends State<SensorManagerPage> {
       }, () async {
         await this._mailToSupport();
       }) :
-
     Column(
             children: [
-              SizedBox(height: 80,),
-              Text("Add new sensor",  style: TextStyle(fontSize: 17, fontFamily: 'Poppins')),
+              SizedBox(height: MediaQuery.of(context).viewPadding.top + 20),
+              Text(AppLocalizations.of(context).translate("sensor_manager_add_sensor_text"),  style: TextStyle(fontSize: 17, fontFamily: 'Poppins')),
               SizedBox(height: 15,),
-              Text("Please, provide the sensor number and key",  style: TextStyle(fontSize: 14, fontFamily: 'Poppins')),
+              Text(AppLocalizations.of(context).translate("sensor_manager_subtitle_text"),  style: TextStyle(fontSize: 14, fontFamily: 'Poppins')),
               SizedBox(height: 10,),
               Padding(padding: EdgeInsets.only(left: 20, right: 20), child:
               TextFormField(
@@ -175,7 +174,7 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                   obscureText: false,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    hintText: "Sensor number",
+                    hintText: AppLocalizations.of(context).translate("sensor_manager_sensor_number_text"),
                   )
               )),
               SizedBox(height: 10,),
@@ -195,7 +194,7 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                   },
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
-                    hintText: "Sensor key",
+                    hintText: AppLocalizations.of(context).translate("sensor_manager_sensor_key_text"),
                   )
               )),
               SizedBox(height: 10,),
@@ -221,16 +220,16 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                             },
                             color: ColorProvider.shared.standardAppButtonColor,
                             textColor: ColorProvider.shared.standardAppButtonTextColor,
-                            child: Text("Add sensor")
+                            child: Text(AppLocalizations.of(context).translate("sensor_manager_add_sensor_text"))
 
                         ))]),
 
               SizedBox(height: 20),
-              _sensors.isNotEmpty ? Text("Your sensors:") : SizedBox(height: 1,width: 1,),
+              _sensors.isNotEmpty ? Text(AppLocalizations.of(context).translate("sensor_manager_your_sensors_text")) : SizedBox(height: 1,width: 1,),
 
               _didLoad ? SizedBox(height: 10) : SizedBox(height: 100),
-              _didLoad == true && _didAddSensor == false ? _sensors.length > 0 ? sensorListView() : emptyList() : LoadingIndicator(),
-              Spacer(),
+              _didLoad == true && _didAddSensor == false ? _sensors.length > 0 ? sensorListView() : emptyList() : Expanded(child:LoadingIndicator()),
+              SizedBox(height: 10,),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -252,27 +251,34 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                                           SecondWelcomePage(false)));
                                 }
                               } else {
-                                ensureContinue(context);
+                                ensureContinue(context, () {
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (context) =>
+                                          SecondWelcomePage(false)));
+                                });
                               }
                             },
                             color: ColorProvider.shared.standardAppButtonColor,
                             textColor: ColorProvider.shared.standardAppButtonTextColor,
-                            child: Text("Proceed")
+                            child: Text(AppLocalizations.of(context).translate("sensor_manager_continue_button_text"))
 
-                        )):SizedBox()]),
-              SizedBox(height: 30),
+                        )):SizedBox()]) ,
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 10),
             ],
-          )
+          ),
     ),
       onWillPop: () async => false,
     );
   }
 
   Widget sensorListView() {
-    return ListView.builder(
+    return
+      Expanded(child:
+      ListView.builder(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
-      padding: EdgeInsets.zero,
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.only(bottom: 10),
       itemCount: _sensors.length,
       itemBuilder: (BuildContext context, int index) {
         return
@@ -298,14 +304,13 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(width: 10),
-                              //  Expanded(child:
                               Column(children: [
                                 Text(AppLocalizations.of(context).translate("sensor_word") + " "  + (index + 1).toString(),
                                     style: TextStyle(fontSize: 17,
                                         fontFamily: 'Poppins')),
                                 TextButton(
                                     onPressed: () {
-                                      MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, "Whiff Sensor");
+                                      MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, AppLocalizations.of(context).translate("sensor_manager_whiff_sensor_label"));
                                     },
                                     child: Image.asset('assets/room_24px.png', scale: 2))
                               ],),//),
@@ -347,8 +352,11 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                                         SizedBox(height: 30,),
                                         TextButton(onPressed: () {
                                           _didAddSensor = true;
-                                          _viewModel.requestDeleteSensor(_sensors[index].externalIdentfier.toString());
-                                          setState(() {});
+                                          ensureDelete(context, (){
+                                            _viewModel.requestDeleteSensor(_sensors[index].externalIdentfier.toString());
+                                            setState(() {});
+                                          });
+
                                         }, child:
 
 
@@ -373,20 +381,28 @@ class SensorManagerPageState extends State<SensorManagerPage> {
                   {
                   },
                 )]);
-      },);
+      },));
   }
 
 
   Widget emptyList() {
     return
-      Center(child:
-      FailurePage(WhiffError(1002,
-          AppLocalizations.of(context).translate('sensor_manager_empty_list_description')),
-              () {},
-              () {},
-          hideButtons: true,)
+    Expanded(child:
+      Column(
+        children: [
+        Text( AppLocalizations.of(context).translate("failure_page_empty_sensors_list_title"), style: TextStyle(fontSize: 17, fontFamily: 'Poppins')),
+        SizedBox(height: 10,),
+        Text(AppLocalizations.of(context).translate('sensor_manager_empty_list_description'), style: TextStyle(fontSize: 14, fontFamily: 'Poppins'))],
+          // FailurePage(WhiffError(1002,
+          //     ,
+          //         () {},
+          //         () {},
+          //     hideButtons: true,)
 
-      );
+      //     child:
+
+
+      ));
   }
 
 
@@ -427,16 +443,16 @@ class SensorManagerPageState extends State<SensorManagerPage> {
     Navigator.of(context).pop();
   }
 
-  void ensureContinue(BuildContext context) {
+  void ensureContinue(BuildContext context, VoidCallback YesPressedCallback) {
     Widget yesButton = TextButton(
-      child: Text("Yes"),
+      child: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_yes_answer")),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
 
     Widget noButton = TextButton(
-      child: Text("No"),
+      child: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_no_answer")),
       onPressed: () {
         Navigator.of(context).pop();
       },
@@ -445,7 +461,35 @@ class SensorManagerPageState extends State<SensorManagerPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: Text("You haven't added any sensor. Are you sure?"),
+        content: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_sensor_warning_text")),
+        actions: [
+          yesButton, noButton
+        ],
+      ),
+    );
+  }
+
+  void ensureDelete(BuildContext context, VoidCallback YesPressedCallback ) {
+    Widget yesButton = TextButton(
+      child: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_yes_answer")),
+      onPressed: () {
+        YesPressedCallback();
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget noButton = TextButton(
+      child: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_no_answer")),
+      onPressed: () {
+
+        Navigator.of(context).pop();
+      },
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(AppLocalizations.of(context).translate("sensor_manager_whiff_delete_sensor_warning_text")),
         actions: [
           yesButton, noButton
         ],

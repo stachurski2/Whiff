@@ -226,7 +226,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
         children: [
           SizedBox(width: 30),
           (_measurement != null)
-              ? Text("device number: " + widget.sensor.externalIdentfier.toString(),
+              ? Text(AppLocalizations.of(context).translate("measurement_device_number_label") + widget.sensor.externalIdentfier.toString(),
               style: TextStyle(fontSize: 16, fontFamily: 'Poppins'))
               : SizedBox(),
         ],
@@ -237,7 +237,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(width: 30),
-                      Text(widget.measurement.isInsideBuilding ? "indoor sensor" : "outdoor sensor",
+                      Text(widget.measurement.isInsideBuilding ? AppLocalizations.of(context).translate("measurement_indoor_sensor_label") : AppLocalizations.of(context).translate("measurement_outdoor_sensor_label"),
                           style: TextStyle(fontSize: 16, fontFamily: 'Poppins'))
                       ]
                 ),
@@ -246,7 +246,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
         children: [
           SizedBox(width: 30),
           (_measurement != null)
-              ? Flexible(child:Text("location: " + widget.sensor.locationName, maxLines: 2,
+              ? Flexible(child:Text( AppLocalizations.of(context).translate("measurement_location_label") + widget.sensor.locationName, maxLines: 2,
               style: TextStyle(fontSize: 16, fontFamily: 'Poppins')))
               : SizedBox(),
         ],
@@ -599,7 +599,7 @@ class MeasurementPageState extends State<MeasurementPage>  {
           children: [
           TextButton(
               onPressed: () {
-                MapsLauncher.launchCoordinates(widget.sensor.locationLat, widget.sensor.locationLon, "Whiff Sensor");
+                MapsLauncher.launchCoordinates(widget.sensor.locationLat, widget.sensor.locationLon, AppLocalizations.of(context).translate("measurement_whiff_sensor_label"));
               },
               child: Image.asset('assets/Measurement_Page_Map_Button.png', scale: 3)),
           TextButton(

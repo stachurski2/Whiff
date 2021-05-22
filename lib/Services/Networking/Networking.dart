@@ -21,7 +21,7 @@ abstract class NetworkingServicing {
 
 class NetworkService extends NetworkingServicing {
 
-  final _kMainAdress = "https://whiffdev.herokuapp.com";
+  final _kMainAdress = "https://whiffapp.herokuapp.com";
 
   static final NetworkService shared = NetworkService._internal();
   factory NetworkService() {

@@ -348,7 +348,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                                   fontFamily: 'Poppins')),
                           TextButton(
                               onPressed: () {
-                                MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, "Whiff Sensor");
+                                MapsLauncher.launchCoordinates(_sensors[index].locationLat, _sensors[index].locationLon, AppLocalizations.of(context).translate("onboarding_whiff_sensor_text"));
                               },
                               child: Image.asset('assets/room_24px.png', scale: 2))
                                     ],),//),
