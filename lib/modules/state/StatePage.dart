@@ -94,7 +94,7 @@ class StatePageState extends State<StatePage> {
 
       }
     });
-
+    _viewModel.fetchSensors();
     _viewModel.fetchState();
   }
 

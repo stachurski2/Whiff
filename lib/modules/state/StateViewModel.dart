@@ -17,12 +17,28 @@ abstract class StateViewModelContract {
 
   void fetchState();
 
+  void fetchSensors();
+
 }
 
 class StateViewModel extends StateViewModelContract {
 
   final AutheticatingServicing _authenticationService = AutheticationService.shared;
   final DataServicing _dataService = DataService.shared;
+
+  StreamSubscription sensorListSubscription;
+
+  StateViewModel() {
+
+  sensorListSubscription = _dataService.fetchedSensors().listen((fetchedSensors) {
+    if(fetchedSensors.responseObject != null) {
+      fetchedSensors.responseObject.forEach((sensor) {
+         _dataService.fetchCurrentMeasurement(sensor);
+      });
+    }
+    });
+  }
+
 
   Stream<AutheticationState> currentAuthState() {
     return _authenticationService.currentAuthState();
@@ -46,5 +62,9 @@ class StateViewModel extends StateViewModelContract {
 
   void fetchState() {
     _dataService.fetchState();
+  }
+
+  void fetchSensors() {
+    _dataService.fetchSensorsFirst();
   }
 }

@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:Whiff/model/AirState.dart';
 
 abstract class DataServicing {
+   void fetchSensorsFirst() async { }
    void fetchSensors() async { }
    void fetchState() async { }
    void requestDemo() async { }
@@ -37,6 +38,8 @@ class DataService extends DataServicing  {
   factory DataService() {
     return shared;
   }
+
+  bool _didRequestedFetchFirstSensor = false;
 
   final _fetchedSensorsSubject = ReplaySubject<ServerResponse<List<Sensor>>>(maxSize:1);
 
@@ -243,5 +246,13 @@ class DataService extends DataServicing  {
     }
 
   }
+
+  void fetchSensorsFirst() async {
+    if(_didRequestedFetchFirstSensor == false) {
+      _didRequestedFetchFirstSensor = true;
+      fetchSensors();
+    }
+  }
+
 
 }
